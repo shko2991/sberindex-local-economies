@@ -96,8 +96,8 @@
   },
   "lisa_HH_LL_all_seeds_agree": 0.9386792452830188,
   "lisa_HH_LL_min_seed_agreement": 0.4,
-  "gap_model_R2": 0.6580187501444594,
-  "gap_model_n": 1680,
+  "gap_model_R2": 0.6590331138811787,
+  "gap_model_n": 1693,
   "gap_by_cons_type": {
     "0": 0.172,
     "1": -0.006,

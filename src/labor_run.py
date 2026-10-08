@@ -93,9 +93,19 @@ def main():
     diag = {}
     lt = impute_demography(labor_table(cfg, bd, diag), ref)
     lt.to_csv(path(cfg, "processed", "labor_table.csv"))
-    viol = diag.pop("нарушения баланса разделов", None)
-    if viol is not None:
-        viol.to_csv(path(cfg, "processed", "labor_sector_violations.csv"))
+    # диагностические таблицы пишутся всегда (в том числе пустые), чтобы не оставались устаревшие файлы
+    tables = {"таблица: нарушения баланса разделов": "labor_sector_violations.csv",
+              "таблица: округления разделов": "labor_sector_rounding.csv",
+              "таблица: исключённые годы возрастной структуры": "labor_age_exclusions.csv",
+              "таблица: выбросы численности населения": "labor_population_outliers.csv"}
+    for key, fname in tables.items():
+        tab = diag.pop(key, pd.DataFrame())
+        if "territory_id" in tab and "year" in tab:      # ОКТМО строк источника для проверки
+            okt = omap.dropna(subset=["territory_id"]).astype({"territory_id": int})
+            okt = okt.groupby(["territory_id", "year"]).oktmo.apply(lambda v: ";".join(sorted(set(map(str, v)))))
+            tab = tab.merge(okt.rename("ОКТМО"), left_on=["territory_id", "year"], right_index=True, how="left")
+        tab.to_csv(path(cfg, "processed", fname), index=False)
+        diag[f"файл: {fname}"] = int(len(tab))
     t0 = lt.reindex(ids)
     diag.update({
         "источник": cfg["labor"].get("source_version", ""), "файл": cfg["labor"]["file"], "sha256": sha,

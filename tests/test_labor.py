@@ -95,7 +95,24 @@ def test_retail_total_not_double_counted():
          for o, v in (("Магазины", 10), ("Супермаркеты", 6), ("Прочие магазины", 4), ("Киоски", 5))]
     t = labor_table(CFG, _frame(q)).loc[1]
     assert abs(t.modern_retail_share - 0.6) < 1e-9
-    assert abs(t.retail_per_1000 - 15 / t.population * 1000) < 1e-9
+    # торговля есть только за 2023 г.: знаменатель — среднегодовая численность 2023 г. (1000 + 1200) / 2
+    assert abs(t.retail_per_1000 - 15 / 1100 * 1000) < 1e-9
+
+
+def test_retail_total_not_rebuilt_from_partial_subtypes():
+    q = [_row("Y48002001", 2023, 6, period="I квартал", obroz="Супермаркеты")]
+    t = labor_table(CFG, _frame(q)).loc[1]
+    assert np.isnan(t.modern_retail_share) and np.isnan(t.retail_per_1000)
+
+
+def test_sector_balance_violation_year_is_excluded():
+    sec = [_row("Y48423005", 2023, 120, okved2="Раздел A Сельское хозяйство"),     # больше итога 100: не округление
+           _row("Y48423005", 2024, 30, okved2="Раздел A Сельское хозяйство")]
+    diag = {}
+    t = labor_table(CFG, _frame(sec), diag).loc[1]
+    assert diag["МО-лет: сумма разделов больше итога сверх округления (исключены)"] == 1
+    assert abs(t["emp_первичный (A, B)"] - 0.3) < 1e-9                         # только 2024 г.
+    assert len(diag["таблица: нарушения баланса разделов"]) == 1
 
 
 def test_population_is_mean_of_annual_means_and_urban_zero_only_when_confirmed():

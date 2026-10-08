@@ -195,6 +195,24 @@ def labor_table(cfg: dict, d: pd.DataFrame | None = None, diagnostics: dict | No
     jan1 = _per_year(d, "Y48112027", "На 1 января", sorted(set(yrs) | {max(yrs) + 1} | {min(cfg["labor"]["migration_years"])}),
                      {"mest": "Все население"})
     jan1 = jan1.where(jan1 > 0)
+    # одиночный выброс численности (например, лишний разряд: 200 276 при 20 539 и 20 296 в соседние даты):
+    # значение, отличающееся больше чем на 30% от обеих соседних дат в одну сторону, считается пропуском.
+    # Изменения на краях окна и ступеньки (пересчёт после переписи 2021 г., преобразования МО) не трогаются.
+    cols = list(jan1.columns)
+    out_pop = pd.DataFrame(False, index=jan1.index, columns=cols)
+    for j in range(1, len(cols) - 1):
+        r_prev = jan1[cols[j]] / jan1[cols[j - 1]] - 1
+        r_next = jan1[cols[j]] / jan1[cols[j + 1]] - 1
+        out_pop[cols[j]] = ((r_prev > 0.3) & (r_next > 0.3)) | ((r_prev < -0.3) & (r_next < -0.3))
+    tab = jan1.where(out_pop).stack().dropna().rename("численность на 1 января").to_frame()
+    tab.index.names = ["territory_id", "year"]
+    neigh = {(t, y): (jan1.at[t, cols[cols.index(y) - 1]], jan1.at[t, cols[cols.index(y) + 1]]) for t, y in tab.index}
+    tab["предыдущая дата"] = [neigh[k][0] for k in tab.index]
+    tab["следующая дата"] = [neigh[k][1] for k in tab.index]
+    tab["причина"] = "одиночный выброс: отличается больше чем на 30% от обеих соседних дат"
+    diag["таблица: выбросы численности населения"] = tab.reset_index()
+    diag["МО-дат: выбросы численности (пропуск)"] = int(out_pop.values.sum())
+    jan1 = jan1.mask(out_pop)
     pop_y, pop_approx = annual_mean_population(jan1, yrs)
     emp_y = _per_year(d, "Y48423005", "Январь-декабрь", yrs, {"okved2": TOTAL_OKVED})
     fund_y = _per_year(d, "Y48423006", "Январь-декабрь", yrs, {"okved2": TOTAL_OKVED})
@@ -236,6 +254,11 @@ def labor_table(cfg: dict, d: pd.DataFrame | None = None, diagnostics: dict | No
         diag["МО-лет: возрастные группы расходятся с численностью > 5% (год отброшен)"] = int(bad.sum())
         if "Всего" in age:
             diag["МО-лет: строка «Всего» возраста ≠ сумме групп более чем на 1%"] = int(((age["Всего"] / asum - 1).abs() > 0.01).sum())
+        ex = pd.concat([age[groups3], age["Всего"].rename("Всего (источник)") if "Всего" in age else None,
+                        asum.rename("сумма трёх групп"), pop_same.rename("численность на 1 января"),
+                        (asum / pop_same - 1).rename("расхождение")], axis=1)[bad]
+        ex["причина"] = "сумма возрастных групп расходится с численностью на ту же дату больше чем на 5%"
+        diag["таблица: исключённые годы возрастной структуры"] = ex.reset_index()
         ok = ~bad & asum.notna()
         for col, name in (("share_old", "Старше трудоспособного возраста"), ("share_young", "Моложе трудоспособного возраста")):
             out[col] = (age[name] / asum)[ok].groupby(level=0).mean().reindex(idx)
@@ -265,15 +288,19 @@ def labor_table(cfg: dict, d: pd.DataFrame | None = None, diagnostics: dict | No
     # на каждый опубликованный раздел — округление; больше — нарушение баланса (выводится отдельно)
     n_sec = sec.groupby(["territory_id", "year"]).okved2.nunique().reindex(tot_long.index).fillna(0)
     excess = known_y - tot_long
-    rounding = (excess > 0) & (excess <= 0.5 * n_sec)
-    over = excess > 0.5 * n_sec
+    tol = 0.5 * n_sec
+    rounding = (excess > 0) & (excess <= tol)
+    over = excess > tol
     diag["МО-лет: сумма разделов больше итога в пределах округления"] = int(rounding.sum())
-    diag["МО-лет: сумма разделов больше итога сверх округления"] = int(over.sum())
-    if over.any():
-        diag["нарушения баланса разделов"] = pd.concat([known_y[over].rename("сумма разделов"), tot_long[over],
-                                                      n_sec[over].rename("разделов")], axis=1)
-    sec_tot = sec_y.fillna(0).groupby(level=0).sum()
-    den = tot_long.groupby(level=0).sum()
+    diag["МО-лет: сумма разделов больше итога сверх округления (исключены)"] = int(over.sum())
+    bal = pd.concat([known_y.rename("сумма разделов"), tot_long.rename("итог"), n_sec.rename("опубликовано разделов"),
+                     excess.rename("превышение, чел."), tol.rename("допуск округления, чел.")], axis=1)
+    diag["таблица: округления разделов"] = bal[rounding].reset_index()
+    diag["таблица: нарушения баланса разделов"] = bal[over].reset_index()
+    # МО-год с нарушением сверх округления не используется для структуры (ни разделы, ни итог)
+    keep = ~over
+    sec_tot = sec_y[keep].fillna(0).groupby(level=0).sum()
+    den = tot_long[keep].groupby(level=0).sum()
     for name in SECTOR_GROUPS:
         out[f"emp_{name}"] = (sec_tot[name] / den).reindex(idx)
     known = out[[f"emp_{n}" for n in SECTOR_GROUPS]].sum(axis=1, min_count=1)
@@ -293,15 +320,19 @@ def labor_table(cfg: dict, d: pd.DataFrame | None = None, diagnostics: dict | No
     q.columns = q.columns.astype(str)
     subs = [c for c in RETAIL_SHOP_SUBTYPES if c in q]
     shops = q[RETAIL_SHOPS_TOTAL] if RETAIL_SHOPS_TOTAL in q else pd.Series(np.nan, index=q.index)
-    from_sub = q[subs].sum(axis=1, min_count=1)
-    rebuilt = shops.isna() & from_sub.notna()
-    diag["кварталов: магазины всего восстановлены из подвидов"] = int(rebuilt.sum())
-    shops = shops.fillna(from_sub)
+    # итог «Магазины» не восстанавливается из подвидов: в выгрузке без итога публикуется лишь часть
+    # подвидов (например, только супермаркеты и минимаркеты), сумма была бы заниженной; квартал — пропуск
+    partial = shops.isna() & q[subs].notna().any(axis=1)
+    diag["кварталов: нет итога «Магазины», есть часть подвидов (пропуск)"] = int(partial.sum())
     exclusive = [c for c in q.columns if c not in subs and c != RETAIL_SHOPS_TOTAL]
-    objects = q[exclusive].sum(axis=1, min_count=1).fillna(0) + shops.fillna(0)
-    objects = objects.where(q.notna().any(axis=1))
-    modern = q[[c for c in RETAIL_MODERN if c in q]].sum(axis=1, min_count=1)
-    out["retail_per_1000"] = (objects.groupby(level=0).mean() / out.population * 1000).reindex(idx)
+    objects = (q[exclusive].sum(axis=1, min_count=1).fillna(0) + shops).where(shops.notna())
+    modern = q[[c for c in RETAIL_MODERN if c in q]].sum(axis=1, min_count=1).fillna(0).where(shops.notna())
+    # объекты на 1 000 жителей: среднее по кварталам года / среднегодовая численность того же года,
+    # затем среднее по годам (как остальные показатели на жителя)
+    obj_y = objects.groupby(level=[0, 1]).mean().unstack(level=1).reindex(index=idx, columns=yrs)
+    out["retail_per_1000"] = _mean_ratio(obj_y, pop_y) * 1000
+    nq = objects.notna().groupby(level=[0, 1]).sum()
+    diag["МО-лет: кварталов с данными о торговле"] = nq.value_counts().sort_index().to_dict()
     out["modern_retail_share"] = (modern / shops.where(shops > 0)).groupby(level=0).mean().reindex(idx)
     return out
 
