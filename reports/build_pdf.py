@@ -6,9 +6,7 @@ Markdown → HTML (библиотека markdown) → PDF (Chromium через P
 (docs/index.html), поэтому страницу нужно собрать раньше.
 
   pip install markdown playwright      # Chromium: python -m playwright install chromium
-  python reports/build_pdf.py          → reports/report.pdf (основной отчёт, ~10 страниц) и
-                                         reports/technical_appendix.pdf (полное описание);
-                                         копии — в docs/ для GitHub Pages
+  python reports/build_pdf.py          → reports/report.pdf (основной отчёт) и копия в docs/ для GitHub Pages
 
 Шрифт: HSE Sans (НИУ ВШЭ, https://it.hse.ru/en/hsesans/) — встраивается в PDF только для просмотра и
 печати, в репозиторий не входит; он должен быть установлен в системе. Без него — PT Sans.
@@ -27,7 +25,6 @@ import markdown
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = [  # исходник, PDF, подпись серии на обложке и в колонтитуле
     ("report.md", "report.pdf", "Методологический отчёт"),
-    ("technical_appendix.md", "technical_appendix.pdf", "Техническое приложение к методологическому отчёту"),
 ]
 TITLE = "Типы локальных экономик муниципалитетов"
 SUBTITLE = "Безналичное потребление и рынок труда"
