@@ -65,6 +65,21 @@ def dynamics_block(cfg: dict, panel, ctx, labels: pd.Series, cand: dict) -> dict
             xi *= (ctx.X ** 2).sum() / (P ** 2).sum()
     T = assign_periods(F, labels, P, xi, dist)
     traj = trajectory_classes(T, cfg["dynamics"]["min_run"])
+    # проверка: без сетевого члена (он постоянен во времени и сам по себе сглаживает переходы)
+    T0 = assign_periods(F, labels, None, 0.0, dist)
+    traj0 = trajectory_classes(T0, cfg["dynamics"]["min_run"])
+    net_only_agree = None
+    if P is not None:
+        from methods import _row_normalize
+        Pn = _row_normalize(P) if dist == "cosine" else P
+        ks = np.unique(labels.values)
+        if dist == "cosine":
+            Lc = _row_normalize(np.stack([Pn[labels.values == k].mean(0) for k in ks]))
+            net_lab = ks[(1 - Pn @ Lc.T).argmin(1)]
+        else:
+            Lc = np.stack([P[labels.values == k].mean(0) for k in ks])
+            net_lab = ks[((P ** 2).sum(1)[:, None] - 2 * P @ Lc.T + (Lc ** 2).sum(1)[None]).argmin(1)]
+        net_only_agree = float((net_lab == labels.values).mean())
     Y = yearly_mode(T)
     trans = transition_matrix(Y, Y.columns[0], Y.columns[-1])
     # проверка: независимая кластеризация каждого квартала тем же методом + венгерское сопоставление
@@ -76,7 +91,8 @@ def dynamics_block(cfg: dict, panel, ctx, labels: pd.Series, cand: dict) -> dict
                   resolution=cand.get("resolution"), seed=cfg["seed"],
                   **({"distance": cand["distance"], "xi_mult": cand["xi_mult"]} if cand["method"] == "kefrin" else {}))
         agree[q] = float((jaccard_match(T[q].values, lab) == T[q].values).mean())
-    return {"T": T, "trajectory": traj, "yearly": Y, "transition": trans, "agreement": agree}
+    return {"T": T, "trajectory": traj, "yearly": Y, "transition": trans, "agreement": agree,
+            "trajectory_features_only": traj0.value_counts().to_dict(), "network_term_only_agreement": net_only_agree}
 
 
 def main():
@@ -115,6 +131,8 @@ def main():
     dyn["transition"].to_csv(path(cfg, "processed", "transition_yearly.csv"))
     out["trajectory_counts"] = dyn["trajectory"].value_counts().to_dict()
     out["quarterly_agreement_independent"] = dyn["agreement"]
+    out["trajectory_counts_features_only"] = dyn["trajectory_features_only"]
+    out["network_term_only_agreement"] = dyn["network_term_only_agreement"]
 
     yc = yearly_comovement_graphs(cfg, feat)
     out["comovement_edges_jaccard_2023_2024"] = float(edge_overlap(yc).iloc[0, 1])

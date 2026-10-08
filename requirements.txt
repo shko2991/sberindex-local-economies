@@ -16,3 +16,5 @@ shapely>=2.0
 matplotlib>=3.8
 libarchive-c>=5.0     # только для распаковки справочника .rar
 pytest>=8
+statsmodels>=0.14     # регрессии с устойчивыми ошибками
+topojson>=1.7         # полигоны для веб-карты

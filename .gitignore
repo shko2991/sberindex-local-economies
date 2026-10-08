@@ -1,7 +1,6 @@
 data/raw/
 data/external/
 data/interim/
-data/processed/*.parquet
 __pycache__/
 .pytest_cache/
 *.pyc

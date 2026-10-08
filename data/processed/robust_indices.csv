@@ -1,0 +1,9 @@
+правило,победитель,место выбранного,ARI победителя с выбранным,K победителя
+все 6 индексов (основное правило),kefrin|multiplex|euclidean|xi1|k8,1,1.0,8
+без SW,kefrin|multiplex|euclidean|xi1|k8,1,1.0,8
+без CH,kefrin|geography|cosine|xi1|k12,3,0.283,12
+без S_Dbw,ward|k6,4,0.406,6
+без AVI,kefrin|leadlag|euclidean|xi1|k9,4,0.434,9
+без AVU,kefrin|geography|cosine|xi4|k4,17,0.282,4
+без MQ,kefrin|multiplex|euclidean|xi1|k8,1,1.0,8
+"без дублей (SW, CH, AVI, MQ — по 1/2)",kefrin|multiplex|euclidean|xi1|k8,1,1.0,8

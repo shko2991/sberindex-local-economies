@@ -62,12 +62,35 @@ def build(cfg: dict, raw: pd.DataFrame, type_names: dict[int, str] | None = None
            "overlap": json.loads(pd.read_csv(P("edge_overlap.csv"), index_col=0).round(3).to_json(force_ascii=False)),
            "community": json.loads(pd.read_csv(P("community_strength.csv")).to_json(orient="records", force_ascii=False))}
     topo = json.load(open(path(cfg, "interim", "mo.topo.json"), encoding="utf-8"))
+    labor = None
+    if P("labor_mismatch.csv").exists():
+        lm = pd.read_csv(P("labor_mismatch.csv"), index_col=0).reindex(mo_ids)
+        lp = pd.read_csv(P("labor_profiles.csv"), index_col=0)
+        ls = json.load(open(P("labor_summary.json"), encoding="utf-8"))
+        ln = {int(k): v for k, v in (cfg.get("labor_type_names") or {}).items()}
+        ct = pd.read_csv(P("cons_vs_labor.csv"), index_col=0)
+        gm = pd.read_csv(P("gap_model.csv"), index_col=0)
+        mo.update({"lt": [None if pd.isna(v) else int(v) for v in lm.labor_type],
+                   "gap": [r(v) for v in lm.gap], "lisa": lm.lisa.fillna("нет данных").tolist(),
+                   "spend": [r(v, 0) for v in lm.spend], "wage": [r(v, 0) for v in lm.wage],
+                   "fund": [r(v, 0) for v in lm.fund_pc], "emp": [r(v) for v in lm.emp_rate],
+                   "old": [r(v) for v in lm.share_old]})
+        sec = [c for c in lp.columns if c.startswith("emp_") and c != "emp_rate"]
+        labor = {"types": [{"id": int(t), "name": ln.get(int(t), f"Тип {int(t)}"), "n": int(row.n),
+                            "wage": r(row.wage, 0), "emp": r(row.emp_rate), "fund": r(row.fund_pc, 0),
+                            "old": r(row.share_old), "mig": r(row.mig_rate, 1), "fed": r(row.share_federal_city),
+                            "regions": int(row.n_regions), "sectors": {c[4:]: r(row[c]) for c in sec}}
+                           for t, row in lp.iterrows()],
+                 "cross": {"rows": ct.index.astype(int).tolist(), "cols": [int(float(c)) for c in ct.columns],
+                           "values": ct.values.astype(int).tolist()},
+                 "gap_model": [{"name": k, "coef": r(v["коэф. (станд.)"]), "p": float(v.p)} for k, v in gm.iterrows()],
+                 "summary": ls}
     return {"meta": {"chosen": summary["chosen"], "n": len(mo_ids), "quarters": quarters.columns.tolist(),
                      "summary": summary}, "keys": KEYS, "national": national, "types": types, "mo": mo,
             "methods": methods, "network": net,
             "transition": {"rows": trans.index.astype(int).tolist(), "cols": [int(c) for c in trans.columns],
                            "values": trans.values.astype(int).tolist()},
-            "topo": topo}
+            "labor": labor, "topo": topo}
 
 
 def main():
