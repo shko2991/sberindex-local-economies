@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from common import load_config, path  # noqa: E402
+from common import labor_available, load_config, path  # noqa: E402
 
 FAMILY_COLORS = {"kefrin": "#1f6f78", "leiden": "#c8553d", "spectral": "#8e6c8a", "spectral_joint": "#b08d57",
                  "kmeans": "#5b7553", "gmm": "#7a9e9f", "ward": "#3d405b", "pattern": "#d4a373"}
@@ -110,11 +110,12 @@ def gap_maps(cfg):
 
 
 def cons_labor_heat(cfg):
-    c = pd.read_csv(path(cfg, "processed", "cons_vs_labor.csv"), index_col=0)
+    c = pd.read_csv(path(cfg, "processed", "cons_vs_labor_no_federal.csv"), index_col=0)   # выборка как у V и AMI
     names, lnames = cfg.get("type_names") or {}, cfg.get("labor_type_names") or {}
     c.index = [names.get(int(i), i) for i in c.index]
     c.columns = [lnames.get(int(float(j)), j) for j in c.columns]
-    heat(c.div(c.sum(axis=1), axis=0) * 100, "Типы потребления (строки) × типы рынка труда (столбцы), % строки",
+    heat(c.div(c.sum(axis=1), axis=0) * 100,
+         f"Типы потребления (строки) × типы рынка труда (столбцы), % строки; без городов фед. значения, N = {int(c.values.sum()):,}".replace(",", " "),
          "cons_vs_labor.png", cfg, fmt="{:.0f}", vmin=0, vmax=100)
 
 
@@ -145,7 +146,7 @@ def main():
     heat(pd.read_csv(path(cfg, "processed", "edge_overlap.csv"), index_col=0), "Пересечение рёбер (Жаккар)",
          "edge_overlap.png", cfg, vmin=0, vmax=1)
     types_map(cfg)
-    if path(cfg, "processed", "labor_mismatch.csv").exists():
+    if labor_available(cfg) and path(cfg, "processed", "labor_mismatch.csv").exists():
         gap_maps(cfg)
         cons_labor_heat(cfg)
         gap_coef(cfg)

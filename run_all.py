@@ -3,6 +3,7 @@
   python run_all.py                 — всё, включая сравнение 280 вариантов (~1,5 ч на 2 ядрах)
   python run_all.py --skip-compare  — без сравнения (берутся готовые data/processed/candidates.csv и ranking_main.csv)
 """
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -31,14 +32,16 @@ if __name__ == "__main__":
     has_labor = (ROOT / "data" / "external" / "bdmo" / "bdmo_2021_2024.parquet").exists()
     if not has_labor:
         print("Нет data/external/bdmo/bdmo_2021_2024.parquet — слой рынка труда пропускается "
-              "(см. src/extract_bdmo.py); страница и рисунки соберутся без него.")
+              "(см. src/extract_bdmo.py); страница и рисунки соберутся без него, "
+              "сохранённые ранее CSV рынка труда не используются.")
+    env = dict(os.environ, **({} if has_labor else {"SBER_SKIP_LABOR": "1"}))
     for name, args in STEPS:
         if skip and name == "сравнение методов":
             continue
         if not has_labor and name in ("рынок труда и расхождения", "разобранные случаи"):
             continue
         print(f"\n=== {name} ===", flush=True)
-        r = subprocess.run([sys.executable, *args], cwd=ROOT)
+        r = subprocess.run([sys.executable, *args], cwd=ROOT, env=env)
         if r.returncode != 0:
             sys.exit(f"Шаг «{name}» завершился с ошибкой ({r.returncode})")
     print("\nГотово: reports/report.md, reports/figures/, docs/index.html")

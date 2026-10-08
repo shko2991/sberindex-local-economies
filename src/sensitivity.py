@@ -20,7 +20,7 @@ import pandas as pd
 import scipy.sparse as sp
 from sklearn.metrics import adjusted_rand_score
 
-from common import get_logger, load_config, path
+from common import get_logger, load_config, path, labor_available
 from compare import build_context
 from icvi import all_indices
 from methods import KEFRiN, modularity_transform, relabel_by_size
@@ -78,7 +78,7 @@ def main():
     # внешняя проверка на данных Росстата (если слой рынка труда посчитан): η² log зарплаты без ГФЗ
     lt_path = path(cfg, "processed", "labor_table.csv")
     wage = fed = None
-    if lt_path.exists():
+    if labor_available(cfg) and lt_path.exists():
         from reference import load_reference
         lt = pd.read_csv(lt_path, index_col=0).reindex(ids)
         wage = np.log(lt.wage)

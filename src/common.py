@@ -42,3 +42,12 @@ def get_logger(name: str) -> logging.Logger:
 
 def rng(cfg: dict, offset: int = 0) -> np.random.Generator:
     return np.random.default_rng(int(cfg.get("seed", 42)) + offset)
+
+
+def labor_available(cfg: dict) -> bool:
+    """Слой рынка труда используется, только если есть выгрузка Росстата и прогон не запущен в режиме
+    без неё (SBER_SKIP_LABOR=1 ставит run_all.py). Иначе старые CSV из data/processed не попадут
+    на страницу и в рисунки."""
+    if os.environ.get("SBER_SKIP_LABOR") == "1":
+        return False
+    return path(cfg, "external", cfg["labor"]["file"]).exists()

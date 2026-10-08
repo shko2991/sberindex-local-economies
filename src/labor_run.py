@@ -84,10 +84,28 @@ def main():
     fin = pd.read_csv(path(cfg, "processed", "final_types.csv"), index_col=0)
     cons_type = fin.type.reindex(ids)
     from labor import data_passport, load_bdmo
-    bd = load_bdmo(cfg)
+    import hashlib
+    src_file = path(cfg, "external", cfg["labor"]["file"])
+    sha = hashlib.sha256(src_file.read_bytes()).hexdigest()
+    bd, omap = load_bdmo(cfg, return_map=True)
     data_passport(bd, ids, cfg).to_csv(path(cfg, "processed", "labor_passport.csv"), index=False)
-    lt = impute_demography(labor_table(cfg, bd), ref)
+    omap.to_csv(path(cfg, "processed", "labor_oktmo_map.csv"), index=False)
+    diag = {}
+    lt = impute_demography(labor_table(cfg, bd, diag), ref)
     lt.to_csv(path(cfg, "processed", "labor_table.csv"))
+    viol = diag.pop("нарушения баланса разделов", None)
+    if viol is not None:
+        viol.to_csv(path(cfg, "processed", "labor_sector_violations.csv"))
+    t0 = lt.reindex(ids)
+    diag.update({
+        "источник": cfg["labor"].get("source_version", ""), "файл": cfg["labor"]["file"], "sha256": sha,
+        "привязка ОКТМО (ОКТМО-лет)": omap["способ привязки"].value_counts().to_dict(),
+        "МО выборки: численность приближённо (нет одной из точек на 1 января)": int(t0.population_approx.fillna(False).sum()),
+        "МО выборки: городское население": t0.urban_status.value_counts().to_dict(),
+        "МО выборки: лет с работниками и населением": t0.years_emp_pop.value_counts().sort_index().to_dict()})
+    with open(path(cfg, "processed", "labor_diagnostics.json"), "w", encoding="utf-8") as f:
+        json.dump(diag, f, ensure_ascii=False, indent=1, default=int)
+    log.info("диагностика данных Росстата: %s", diag)
     out = {"n_with_labor": int(lt.reindex(ids).wage.notna().sum()),
            "imputed_age": int(lt.reindex(ids).imputed_age.fillna(False).sum())}
 
@@ -136,19 +154,28 @@ def main():
     out["labor_model_coef"] = {k: round(float(v), 3) for k, v in m1.params.items()}
     # локальные скопления остатка (на сети дорог, только МО с остатком)
     ok = resid.notna().values
+    seeds = [int(cfg["seed"]) + j for j in range(cfg["labor"]["lisa_seeds"])]
     lm = local_moran(ctx.graphs["geography"][ok][:, ok], resid[ok].values, perms=cfg["labor"]["lisa_perms"],
-                     seed=int(cfg["seed"]))
+                     seeds=seeds)
     lisa = pd.Series("нет данных", index=ids)
     lisa.loc[resid.index[ok]] = lm.cluster.values
+    lisa_agree = pd.Series(np.nan, index=ids)
+    lisa_agree.loc[resid.index[ok]] = lm.seed_agreement.values
     out["lisa_counts"] = lisa.value_counts().to_dict()
+    out["lisa_perms_total"] = int(cfg["labor"]["lisa_perms"] * len(seeds))
+    out["lisa_counts_by"] = lm.cluster_by.value_counts().to_dict()
     out["lisa_counts_no_fdr"] = pd.Series(np.where(lm.p < 0.05, lm.quadrant, "не значимо")).value_counts().to_dict()
+    out["lisa_counts_per_seed"] = {str(sd): lm[f"cluster_seed{sd}"].value_counts().to_dict() for sd in seeds}
+    hl = lm.cluster.isin(["HH", "LL"])
+    out["lisa_HH_LL_all_seeds_agree"] = float((lm.seed_agreement[hl] == 1).mean())
+    out["lisa_HH_LL_min_seed_agreement"] = float(lm.seed_agreement[hl].min())
 
     # 4. объяснение разрыва
     ma = load_market_access(cfg).reindex(ids)
     dist = distance_to_capital(cfg, load_reference(cfg), ids)
     Xe = pd.DataFrame({
         "доля старше трудоспособного": t.share_old,
-        "доля занятых в бюджетном секторе": t["emp_бюджетный сектор (O, P, Q)"],
+        "доля занятых в O–Q (госуправление, образование, здравоохранение)": t["emp_госуправление, образование, здравоохранение (O, P, Q)"],
         "log доступности рынков": np.log1p(ma),
         "log расстояния до центра региона": np.log1p(dist.reindex(ids)),
         "Север (широта ≥ 60°)": (ref.lat >= 60).astype(float),
@@ -169,7 +196,7 @@ def main():
     L = pd.read_parquet(path(cfg, "processed", "labels_candidates.parquet")).reindex(ids)
     bench = {"итоговое разбиение": cons_type,
              "k-means по признакам, K=8": L["kmeans|k8"],
-             "Leiden только по дорогам": L["leiden|geography|r0.2"]}
+             f"Leiden только по дорогам (K = {L['leiden|geography|r0.2'].nunique()})": L["leiden|geography|r0.2"]}
     ext = {"log зарплаты": np.log(t.wage), "log работников на жителя": np.log(t.emp_rate),
            "доля старше трудоспособного": t.share_old, "log фонда оплаты на жителя": np.log(t.fund_pc),
            "миграционный прирост": Xl.mig_rate, "индекс доступности рынков": ma}
@@ -185,7 +212,8 @@ def main():
     res = pd.DataFrame({"labor_type": labor_type.reindex(ids), "cons_type": cons_type, "spend": spend.round(0),
                         "wage": t.wage.round(0), "fund_pc": t.fund_pc.round(0), "emp_rate": t.emp_rate.round(3),
                         "share_old": t.share_old.round(3), "gap": gap.round(3), "resid": resid.round(3),
-                        "lisa": lisa, "dist_capital_km": dist.reindex(ids).round(0), "federal_city": fed})
+                        "lisa": lisa, "lisa_seed_agreement": lisa_agree.round(2),
+                        "dist_capital_km": dist.reindex(ids).round(0), "federal_city": fed})
     res.to_csv(path(cfg, "processed", "labor_mismatch.csv"))
     with open(path(cfg, "processed", "labor_summary.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2, default=float)

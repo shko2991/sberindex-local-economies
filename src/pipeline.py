@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 from common import get_logger, load_config, path
-from compare import build_context, cand_id, candidates
+from compare import build_context, cand_id, candidates, choose
 from data import load_market_access
 from dynamics import assign_periods, jaccard_match, trajectory_classes, transition_matrix, yearly_mode
 from fca import describe_clusters, scale
@@ -32,18 +32,6 @@ RU = {"share_Продовольствие": "доля продовольстви
       "share_Транспорт": "доля транспорта", "share_Прочее": "доля прочего", "level_total": "уровень расходов",
       "growth_rel": "относительный рост", "summer_peak": "летний пик", "dec_peak": "декабрьский пик",
       "volatility": "волатильность", "mp_shift": "сдвиг к маркетплейсам"}
-
-
-def choose(cfg: dict) -> tuple[str, pd.DataFrame]:
-    r = pd.read_csv(path(cfg, "processed", "ranking_main.csv"), index_col=0)
-    thr = cfg["evaluation"]["stability_min"]
-    if "ARI_mean" not in r:
-        raise SystemExit("В ranking_main.csv нет устойчивости — запустите compare.py полностью")
-    ok = r[r.ARI_mean >= thr]
-    if ok.empty:
-        raise SystemExit(f"Ни один из проверенных кандидатов не прошёл порог устойчивости {thr:.2f}: "
-                         "правило выбора не выполнено — нужно расширить bootstrap_top или пересмотреть сетку")
-    return ok.index[0], r
 
 
 def type_profiles(feat, labels: pd.Series, ref: pd.DataFrame, ma: pd.Series) -> pd.DataFrame:

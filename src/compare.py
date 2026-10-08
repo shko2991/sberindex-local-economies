@@ -156,5 +156,19 @@ def main():
     log.info("готово")
 
 
+def choose(cfg: dict) -> tuple[str, pd.DataFrame]:
+    """Заданное правило выбора: лучший по Борда среди прошедших порог устойчивости (без запасного варианта).
+    Общее для pipeline.py и robustness.py, чтобы не зависеть от порядка запуска и старых файлов."""
+    r = pd.read_csv(path(cfg, "processed", "ranking_main.csv"), index_col=0)
+    thr = cfg["evaluation"]["stability_min"]
+    if "ARI_mean" not in r:
+        raise SystemExit("В ranking_main.csv нет устойчивости — запустите compare.py полностью")
+    ok = r[r.ARI_mean >= thr]
+    if ok.empty:
+        raise SystemExit(f"Ни один из проверенных кандидатов не прошёл порог устойчивости {thr:.2f}: "
+                         "правило выбора не выполнено — нужно расширить bootstrap_top или пересмотреть сетку")
+    return ok.index[0], r
+
+
 if __name__ == "__main__":
     main()

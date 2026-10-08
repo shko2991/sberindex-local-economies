@@ -3,6 +3,7 @@
 Правило отбора (воспроизводимое, без ручного выбора):
   1) «тратят больше» — МО из скопления HH с наибольшим остатком модели «расходы ← рынок труда»;
   2) «тратят меньше» — МО из скопления LL с наименьшим остатком;
+  (в 1–2 — только МО, чья метка скопления совпадает во всех seed перестановочного теста);
   3) «Север» — МО типа «Крайний Север» или «Северные ресурсные территории» с наименьшим отношением
      расходов к фонду оплаты труда;
   4) «пригород» — МО в пределах 60 км от центра региона с наибольшим отношением расходов к фонду
@@ -16,7 +17,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from common import get_logger, load_config, path
+from common import get_logger, load_config, path, labor_available
 from compare import build_context
 
 log = get_logger("cases")
@@ -29,6 +30,9 @@ METRICS = {"spend": "расходы жителя, руб./мес.", "fund_pc": "
 
 def main():
     cfg = load_config()
+    if not labor_available(cfg):
+        log.info("нет данных Росстата — разобранные случаи не строятся")
+        return
     _, feat, ctx = build_context(cfg)
     ids = feat.X.index
     m = pd.read_csv(path(cfg, "processed", "labor_mismatch.csv"), index_col=0).reindex(ids)
@@ -43,8 +47,9 @@ def main():
     ok = (~m.federal_city.astype(bool)) & (m.reliability >= 0.8)
     names = {int(k): v for k, v in (cfg.get("type_names") or {}).items()}
     pick = {}
-    hh = m[ok & (m.lisa == "HH")]
-    ll = m[ok & (m.lisa == "LL")]
+    stable = m.lisa_seed_agreement.fillna(0) >= 1 if "lisa_seed_agreement" in m else True
+    hh = m[ok & (m.lisa == "HH") & stable]
+    ll = m[ok & (m.lisa == "LL") & stable]
     north = m[ok & fin.type.isin([5, 7])]
     sub = m[ok & (m.dist_capital_km <= 60) & (m.dist_capital_km > 0)]
     if len(hh):

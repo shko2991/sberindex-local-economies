@@ -70,5 +70,6 @@
       "kefrin|multiplex|euclidean|xi1|k8",
       "kefrin|geography|cosine|xi1|k8"
     ]
-  }
+  },
+  "chosen": "kefrin|multiplex|euclidean|xi1|k8"
 }

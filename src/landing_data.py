@@ -11,7 +11,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from common import get_logger, load_config, path
+from common import get_logger, load_config, path, labor_available
 
 log = get_logger("landing")
 
@@ -63,12 +63,13 @@ def build(cfg: dict, raw: pd.DataFrame, type_names: dict[int, str] | None = None
            "community": json.loads(pd.read_csv(P("community_strength.csv")).to_json(orient="records", force_ascii=False))}
     topo = json.load(open(path(cfg, "interim", "mo.topo.json"), encoding="utf-8"))
     labor = None
-    if P("labor_mismatch.csv").exists():
+    use_labor = labor_available(cfg)
+    if use_labor and P("labor_mismatch.csv").exists():
         lm = pd.read_csv(P("labor_mismatch.csv"), index_col=0).reindex(mo_ids)
         lp = pd.read_csv(P("labor_profiles.csv"), index_col=0)
         ls = json.load(open(P("labor_summary.json"), encoding="utf-8"))
         ln = {int(k): v for k, v in (cfg.get("labor_type_names") or {}).items()}
-        ct = pd.read_csv(P("cons_vs_labor.csv"), index_col=0)
+        ct = pd.read_csv(P("cons_vs_labor_no_federal.csv"), index_col=0)   # та же выборка, что у V и AMI
         gm = pd.read_csv(P("gap_model.csv"), index_col=0)
         mo.update({"lt": [None if pd.isna(v) else int(v) for v in lm.labor_type],
                    "gap": [r(v) for v in lm.gap], "lisa": lm.lisa.fillna("нет данных").tolist(),
@@ -96,7 +97,7 @@ def build(cfg: dict, raw: pd.DataFrame, type_names: dict[int, str] | None = None
             if t["id"] in ts.index:
                 t["jaccard"] = r(ts.loc[t["id"], "Жаккар среднее"])
                 t["jaccard_q10"] = r(ts.loc[t["id"], "Жаккар 10-й проц."])
-    if P("labor_table.csv").exists():
+    if use_labor and P("labor_table.csv").exists():
         lt = pd.read_csv(P("labor_table.csv"), index_col=0).reindex(mo_ids)
         tser = pd.Series(mo["type"], index=mo_ids)
         for t in types:
@@ -111,7 +112,7 @@ def build(cfg: dict, raw: pd.DataFrame, type_names: dict[int, str] | None = None
             stability = {"chosen": r(fz.loc[summary["chosen"], "ARI среднее"]),
                          "finalists": {int(fz.loc[i, "K"]): r(fz.loc[i, "ARI среднее"]) for i in fz.index}}
     cases = None
-    if P("cases.csv").exists():
+    if use_labor and P("cases.csv").exists():
         cases = json.loads(pd.read_csv(P("cases.csv")).round(3).to_json(orient="records", force_ascii=False))
     return {"meta": {"chosen": summary["chosen"], "n": len(mo_ids), "quarters": quarters.columns.tolist(),
                      "summary": summary, "stability": stability}, "keys": KEYS, "national": national, "types": types, "mo": mo,

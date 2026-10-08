@@ -62,7 +62,12 @@ def leadlag_test(cfg, feat, ref) -> tuple[dict, pd.DataFrame]:
            "lead": round(float(d["столица опережает"].mean()), 3), "lag": round(float(d["столица отстаёт"].mean()), 3),
            "sync": round(float(d["синхронно"].mean()), 3), "wilcoxon_p": round(float(w.pvalue), 3),
            "pseudo_lead": round(float(d["псевдостолица опережает"].mean()), 3),
-           "pseudo_lag": round(float(d["псевдостолица отстаёт"].mean()), 3), "pseudo_wilcoxon_p": round(float(w2.pvalue), 3)}
+           "pseudo_lag": round(float(d["псевдостолица отстаёт"].mean()), 3), "pseudo_wilcoxon_p": round(float(w2.pvalue), 3),
+           # доли выше — средние региональных долей (каждый регион с равным весом); ниже — по всем парам
+           "averaging": "lead/lag/sync — среднее региональных долей; *_pairs — доля по всем парам",
+           "lead_pairs": round(float((d["столица опережает"] * d["МО"]).sum() / d["МО"].sum()), 4),
+           "lag_pairs": round(float((d["столица отстаёт"] * d["МО"]).sum() / d["МО"].sum()), 4),
+           "sync_pairs": round(float((d["синхронно"] * d["МО"]).sum() / d["МО"].sum()), 4)}
     return res, d
 
 

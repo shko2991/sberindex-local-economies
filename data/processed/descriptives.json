@@ -44,6 +44,10 @@
     "wilcoxon_p": 0.785,
     "pseudo_lead": 0.284,
     "pseudo_lag": 0.271,
-    "pseudo_wilcoxon_p": 0.62
+    "pseudo_wilcoxon_p": 0.62,
+    "averaging": "lead/lag/sync — среднее региональных долей; *_pairs — доля по всем парам",
+    "lead_pairs": 0.2507,
+    "lag_pairs": 0.2748,
+    "sync_pairs": 0.4745
   }
 }

@@ -53,3 +53,56 @@ def test_impute_demography():
     assert t.loc[2, "share_old"] == 0.3                    # медиана того же типа в регионе
     assert np.isnan(t.loc[4, "share_old"])                  # нет МО того же типа нигде
     assert t.imputed_age.tolist() == [False, True, False, True]
+
+
+# --- контрпримеры из рецензии: агрегация таблицы рынка труда ---------------------------------
+from labor import TOTAL_OKVED, labor_table  # noqa: E402
+
+CFG = {"labor": {"years": [2023, 2024], "migration_years": [2022, 2023]}}
+
+
+def _row(code, year, value, period="Январь-декабрь", **kw):
+    base = {"indicator_code": code, "indicator_period": period, "indicator_unit": "", "year": year, "oktmo": "1",
+            "oktmo_stable": "1", "territory_id": 1, "value": float(value), "okved2": None, "mest": None,
+            "grup_2": None, "vozr": None, "migr": None, "obroz": None}
+    base.update(kw)
+    return base
+
+
+def _frame(extra):
+    rows = []
+    for y in (2023, 2024):
+        rows += [_row("Y48423005", y, 100, okved2=TOTAL_OKVED), _row("Y48423006", y, 1200, okved2=TOTAL_OKVED),
+                 _row("Y48423007", y, 50000, okved2=TOTAL_OKVED)]
+    for y, v in ((2023, 1000), (2024, 1200), (2025, 1200)):
+        rows.append(_row("Y48112027", y, v, period="На 1 января", mest="Все население"))
+    return pd.DataFrame(rows + extra)
+
+
+def test_sector_shares_consistent_when_sections_published_in_different_years():
+    sec = [_row("Y48423005", 2023, 80, okved2="Раздел A Сельское хозяйство"),
+           _row("Y48423005", 2024, 20, okved2="Раздел A Сельское хозяйство"),
+           _row("Y48423005", 2023, 20, okved2="Раздел C Обрабатывающие производства"),
+           _row("Y48423005", 2024, 80, okved2="Раздел O Государственное управление")]
+    t = labor_table(CFG, _frame(sec)).loc[1]
+    shares = t[[c for c in t.index if c.startswith("emp_") and c != "emp_rate"]].astype(float)
+    assert abs(shares.sum() - 1) < 1e-9
+    assert abs(t["emp_первичный (A, B)"] - 0.5) < 1e-9 and abs(t["emp_промышленность (C, D, E)"] - 0.1) < 1e-9
+
+
+def test_retail_total_not_double_counted():
+    q = [_row("Y48002001", 2023, v, period="I квартал", obroz=o)
+         for o, v in (("Магазины", 10), ("Супермаркеты", 6), ("Прочие магазины", 4), ("Киоски", 5))]
+    t = labor_table(CFG, _frame(q)).loc[1]
+    assert abs(t.modern_retail_share - 0.6) < 1e-9
+    assert abs(t.retail_per_1000 - 15 / t.population * 1000) < 1e-9
+
+
+def test_population_is_mean_of_annual_means_and_urban_zero_only_when_confirmed():
+    t = labor_table(CFG, _frame([])).loc[1]
+    assert abs(t.population - 1150) < 1e-9                     # (1000 + 2·1200 + 1200) / 4
+    assert np.isnan(t.share_urban) and t.urban_status == "нет данных"
+    rural = [_row("Y48112027", y, v, period="На 1 января", mest="Сельское население")
+             for y, v in ((2023, 1000), (2024, 1200), (2025, 1200))]
+    t2 = labor_table(CFG, _frame(rural)).loc[1]
+    assert t2.share_urban == 0 and t2.urban_status == "структурный ноль"
