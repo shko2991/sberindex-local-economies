@@ -24,7 +24,7 @@ def r(x, n=3):
     return None if pd.isna(x) else round(float(x), n)
 
 
-def build(cfg: dict, raw: pd.DataFrame, type_names: dict[int, str] | None = None) -> dict:
+def build(cfg: dict, raw: pd.DataFrame, type_names: dict[int, str] | None = None, X: pd.DataFrame | None = None) -> dict:
     P = lambda n: path(cfg, "processed", n)  # noqa: E731
     final = pd.read_csv(P("final_types.csv"), index_col=0)
     quarters = pd.read_csv(P("types_quarterly.csv"), index_col=0)
@@ -114,7 +114,40 @@ def build(cfg: dict, raw: pd.DataFrame, type_names: dict[int, str] | None = None
     cases = None
     if use_labor and P("cases.csv").exists():
         cases = json.loads(pd.read_csv(P("cases.csv")).round(3).to_json(orient="records", force_ascii=False))
+    # похожие МО (правило задано заранее): 7 ближайших МО того же типа потребления по 12 признакам
+    # итогового расчёта (евклидово расстояние в стандартизованном пространстве KEFRiN); для каждого МО —
+    # два признака, по которым оно сильнее всего отличается от медианы своих аналогов (|z| ≥ 0,5)
+    analog_meta = None
+    if X is not None:
+        Xa = X.reindex(mo_ids)
+        tser = np.asarray(mo["type"])
+        Z = Xa.values
+        an, diff = [], []
+        for i in range(len(mo_ids)):
+            cand = np.where((tser == tser[i]) & (np.arange(len(mo_ids)) != i))[0]
+            d = np.sqrt(((Z[cand] - Z[i]) ** 2).sum(axis=1))
+            nn = cand[np.argsort(d)[:7]]
+            an.append([int(j) for j in nn])
+            dz = Z[i] - np.median(Z[nn], axis=0)
+            top = [int(k) for k in np.argsort(-np.abs(dz))[:2] if abs(dz[k]) >= 0.5]
+            diff.append([[k, 1 if dz[k] > 0 else -1] for k in top])
+        mo["an"], mo["and"] = an, diff
+        flab = {"clr_Продовольствие": "доля продовольствия", "clr_Здоровье": "доля здоровья",
+                "clr_Маркетплейсы": "доля маркетплейсов", "clr_Общественное питание": "доля общепита",
+                "clr_Транспорт": "доля транспорта", "clr_Прочее": "доля прочего", "level_total": "уровень расходов",
+                "growth_rel": "относительный рост", "summer_peak": "летний пик", "dec_peak": "декабрьский пик",
+                "volatility": "волатильность", "mp_shift": "сдвиг к маркетплейсам"}
+        analog_meta = {"features": [flab.get(c, c) for c in Xa.columns], "k": 7}
+    # типы по скользящим 12-месячным окнам (дополнительный анализ, windows.py)
+    windows = None
+    if P("window_labels.parquet").exists():
+        wl = pd.read_parquet(P("window_labels.parquet")).reindex(mo_ids)
+        wcols = [c for c in wl.columns if c.startswith("kefrin:")]
+        mo["win"] = wl[wcols].astype(int).values.tolist()
+        ws = json.load(open(P("window_summary.json"), encoding="utf-8"))
+        windows = {"names": [c.split(":", 1)[1] for c in wcols], "summary": ws}
     return {"meta": {"chosen": summary["chosen"], "n": len(mo_ids), "quarters": quarters.columns.tolist(),
+                     "analogs": analog_meta, "windows": windows, "publication": cfg.get("publication") or {},
                      "summary": summary, "stability": stability}, "keys": KEYS, "national": national, "types": types, "mo": mo,
             "methods": methods, "network": net,
             "transition": {"rows": trans.index.astype(int).tolist(), "cols": [int(c) for c in trans.columns],
@@ -129,7 +162,7 @@ def main():
     _, feat, _ = build_context(cfg)
     export_topojson(cfg)            # все МО справочника: вне выборки — серым
     names = cfg.get("type_names") or {}
-    data = build(cfg, feat.raw, {int(k): v for k, v in names.items()})
+    data = build(cfg, feat.raw, {int(k): v for k, v in names.items()}, X=feat.X)
     out = path(cfg, "processed", "landing_data.json")
     with open(out, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))

@@ -136,3 +136,13 @@ def test_fca_concepts_and_delta():
     Bdf = pd.DataFrame(B, columns=["a", "b", "c"])
     d = describe_clusters(Bdf, pd.Series([0, 0, 1, 1]), max_len=2, min_precision=0.9, min_extent=1)
     assert d[d.type == 0].description.iloc[0] in ("b", "a ∧ b")
+
+
+def test_window_label_matching_is_permutation_invariant():
+    import numpy as np
+    from windows import match_to
+    ref = np.array([0, 0, 1, 1, 2, 2])
+    lab = np.array([5, 5, 3, 3, 3, 4])          # те же группы с другими метками, одна точка перешла в группу «3»
+    assert match_to(ref, lab).tolist() == [0, 0, 1, 1, 1, 2]
+    extra = match_to(ref, np.array([5, 5, 3, 3, 4, 2]))   # в окне больше групп, чем в ref: лишняя — отдельная метка
+    assert extra[:4].tolist() == [0, 0, 1, 1] and sorted(extra[4:].tolist())[1] >= 100

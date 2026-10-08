@@ -196,7 +196,9 @@ def main():
     m2 = ols(gap[~fed], Xe[~fed], standardize=True, groups=region[~fed])
     out["gap_model_R2"] = float(m2.rsquared)
     out["gap_model_n"] = int(m2.nobs)
-    coef = pd.DataFrame({"коэф. (станд.)": m2.params, "p": m2.pvalues}).drop(index="const")
+    ci = m2.conf_int(0.05)
+    coef = pd.DataFrame({"коэф. (станд.)": m2.params, "p": m2.pvalues,
+                         "95% ДИ, нижняя": ci[0], "95% ДИ, верхняя": ci[1]}).drop(index="const")
     coef.round(4).to_csv(path(cfg, "processed", "gap_model.csv"))
     gap_by_type = pd.DataFrame({"gap": gap, "type": cons_type})[~fed].groupby("type").gap.median()
     out["gap_by_cons_type"] = gap_by_type.round(3).to_dict()
