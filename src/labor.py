@@ -40,7 +40,7 @@ def section_letter(okved: str) -> str | None:
     return okved.split()[1].translate(CYR2LAT)
 
 
-COLUMNS = ["indicator_code", "indicator_period", "oktmo", "oktmo_stable", "year", "indicator_value", "comment",
+COLUMNS = ["indicator_code", "indicator_period", "indicator_unit", "oktmo", "oktmo_stable", "year", "indicator_value", "comment",
            "okved2", "vozr", "grup_2", "migr", "mest", "obroz"]
 
 
@@ -85,15 +85,61 @@ def _annual(d: pd.DataFrame, code: str, period: str, years: list[int], extra: di
     return per_year.groupby("territory_id").mean()
 
 
+def _weighted_wage(d: pd.DataFrame, years: list[int]) -> pd.Series:
+    """Средняя зарплата МО: если одному МО в году соответствуют несколько ОКТМО (слияния),
+    зарплаты усредняются с весами — численностью работников тех же ОКТМО; затем среднее по годам."""
+    key = ["territory_id", "year", "oktmo"]
+    base = (d.indicator_period == "Январь-декабрь") & d.year.isin(years) & (d.okved2 == TOTAL_OKVED)
+    w = d[base & (d.indicator_code == "Y48423007")].drop_duplicates(key).set_index(key).value.rename("wage")
+    e = d[base & (d.indicator_code == "Y48423005")].drop_duplicates(key).set_index(key).value.rename("emp")
+    m = pd.concat([w, e], axis=1).dropna(subset=["wage"]).reset_index()
+    m["emp"] = m.emp.fillna(1.0)
+    per_year = m.groupby(["territory_id", "year"]).apply(lambda g: np.average(g.wage, weights=g.emp),
+                                                         include_groups=False)
+    return per_year.groupby("territory_id").mean()
+
+
+PASSPORT = {
+    "Y48423007": ("Среднемесячная заработная плата работников организаций (без СМП)", "Январь-декабрь", "всего по ОКВЭД2"),
+    "Y48423005": ("Среднесписочная численность работников организаций (без СМП)", "Январь-декабрь", "всего и по разделам ОКВЭД2"),
+    "Y48423006": ("Фонд заработной платы всех работников организаций (без СМП)", "Январь-декабрь", "всего по ОКВЭД2"),
+    "Y48112027": ("Оценка численности населения на 1 января", "На 1 января", "все население"),
+    "Y48112014": ("Численность населения по полу и возрасту на 1 января", "На 1 января", "оба пола; моложе / трудоспособный / старше"),
+    "Y48112023": ("Миграционный прирост (убыль)", "Значение показателя за год", "миграция — всего, все возрасты, оба пола"),
+    "Y48002001": ("Число объектов розничной торговли и общественного питания", "квартал", "сумма по типам объектов"),
+}
+
+
+def data_passport(d: pd.DataFrame, ids, cfg: dict) -> pd.DataFrame:
+    """Паспорт использованных показателей: код, название, единица, период, годы, покрытие выборки."""
+    rows = []
+    ids = set(ids)
+    for code, (name, period, cut) in PASSPORT.items():
+        s = d[d.indicator_code == code]
+        s = s[s.indicator_period.astype(str).str.contains(period.split()[0])]
+        yrs = cfg["labor"]["migration_years"] if code == "Y48112023" else list(cfg["labor"]["years"])
+        if code == "Y48112027":                      # среднегодовая численность: 1 января трёх лет
+            yrs = yrs + [max(yrs) + 1]
+        sy = s[s.year.isin(yrs)]
+        rows.append({"код": code, "показатель": name, "единица": ", ".join(map(str, s.indicator_unit.unique()[:2]))
+                     if "indicator_unit" in s else "", "период": period, "разрез": cut,
+                     "годы в расчёте": "–".join(map(str, (min(yrs), max(yrs)))),
+                     "МО выборки с данными": len(set(sy.territory_id) & ids),
+                     "доля выборки": round(len(set(sy.territory_id) & ids) / len(ids), 3)})
+    return pd.DataFrame(rows)
+
+
 def labor_table(cfg: dict, d: pd.DataFrame | None = None) -> pd.DataFrame:
     d = load_bdmo(cfg) if d is None else d
     yrs = cfg["labor"]["years"]
     out = pd.DataFrame()
     out["employees"] = _annual(d, "Y48423005", "Январь-декабрь", yrs, {"okved2": TOTAL_OKVED})
     out["fund_thrub"] = _annual(d, "Y48423006", "Январь-декабрь", yrs, {"okved2": TOTAL_OKVED})
-    out["wage"] = _annual(d, "Y48423007", "Январь-декабрь", yrs, {"okved2": TOTAL_OKVED}, how="mean")
+    out["wage"] = _weighted_wage(d, yrs)
     pop_years = sorted(set(yrs) | {max(yrs) + 1})              # среднегодовая: 1 января 2023, 2024, 2025
     out["population"] = _annual(d, "Y48112027", "На 1 января", pop_years, {"mest": "Все население"})
+    urban = _annual(d, "Y48112027", "На 1 января", pop_years, {"mest": "Городское население"})
+    out["share_urban"] = (urban.reindex(out.index).fillna(0) / out.population).clip(upper=1)
     age = d[(d.indicator_code == "Y48112014") & (d.grup_2 == "Всего") & (d.indicator_period == "На 1 января")
             & d.year.isin(yrs)]
     age = age.drop_duplicates(["territory_id", "year", "oktmo", "vozr"]).groupby(["territory_id", "year", "vozr"]).value.sum()

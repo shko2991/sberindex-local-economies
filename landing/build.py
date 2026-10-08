@@ -19,6 +19,11 @@ def main():
     tpl = (ROOT / "landing" / "template.html").read_text(encoding="utf-8")
     payload = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     body = tpl.replace("/*__DATA__*/null", payload)
+    # библиотеки встраиваются в страницу: она работает без интернета (лицензии: d3 — ISC, topojson — BSD-3)
+    for url, local in (("https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js", "d3.min.js"),
+                       ("https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js", "topojson.min.js")):
+        code = (ROOT / "landing" / "vendor" / local).read_text(encoding="utf-8").replace("</script", "<\\/script")
+        body = body.replace(f'<script src="{url}"></script>', f"<script>{code}</script>")
     (ROOT / "landing" / "index.html").write_text(body, encoding="utf-8")
     # для GitHub Pages — полноценный документ со своим заголовком
     page = ("<!doctype html>\n<html lang=\"ru\">\n<head>\n<meta charset=\"utf-8\">\n"

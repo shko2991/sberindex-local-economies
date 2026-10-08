@@ -37,10 +37,12 @@ RU = {"share_Продовольствие": "доля продовольстви
 def choose(cfg: dict) -> tuple[str, pd.DataFrame]:
     r = pd.read_csv(path(cfg, "processed", "ranking_main.csv"), index_col=0)
     thr = cfg["evaluation"]["stability_min"]
-    ok = r[r.ARI_mean >= thr] if "ARI_mean" in r else r
+    if "ARI_mean" not in r:
+        raise SystemExit("В ranking_main.csv нет устойчивости — запустите compare.py полностью")
+    ok = r[r.ARI_mean >= thr]
     if ok.empty:
-        log.warning("ни один кандидат не прошёл порог устойчивости %.2f — берётся лучший по Борда", thr)
-        ok = r
+        raise SystemExit(f"Ни один из проверенных кандидатов не прошёл порог устойчивости {thr:.2f}: "
+                         "правило выбора не выполнено — нужно расширить bootstrap_top или пересмотреть сетку")
     return ok.index[0], r
 
 
@@ -62,8 +64,17 @@ def dynamics_block(cfg: dict, panel, ctx, labels: pd.Series, cand: dict) -> dict
         P = modularity_transform(ctx.graph(cand["network"]))
         xi = cfg["methods"]["kefrin"]["rho_network"] * cand["xi_mult"]
         if dist == "euclidean":
-            xi *= (ctx.X ** 2).sum() / (P ** 2).sum()
+            # тот же принцип, что в статике: полный разброс сетевого блока равен разбросу признаков.
+            # В квартальных признаках два блока вместо трёх, поэтому разброс признаков меньше — вес
+            # сети пересчитывается по квартальному разбросу (иначе сеть была бы в 1,5 раза сильнее)
+            sq_q = np.mean([(f.loc[labels.index].values ** 2).sum() for f in F.values()])
+            xi *= sq_q / (P ** 2).sum()
     T = assign_periods(F, labels, P, xi, dist)
+    sens = {}
+    for mult in cfg["dynamics"]["network_multipliers"]:
+        Tm = assign_periods(F, labels, P, xi * mult, dist) if mult else assign_periods(F, labels, None, 0.0, dist)
+        tc = trajectory_classes(Tm, cfg["dynamics"]["min_run"]).value_counts()
+        sens[str(mult)] = {k: int(v) for k, v in tc.items()}
     traj = trajectory_classes(T, cfg["dynamics"]["min_run"])
     # проверка: без сетевого члена (он постоянен во времени и сам по себе сглаживает переходы)
     T0 = assign_periods(F, labels, None, 0.0, dist)
@@ -92,7 +103,8 @@ def dynamics_block(cfg: dict, panel, ctx, labels: pd.Series, cand: dict) -> dict
                   **({"distance": cand["distance"], "xi_mult": cand["xi_mult"]} if cand["method"] == "kefrin" else {}))
         agree[q] = float((jaccard_match(T[q].values, lab) == T[q].values).mean())
     return {"T": T, "trajectory": traj, "yearly": Y, "transition": trans, "agreement": agree,
-            "trajectory_features_only": traj0.value_counts().to_dict(), "network_term_only_agreement": net_only_agree}
+            "trajectory_features_only": traj0.value_counts().to_dict(), "network_term_only_agreement": net_only_agree,
+            "network_multiplier_sensitivity": sens}
 
 
 def main():
@@ -133,6 +145,7 @@ def main():
     out["quarterly_agreement_independent"] = dyn["agreement"]
     out["trajectory_counts_features_only"] = dyn["trajectory_features_only"]
     out["network_term_only_agreement"] = dyn["network_term_only_agreement"]
+    out["dynamics_network_sensitivity"] = dyn["network_multiplier_sensitivity"]
 
     yc = yearly_comovement_graphs(cfg, feat)
     out["comovement_edges_jaccard_2023_2024"] = float(edge_overlap(yc).iloc[0, 1])

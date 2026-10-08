@@ -28,7 +28,7 @@ class Features:
     X: pd.DataFrame                 # итоговая матрица признаков (стандартизована, блоки уравновешены)
     raw: pd.DataFrame               # те же признаки в исходных единицах (для интерпретации)
     blocks: dict[str, list[str]]    # блок → список колонок
-    residual: dict[str, pd.DataFrame]   # категория → очищенный лог-ряд (МО × месяц)
+    residual: dict[str, pd.DataFrame]   # категория → относительная траектория: лог-ряд минус медиана по МО в том же месяце
     shares: dict[str, pd.DataFrame]     # категория/прочее → доли по месяцам
 
 
@@ -134,7 +134,7 @@ def period_features(panel: Panel, cfg: dict, period: str | None = None) -> dict[
 
 
 def comovement_matrix(feat: Features, months: list[str] | None = None) -> np.ndarray:
-    """Строки — МО: очищенные ряды всех категорий, у каждого ряда вычтено среднее МО
+    """Строки — МО: относительные траектории всех категорий, у каждого ряда вычтено среднее МО
     (сравнивается движение, а не уровень), затем строка стандартизуется.
     months — подпериод (для динамической сети по годам)."""
     res = {c: (r[months] if months else r) for c, r in feat.residual.items()}

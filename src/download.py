@@ -56,6 +56,7 @@ def fetch_hackathon(cfg: dict) -> None:
 
 
 def unpack_dict(cfg: dict, archive: Path) -> None:
+    archive = Path(archive).resolve()          # до смены каталога: относительный путь иначе сломается
     out = path(cfg, "external", cfg["reference"]["table"]).parent
     if archive.suffix.lower() == ".zip":
         with zipfile.ZipFile(archive) as z:
@@ -66,13 +67,15 @@ def unpack_dict(cfg: dict, archive: Path) -> None:
         cwd = os.getcwd()
         os.chdir(out)
         try:
-            libarchive.extract_file(str(archive.resolve()))
+            libarchive.extract_file(str(archive))
         finally:
             os.chdir(cwd)
     log.info("справочник распакован в %s", out)
 
 
-def check(cfg: dict) -> bool:
+def check(cfg: dict, allow_new: bool = False) -> bool:
+    """Наличие файлов и совпадение контрольных сумм с версией, на которой получены результаты.
+    Несовпадение — ошибка (другая версия данных даст другие числа), если не задан --allow-new-data."""
     ok = True
     files = {n: path(cfg, "raw", n) for n in ("consumption.parquet", "connection.parquet", "market_access.parquet")}
     files["t_dict_municipal_districts.xlsx"] = path(cfg, "external", cfg["reference"]["table"])
@@ -81,7 +84,12 @@ def check(cfg: dict) -> bool:
         if not p.exists():
             log.error("нет файла: %s", p); ok = False; continue
         if n in SHA256 and sha256(p) != SHA256[n]:
-            log.warning("контрольная сумма отличается (возможно, обновлённая версия): %s", p)
+            if allow_new:
+                log.warning("контрольная сумма отличается (новая версия данных, разрешено флагом): %s", p)
+            else:
+                log.error("контрольная сумма отличается: %s — это другая версия данных; "
+                          "запустите с --allow-new-data, если так и задумано", p)
+                ok = False
         else:
             log.info("ок: %s", p.name)
     bdmo = path(cfg, "external", "bdmo", "x").parent
@@ -93,15 +101,16 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dict", type=Path, help="архив справочника МО СберИндекса")
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--allow-new-data", action="store_true", help="не считать ошибкой другие контрольные суммы")
     a = ap.parse_args()
     cfg = load_config()
     if a.check:
-        sys.exit(0 if check(cfg) else 1)
+        sys.exit(0 if check(cfg, a.allow_new_data) else 1)
     if a.dict:
         unpack_dict(cfg, a.dict)
     else:
         fetch_hackathon(cfg)
-    check(cfg)
+    check(cfg, a.allow_new_data)
 
 
 if __name__ == "__main__":

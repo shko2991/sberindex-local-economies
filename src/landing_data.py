@@ -85,12 +85,34 @@ def build(cfg: dict, raw: pd.DataFrame, type_names: dict[int, str] | None = None
                            "values": ct.values.astype(int).tolist()},
                  "gap_model": [{"name": k, "coef": r(v["коэф. (станд.)"]), "p": float(v.p)} for k, v in gm.iterrows()],
                  "summary": ls}
+    # надёжность типа МО и устойчивость типов (type_stability.py), население типов (Росстат)
+    if P("mo_reliability.csv").exists():
+        rel = pd.read_csv(P("mo_reliability.csv"), index_col=0).reliability.reindex(mo_ids)
+        mo["rel"] = [r(v, 2) for v in rel]
+    if P("type_stability.csv").exists():
+        ts = pd.read_csv(P("type_stability.csv"))
+        ts = ts[ts["вариант"] == summary["chosen"]].set_index("тип")
+        for t in types:
+            if t["id"] in ts.index:
+                t["jaccard"] = r(ts.loc[t["id"], "Жаккар среднее"])
+                t["jaccard_q10"] = r(ts.loc[t["id"], "Жаккар 10-й проц."])
+    if P("labor_table.csv").exists():
+        lt = pd.read_csv(P("labor_table.csv"), index_col=0).reindex(mo_ids)
+        tser = pd.Series(mo["type"], index=mo_ids)
+        for t in types:
+            sel = tser[tser == t["id"]].index
+            t["population"] = r(lt.population.reindex(sel).sum(), 0)
+            if "share_urban" in lt:
+                t["urban"] = r(lt.share_urban.reindex(sel).median())
+    cases = None
+    if P("cases.csv").exists():
+        cases = json.loads(pd.read_csv(P("cases.csv")).round(3).to_json(orient="records", force_ascii=False))
     return {"meta": {"chosen": summary["chosen"], "n": len(mo_ids), "quarters": quarters.columns.tolist(),
                      "summary": summary}, "keys": KEYS, "national": national, "types": types, "mo": mo,
             "methods": methods, "network": net,
             "transition": {"rows": trans.index.astype(int).tolist(), "cols": [int(c) for c in trans.columns],
                            "values": trans.values.astype(int).tolist()},
-            "labor": labor, "topo": topo}
+            "labor": labor, "cases": cases, "topo": topo}
 
 
 def main():

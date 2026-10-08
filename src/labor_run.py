@@ -70,7 +70,9 @@ def select_typology(cfg, X: np.ndarray, A, seed: int):
         log.info("труд: устойчивость %s ARI=%.3f", i, stab[i]["ARI_mean"])
     ranked = ranked.join(pd.DataFrame(stab).T)
     ok = ranked[ranked.ARI_mean >= ev["stability_min"]]
-    best = (ok if len(ok) else ranked).index[0]
+    if not len(ok):                                   # без запасного варианта: правило должно выполняться
+        raise SystemExit("ни одна типология рынка труда не прошла порог устойчивости")
+    best = ok.index[0]
     return best, labels[best], ranked, W
 
 
@@ -81,7 +83,10 @@ def main():
     ref = load_reference(cfg).loc[ids]
     fin = pd.read_csv(path(cfg, "processed", "final_types.csv"), index_col=0)
     cons_type = fin.type.reindex(ids)
-    lt = impute_demography(labor_table(cfg), ref)
+    from labor import data_passport, load_bdmo
+    bd = load_bdmo(cfg)
+    data_passport(bd, ids, cfg).to_csv(path(cfg, "processed", "labor_passport.csv"), index=False)
+    lt = impute_demography(labor_table(cfg, bd), ref)
     lt.to_csv(path(cfg, "processed", "labor_table.csv"))
     out = {"n_with_labor": int(lt.reindex(ids).wage.notna().sum()),
            "imputed_age": int(lt.reindex(ids).imputed_age.fillna(False).sum())}

@@ -89,12 +89,18 @@ def transition_matrix(T: pd.DataFrame, a: str, b: str) -> pd.DataFrame:
     return pd.crosstab(T[a], T[b], rownames=[a], colnames=[b])
 
 
+def _mode_last(values) -> int:
+    """Самый частый тип; при равенстве частот — тот из них, что встретился последним по времени."""
+    vals = list(values)
+    cnt = pd.Series(vals).value_counts()
+    tied = set(cnt[cnt == cnt.max()].index)
+    return next(v for v in reversed(vals) if v in tied)
+
+
 def yearly_mode(T: pd.DataFrame) -> pd.DataFrame:
-    """Тип МО за год — наиболее частый тип по кварталам года (при равенстве — последний)."""
+    """Тип МО за год — наиболее частый тип по кварталам года (при равенстве — последний по времени)."""
     out = {}
     for y in sorted({c[:4] for c in T.columns}):
-        cols = [c for c in T.columns if c.startswith(y)]
-        sub = T[cols]
-        out[y] = sub.apply(lambda r: r.value_counts().sort_values(kind="stable").index[-1]
-                           if r.value_counts().max() > 1 else r.iloc[-1], axis=1)
+        cols = sorted(c for c in T.columns if c.startswith(y))
+        out[y] = T[cols].apply(lambda r: _mode_last(r.values), axis=1)
     return pd.DataFrame(out)

@@ -1,6 +1,6 @@
 """Полный прогон одной командой (данные уже скачаны: см. README).
 
-  python run_all.py                 — всё, включая сравнение 280 вариантов (~45 мин на 2 ядрах)
+  python run_all.py                 — всё, включая сравнение 280 вариантов (~1,5 ч на 2 ядрах)
   python run_all.py --skip-compare  — без сравнения (берутся готовые data/processed/candidates.csv и ranking_main.csv)
 """
 import subprocess
@@ -15,7 +15,11 @@ STEPS = [
     ("сравнение методов", ["src/compare.py"]),
     ("устойчивость выбора к правилам оценки", ["src/robustness.py"]),
     ("итоговое разбиение, описания, динамика", ["src/pipeline.py"]),
+    ("устойчивость типов и финалисты K = 6, 7, 8", ["src/type_stability.py"]),
+    ("перезапуски KEFRiN и связь финалистов с итогом", ["src/optimum_check.py"]),
+    ("чувствительность к слоям сети и геометрии", ["src/sensitivity.py"]),
     ("рынок труда и расхождения", ["src/labor_run.py"]),
+    ("разобранные случаи", ["src/cases.py"]),
     ("синтетическая проверка KEFRiN", ["src/synthetic.py"]),
     ("рисунки", ["src/figures.py"]),
     ("данные страницы", ["src/landing_data.py"]),
@@ -31,7 +35,7 @@ if __name__ == "__main__":
     for name, args in STEPS:
         if skip and name == "сравнение методов":
             continue
-        if not has_labor and name == "рынок труда и расхождения":
+        if not has_labor and name in ("рынок труда и расхождения", "разобранные случаи"):
             continue
         print(f"\n=== {name} ===", flush=True)
         r = subprocess.run([sys.executable, *args], cwd=ROOT)
