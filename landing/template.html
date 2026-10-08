@@ -1,12 +1,13 @@
-<title>Потребление и труд</title>
+<title>Локальные экономики муниципалитетов</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
 /* Макет: ночное небо над страной. Герой — «галактика муниципалитетов»: 2 016 звёзд в географических
    центрах МО (цвет — тип, яркость — надёжность), с перестройкой в галактики типов и карту сходства.
    Ниже — атлас и главы на тёмно-синих панелях; неон — только для активного и выбранного.
-   Шрифты: Unbounded (заголовки), Golos Text (текст и цифры). Одна тёмная тема. */
+   Шрифты ParaType: PT Serif (заголовки), PT Sans (текст и цифры) — созданы для официальных документов
+   на кириллице. Одна тёмная тема. */
 :root {
   color-scheme: dark;
   --space: #060b26;
@@ -27,11 +28,11 @@
   --t0: #4fa3ff; --t1: #7fe08a; --t2: #ff7d5c; --t3: #ffcf5a;
   --t4: #c18bff; --t5: #2ee6c8; --t6: #ff6fb7; --t7: #a9b9e6;
   --t8: #8f9bc4; --t9: #c7d25a; --t10: #8fb6ff; --t11: #e0607a;
-  --good: #6ff3b0; --warn: #ffc163;
+  --good: #6ff3b0; --warn: #ffc163; --bad: #ff7b8f;
   --l0: #e2b56c; --l1: #5fb0ff; --l2: #9fe37d; --l3: #ff9a52; --l4: #9488e8; --l5: #ff5c8a;
   --neg: #3fcfff; --pos: #ff62d4;
-  --display: "Unbounded", "Arial Black", "Segoe UI", sans-serif;
-  --sans: "Golos Text", "Segoe UI", Roboto, Arial, sans-serif;
+  --display: "PT Serif", Georgia, "Times New Roman", serif;
+  --sans: "PT Sans", "Segoe UI", Roboto, Arial, sans-serif;
   --serif: var(--sans);
   --mono: var(--sans);
   --s-1: 0.8125rem; --s0: 0.9375rem; --s1: 1.0625rem; --s2: 1.375rem; --s3: 1.875rem; --s4: 2.75rem;
@@ -63,10 +64,10 @@ body::after { background-image:
 .wrap { max-width: 1280px; margin: 0 auto; padding-inline: 16px; padding-block: 0 64px; display: grid; gap: 48px; }
 h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.15; }
 h1, h2 { font-family: var(--display); font-weight: 700; }
-h1 { font-size: clamp(2.1rem, 5.4vw, 4.2rem); letter-spacing: -0.02em; line-height: 1.02; color: #f6f9ff;
+h1 { font-size: clamp(2rem, 4.6vw, 3.7rem); letter-spacing: -0.01em; line-height: 1.06; color: #f6f9ff; max-width: 18ch;
   text-shadow: 0 0 18px rgba(111, 243, 255, 0.45), 0 0 46px rgba(111, 243, 255, 0.22); }
 h2 { font-size: clamp(1.45rem, 2.6vw, var(--s3)); letter-spacing: -0.01em; }
-h3 { font-family: var(--sans); font-weight: 600; font-size: var(--s1); }
+h3 { font-family: var(--sans); font-weight: 700; font-size: var(--s1); }
 p { margin: 0; max-width: 70ch; }
 .eyebrow { font-size: var(--s-1); color: var(--ink-3); }
 .lede { font-size: var(--s1); color: var(--ink-2); max-width: 58ch; }
@@ -77,8 +78,9 @@ a { color: var(--accent); text-underline-offset: 3px; }
 /* навигация */
 .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(6, 11, 38, 0.78);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
-.nav-in { max-width: 1280px; margin: 0 auto; padding-inline: 16px; min-height: var(--nav-h); display: flex; align-items: center; gap: 8px 24px; }
-.brand { font-family: var(--display); font-weight: 700; font-size: 0.95rem; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.nav-in { max-width: 1280px; margin: 0 auto; padding-inline: 16px; min-height: var(--nav-h); display: flex; flex-wrap: wrap; align-items: center; gap: 0 24px; }
+@media (max-width: 640px) { .nav-in { padding-block: 6px; } .nav ul { width: 100%; } }
+.brand { font-family: var(--display); font-weight: 700; font-size: 1rem; color: var(--ink); text-decoration: none; white-space: nowrap; }
 .brand i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); margin-right: 8px; vertical-align: 1px; }
 .nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; min-width: 0; }
 .nav ul::-webkit-scrollbar { display: none; }
@@ -93,7 +95,7 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .hero-text .lead { display: grid; gap: 14px; }
 .kicker { font-size: var(--s-1); color: var(--accent); }
 .facts { display: flex; flex-wrap: wrap; gap: 10px 26px; color: var(--ink-2); font-size: var(--s-1); }
-.facts b { display: block; font-family: var(--display); font-weight: 500; font-size: 1.35rem; color: var(--ink); line-height: 1.2; font-variant-numeric: tabular-nums; }
+.facts b { display: block; font-family: var(--display); font-weight: 700; font-size: 1.45rem; color: var(--ink); line-height: 1.2; font-variant-numeric: tabular-nums; }
 .hero-text .facts span { max-width: 15em; }
 .galaxy { position: relative; border-radius: 20px; border: 1px solid var(--line); overflow: hidden; height: clamp(360px, 50vw, 610px);
   background: radial-gradient(ellipse 60% 70% at 30% 45%, rgba(60, 80, 200, 0.22), transparent 70%),
@@ -115,7 +117,7 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .g-foot { display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between; align-items: baseline; font-size: var(--s-1); color: var(--ink-3); }
 .gtip { position: absolute; pointer-events: none; z-index: 3; background: rgba(8, 14, 46, 0.92); border: 1px solid rgba(111, 243, 255, 0.35);
   box-shadow: 0 0 18px rgba(111, 243, 255, 0.18); color: var(--ink); font-size: var(--s-1); padding: 8px 10px; border-radius: 10px; max-width: 280px; }
-.gtip b { font-weight: 600; }
+.gtip b { font-weight: 700; }
 
 /* переключатели и чипы */
 .seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: rgba(6, 11, 38, 0.7); max-width: 100%; }
@@ -129,7 +131,8 @@ button.chip:hover, button.chip[aria-pressed="true"] { color: var(--ink); border-
 .chip .sw { width: 8px; height: 8px; border-radius: 50%; flex: none; box-shadow: 0 0 8px currentColor; }
 
 /* атлас */
-.atlas { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 20px; align-items: start; }
+.atlas { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 20px; align-items: stretch; }
+.cardwrap { position: relative; min-width: 0; }
 @media (max-width: 980px) { .atlas { grid-template-columns: minmax(0, 1fr); } }
 .sec-head { display: grid; gap: 8px; }
 .mapbox { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; display: grid; min-width: 0; overflow: hidden; }
@@ -157,18 +160,19 @@ button.chip:hover, button.chip[aria-pressed="true"] { color: var(--ink); border-
 .legend .item.dim { opacity: 0.35; }
 .ramp { height: 10px; width: 180px; border-radius: 5px; }
 
-.card { background: var(--panel); border: 1px solid rgba(111, 243, 255, 0.28); border-radius: 16px; padding: 18px; display: grid; gap: 14px;
-  position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 12px); box-shadow: 0 0 30px -12px rgba(111, 243, 255, 0.35); }
-@media (max-width: 980px) { .card { position: static; } }
-.card h3 { font-family: var(--display); font-weight: 500; font-size: 1.15rem; line-height: 1.25; }
+.card { background: var(--panel); border: 1px solid rgba(111, 243, 255, 0.28); border-radius: 16px; padding: 18px; display: grid; gap: 14px; align-content: start;
+  box-shadow: 0 0 30px -12px rgba(111, 243, 255, 0.35); scrollbar-width: thin; scrollbar-color: rgba(111, 243, 255, 0.35) transparent; }
+/* на широком экране карточка не длиннее карты: прокручивается внутри, под картой не остаётся пустоты */
+@media (min-width: 981px) { .card { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; } }
+.card h3 { font-family: var(--display); font-weight: 700; font-size: 1.2rem; line-height: 1.25; }
 .card .meta { color: var(--ink-3); font-size: var(--s-1); }
-.card .facts b { font-family: var(--sans); font-weight: 600; font-size: var(--s0); display: inline; margin-right: 4px; }
+.card .facts b { font-family: var(--sans); font-weight: 700; font-size: var(--s0); display: inline; margin-right: 4px; }
 .strip { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
 .strip div { height: 16px; border-radius: 4px; }
 .strip-l { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; font-size: 0.6875rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .an-list { display: grid; gap: 6px; }
 .an-row { display: grid; gap: 1px; padding-bottom: 6px; border-bottom: 1px dashed var(--rule); font-size: var(--s-1); }
-.an-row .note b { color: var(--ink); font-weight: 600; }
+.an-row .note b { color: var(--ink); font-weight: 700; }
 .bars { display: grid; gap: 7px; }
 .bar { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) 4.2em; gap: 8px; align-items: center; font-size: var(--s-1); }
 .bar .track { position: relative; height: 6px; background: var(--absent); border-radius: 3px; }
@@ -189,23 +193,25 @@ section.ch { display: grid; gap: 20px; }
 .tcard h3 { display: flex; gap: 9px; align-items: baseline; }
 .tcard h3 .sw { width: 10px; height: 10px; border-radius: 50%; flex: none; transform: translateY(-1px); box-shadow: 0 0 10px currentColor; }
 .tcard .stats { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: var(--s-1); color: var(--ink-3); }
-.tcard .stats b { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.tcard .stats b { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
 .tcard ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; font-size: var(--s-1); color: var(--ink-2); }
 .tcard ul .num { color: var(--ink-3); }
 .two { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.stack { display: grid; gap: 20px; }
+#flows { width: 100%; height: auto; max-width: 900px; display: block; }
 @media (max-width: 860px) { .two { grid-template-columns: minmax(0, 1fr); } }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; min-width: 0; display: grid; gap: 10px; }
 .scroll-x { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: var(--s-1); }
 th, td { padding: 7px 8px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; }
-th { font-weight: 600; color: var(--ink-2); }
+th { font-weight: 700; color: var(--ink-2); }
 td { font-variant-numeric: tabular-nums; }
 tr.chosen td { background: rgba(111, 243, 255, 0.1); }
 tr.chosen td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
 td.lbl { font-variant-numeric: normal; }
 .pill { display: inline-block; font-size: 0.75rem; padding: 0 7px; border-radius: 999px; border: 1px solid currentColor; }
-.pill.ok { color: var(--good); } .pill.no { color: var(--warn); }
+.pill.ok { color: var(--good); } .pill.mid { color: var(--warn); } .pill.no { color: var(--bad); }
 svg text { fill: var(--ink-2); font-family: var(--sans); font-size: 11px; }
 svg .axis line, svg .axis path { stroke: var(--rule); }
 .heat td { text-align: center; color: var(--ink); }
@@ -222,13 +228,45 @@ table.cross th { white-space: normal; vertical-align: bottom; min-width: 7em; }
 .case dl { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: 2px 10px; margin: 0; font-size: var(--s-1); }
 .case dt { color: var(--ink-2); } .case dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
 .case .hd { color: var(--ink-3); }
-footer { color: var(--ink-3); font-size: var(--s-1); display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 18px; }
+footer { color: var(--ink-3); font-size: var(--s-1); display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 20px; }
+footer > div { max-width: 100ch; }
+.f-title { font-family: var(--display); font-weight: 700; font-size: var(--s1); color: var(--ink); }
+.ai { border-top: 1px solid var(--line); padding-top: 12px; display: grid; gap: 6px; max-width: 100ch; }
+.ai h3 { font-size: var(--s0); color: var(--ink-2); }
+.subtitle { font-family: var(--display); font-style: italic; font-size: clamp(1.1rem, 2vw, var(--s2)); color: var(--ink-2); }
+.lead2 { font-size: var(--s1); color: var(--ink-2); max-width: 64ch; }
+.key { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px 24px; margin: 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(6, 11, 38, 0.5); }
+.key div { display: grid; gap: 2px; align-content: start; }
+.key dt { color: var(--accent); font-weight: 700; font-size: var(--s-1); }
+.key dd { margin: 0; color: var(--ink-2); font-size: var(--s-1); line-height: 1.45; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px 28px; }
+.kpi { display: grid; gap: 4px; align-content: start; padding-top: 12px; border-top: 1px solid var(--line); }
+.kpi b { font-family: var(--display); font-size: 2rem; font-weight: 700; color: #f6f9ff; line-height: 1.1; font-variant-numeric: tabular-nums; text-shadow: 0 0 16px rgba(111, 243, 255, 0.3); }
+.kpi span { color: var(--ink-2); font-size: var(--s-1); max-width: 34ch; }
+.points { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; max-width: 80ch; color: var(--ink-2); }
+.points b { color: var(--ink); }
+.points li::marker { color: var(--accent); }
+.more { border: 1px solid var(--line); border-radius: 12px; background: rgba(6, 11, 38, 0.45); }
+.more summary { cursor: pointer; padding: 10px 14px; color: var(--accent); font-size: var(--s-1); list-style: none; display: flex; align-items: center; gap: 10px; }
+.more summary::-webkit-details-marker { display: none; }
+.more summary::before { content: "+"; width: 18px; height: 18px; display: inline-grid; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-size: 13px; line-height: 1; }
+.more[open] summary::before { content: "−"; }
+.more > :not(summary) { padding: 0 14px 14px; }
+.more p, .more li { font-size: var(--s-1); }
+.tstats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; margin: 0; }
+.tstats div { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 1px; min-width: 0; }
+.tstats dt { font-size: 0.75rem; color: var(--ink-3); line-height: 1.3; }
+.tstats dd { margin: 0; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.tstats .pill { font-weight: 400; }
+.tcard ul.fca { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; border-top: 1px solid var(--line); padding-top: 10px; }
+.fca li { display: grid; gap: 1px; font-size: var(--s-1); color: var(--ink); }
+.fca small { color: var(--ink-3); font-size: 0.75rem; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, body::after { transition: none !important; animation: none !important; } }
 </style>
 
 <nav class="nav" aria-label="Разделы">
   <div class="nav-in">
-    <a class="brand" href="#page"><i></i>Потребление и труд</a>
+    <a class="brand" href="#page"><i></i>Локальные экономики муниципалитетов</a>
     <ul id="navl">
       <li><a class="l" href="#galaxy">Галактика</a></li>
       <li><a class="l" href="#atlas">Атлас</a></li>
@@ -246,7 +284,8 @@ footer { color: var(--ink-3); font-size: var(--s-1); display: grid; gap: 6px; bo
     <div class="hero-text">
       <div class="lead">
         <div class="kicker">Конкурс СберИндекса, направление «Кластеризация»</div>
-        <h1>Потребление и труд</h1>
+        <h1>Типы локальных экономик муниципалитетов</h1>
+        <p class="subtitle">Безналичное потребление и рынок труда, 2023–2024 гг.</p>
         <p class="lede" id="lede"></p>
       </div>
       <div class="facts" id="facts"></div>
@@ -293,56 +332,70 @@ footer { color: var(--ink-3); font-size: var(--s-1); display: grid; gap: 6px; bo
       </div>
       <div class="legend" id="legend"></div>
     </div>
-    <aside class="card" id="card" aria-live="polite"></aside>
+    <div class="cardwrap"><aside class="card" id="card" aria-live="polite" tabindex="0" aria-label="Карточка муниципалитета"></aside></div>
   </div>
   </section>
 
   <section class="ch" id="types-ch">
     <div class="ch-head">
       <div class="ch-n">Глава 1</div>
-      <h2>Типы потребления</h2>
-      <p>Описания получены анализом формальных понятий: короткое сочетание признаков, характерное для части МО типа. ↑ — верхняя треть МО по показателю, ↓ — нижняя, ↑↑ и ↓↓ — верхние и нижние 10%. Точность — доля МО типа среди всех, кто подходит под описание; покрытие — доля типа, которую описание охватывает (у части типов — меньше половины). Устойчивость типа — средний коэффициент Жаккара с ближайшим кластером на 50 подвыборках по 80% МО: ≥ 0,75 — устойчивый, 0,5–0,75 — сомнительный, &lt; 0,5 — неустойчивый.</p>
+      <h2>Восемь типов потребления</h2>
+      <p class="lead2">Типы различаются уровнем расходов, структурой корзины и сезонностью. У каждого — портрет корзины, короткие описания и оценка устойчивости.</p>
     </div>
+    <dl class="key" aria-label="Как читать карточки типов">
+      <div><dt>↑ и ↓</dt><dd>верхняя или нижняя треть МО по признаку; ↑↑ и ↓↓ — крайние 10%</dd></div>
+      <div><dt>Точность</dt><dd>какая доля МО с таким описанием относится к типу</dd></div>
+      <div><dt>Покрытие</dt><dd>какая доля типа подходит под описание</dd></div>
+      <div><dt>Устойчивость</dt><dd>повторяется ли тип на 50 случайных подвыборках: <span class="pill ok">от 0,75</span> <span class="pill mid">0,5–0,75</span> <span class="pill no">ниже 0,5</span></dd></div>
+    </dl>
     <div class="types" id="types"></div>
   </section>
 
   <section class="ch" id="labor-ch">
     <div class="ch-head">
       <div class="ch-n">Глава 2</div>
-      <h2>Потребление против рынка труда</h2>
-      <p id="labor-text"></p>
+      <h2>Потребление и рынок труда</h2>
+      <p class="lead2">Типология рынка труда построена отдельно — по зарплате, занятости, отраслям и демографии из данных Росстата, без сведений о расходах. Сравнение двух типологий показывает, где потребление жителей расходится с трудовой статистикой территории.</p>
     </div>
-    <div class="panel"><h3>Две карты рядом: потребление и рынок труда</h3>
+    <div class="kpis" id="labor-kpis"></div>
+    <details class="more"><summary>Как построена типология рынка труда</summary><div id="labor-more"></div></details>
+    <div class="panel"><h3>Две карты рядом</h3>
       <div class="duo"><div><div class="eyebrow">Типы потребления</div><svg id="duo-a" class="duo-map" role="img" aria-label="Карта типов потребления"></svg></div>
       <div><div class="eyebrow">Типы рынка труда</div><svg id="duo-b" class="duo-map" role="img" aria-label="Карта типов рынка труда"></svg></div></div>
-      <p class="note">Масштаб и наведение синхронизированы: наведите курсор на МО на одной карте, оно подсветится на обеих. Тёмным — МО без полного ряда расходов или без данных Росстата.</p></div>
-    <div class="panel"><h3>Типы потребления × типы рынка труда</h3><div class="scroll-x"><table class="heat cross" id="cross"></table></div><p class="note"><span id="cross-n"></span> Доля МО типа потребления (строка), попавших в каждый тип рынка труда, %. Строка с одной яркой клеткой — потреблению соответствует один рынок труда; размытая строка — за одинаковым потреблением стоят разные рынки труда.</p></div>
-    <div class="panel"><h3>Типы рынка труда</h3><div class="scroll-x"><table id="ltypes"></table></div><p class="note">Зарплата и численность работников — организации без малого бизнеса, по месту работы (Росстат). Поэтому в части деловых районов мегаполисов работников больше, чем жителей. Отличительный сектор — тот, чья доля в занятости сильнее всего превышает среднюю.</p></div>
-    <div class="panel" id="cases-panel" hidden><h3>Разобранные случаи</h3><div class="types" id="cases"></div><p class="note">Отбор по правилу, без ручного выбора: самый сильный остаток в скоплении «тратят больше» и «тратят меньше» (только МО с одинаковой меткой во всех пяти seed), северное МО с наименьшим отношением расходов к фонду оплаты, пригород (до 60 км от центра региона) с наибольшим. Только МО с надёжностью типа ≥ 80%. Какое МО окажется крайним, зависит от процедуры поиска скоплений, поэтому случаи — иллюстрации механизмов, а не доказательство. Объяснения — гипотезы.</p></div>
-    <div class="panel"><h3>Что объясняет разрыв между расходами и фондом оплаты труда</h3><div id="gapmodel" class="bars" style="max-width:760px"></div><p class="note" id="gap-note"></p></div>
+      <p class="note">Масштаб и наведение синхронизированы. Тёмным — нет данных.</p></div>
+    <div class="panel"><h3>Какой рынок труда стоит за каждым типом потребления</h3><div class="scroll-x"><table class="heat cross" id="cross"></table></div><p class="note">Доля МО типа потребления в каждом типе рынка труда, %. Одна яркая клетка в строке — потребление повторяет рынок труда; размытая строка — за похожим потреблением стоят разные рынки труда. <span id="cross-n"></span></p></div>
+    <div class="panel"><h3>Типы рынка труда</h3><div class="scroll-x"><table id="ltypes"></table></div><p class="note">Росстат учитывает организации без малого бизнеса и по месту работы, поэтому в деловых районах работников бывает больше, чем жителей.</p></div>
+    <div class="panel"><h3>С чем связан разрыв между расходами и фондом оплаты труда</h3><div id="gapmodel" class="bars" style="max-width:760px"></div><p class="note" id="gap-note"></p>
+      <details class="more"><summary>Подробнее о модели</summary><div id="gap-more"></div></details></div>
+    <div class="panel" id="cases-panel" hidden><h3>Разобранные случаи</h3><div class="types" id="cases"></div><p class="note">Крайние случаи в каждой группе, отобранные по правилу, а не вручную; только МО с надёжностью типа от 80%. Объяснения — гипотезы.</p></div>
   </section>
 
   <section class="ch" id="time-ch">
     <div class="ch-head">
       <div class="ch-n">Глава 3</div>
       <h2>Как типы меняются во времени</h2>
-      <p id="dyn-text"></p>
+      <p class="lead2" id="dyn-lead"></p>
     </div>
-    <div class="two">
-      <div class="panel"><h3>Переходы 2023 → 2024</h3><div class="scroll-x"><svg id="flows" width="660" height="360"></svg></div><p class="note">Тип МО за год — самый частый тип по кварталам года. Полосы толще — больше МО. Наведите на тип слева или справа, чтобы оставить только его переходы.</p></div>
-      <div class="panel"><h3>Траектории за 8 кварталов</h3><div id="traj"></div><p class="note">Устойчивый сдвиг — одна смена типа, новый тип держится до конца периода; колебания — возвраты на границе типов.</p></div>
-    </div>
+    <div class="kpis" id="dyn-kpis"></div>
+    <details class="more"><summary>Проверка в скользящих окнах</summary><div id="dyn-more"></div></details>
+    <div class="panel"><h3>Переходы 2023 → 2024</h3><div class="scroll-x"><svg id="flows" width="660" height="360" viewBox="0 0 660 360"></svg></div><p class="note">Годовой тип — самый частый за кварталы года; толщина полосы — число МО. Наведите на тип, чтобы оставить только его переходы.</p></div>
   </section>
 
   <section class="ch" id="method-ch">
     <div class="ch-head">
       <div class="ch-n">Глава 4</div>
-      <h2>Выбор метода</h2>
-      <p>Каждый вариант (метод, число типов, сеть, вес сети) оценён шестью внутренними индексами: силуэт, Калински–Харабаш и S_Dbw — по сходству потребления; AVI, AVU и модулярность — по связности на сети дорог. Индексы тянут в разные стороны, поэтому итог выбран агрегированием рангов по Борда и Коупленду, а затем проверен на устойчивость на подвыборках. Итог — компромисс: первый по AVU и без провалов по остальным индексам, поэтому без AVU он опускается на 17-е место. Вариант с 6 типами устойчивее (ARI на подвыборках 0,81 против 0,67; не все шесть одинаково надёжны), восемь типов — основной результат по заданному правилу, в основном детализирующий шесть; наименее устойчивый тип — «удалённые районы с сезонными пиками». Надёжность типа каждого МО — отдельный слой карты. Крупные контрасты во многом воспроизводятся по одним признакам: совпадение с k-means по тем же признакам — 0,81 при K = 7 и 0,63 при K = 8. Сеть меняет границы и повышает пространственную концентрацию типов: в крупнейшей связной части своего типа на дорожной сети находится 42% МО против 33% у k-means с K = 8 (сами типы при этом не связны: у каждого несколько частей).</p>
+      <h2>Как выбран итоговый вариант</h2>
+      <p class="lead2">Сравнено 280 вариантов разбиения: разные методы, число типов, сети и вес сети. Каждый оценён шестью индексами качества, итог выбран правилом, заданным заранее.</p>
     </div>
+    <ul class="points">
+      <li><b>Итог — KEFRiN на мультиплексе, 8 типов.</b> Он первый по индексу AVU и без провалов по остальным; без AVU он опустился бы на 17-е место.</li>
+      <li><b>Вариант с 6 типами устойчивее</b> (ARI на подвыборках 0,81 против 0,67). Восемь типов в основном детализируют шесть.</li>
+      <li><b>Сеть мало меняет крупные контрасты</b> — совпадение с k-means по тем же признакам 0,81 при семи типах, — но собирает типы в более связные территории: 42% МО в крупнейшей связной части своего типа против 33% у k-means.</li>
+    </ul>
+    <details class="more"><summary>Какие индексы использовались</summary><p>По сходству потребления — силуэт, индекс Калински–Харабаша и S_Dbw; по связности на сети дорог — AVI, AVU и модулярность. Индексы тянут в разные стороны, поэтому места агрегированы по Борда и Коупленду, а затем кандидаты проверены на устойчивость на 50 подвыборках по 80% МО (порог ARI 0,6).</p></details>
     <div class="two">
       <div class="panel"><h3>Сходство потребления против связности</h3><div class="scroll-x"><svg id="pareto" width="600" height="380"></svg></div><div class="legend" id="pareto-legend" style="padding:0;border:0"></div><p class="note" id="pareto-note"></p></div>
-      <div class="panel"><h3>Лучшие варианты</h3><div class="scroll-x"><table id="top"></table></div><p class="note">ARI — устойчивость на 50 подвыборках при отборе (5 инициализаций KEFRiN на подвыборку; с 20 инициализациями у итога 0,67, у варианта с 6 типами 0,81). Порог отбора — 0,6.</p></div>
+      <div class="panel"><h3>Лучшие варианты</h3><div class="scroll-x"><table id="top"></table></div><p class="note">ARI — устойчивость на 50 подвыборках при отборе; порог — 0,6. С 20 запусками алгоритма у итога 0,67, у варианта с 6 типами 0,81.</p></div>
     </div>
   </section>
 
@@ -350,11 +403,16 @@ footer { color: var(--ink-3); font-size: var(--s-1); display: grid; gap: 6px; bo
     <div class="ch-head">
       <div class="ch-n">Глава 5</div>
       <h2>Какая сеть связывает муниципалитеты</h2>
-      <p>Сравнены четыре понятия близости: сходство всех признаков МО (структура, уровень, динамика расходов), синхронная динамика (корреляции относительных траекторий — без общего национального компонента), похожая форма траектории (DTW) и расстояние по дорогам. Гипотеза «столица опережает периферию» проверена: при выбранной процедуре свидетельств систематического опережения не обнаружено, поэтому направленные рёбра не вводились. I Морана показывает, насколько соседи по сети похожи по каждому показателю.</p>
+      <p class="lead2">Сравнены четыре понятия близости между МО: сходство всех признаков, синхронная динамика расходов, похожая форма траектории и расстояние по дорогам.</p>
     </div>
-    <div class="two">
+    <ul class="points">
+      <li><b>Соседи по сети похожи</b> по большинству признаков; насколько — показывает I Морана (1 — полное сходство соседей, 0 — нет связи).</li>
+      <li><b>Все сети структурированнее случайных:</b> модулярность заметно выше, чем у графов с теми же степенями узлов.</li>
+      <li><b>«Столица опережает периферию» — не подтвердилось,</b> поэтому направленных связей в сети нет.</li>
+    </ul>
+    <div class="stack">
       <div class="panel"><h3>I Морана по сетям</h3><div class="scroll-x"><table class="heat" id="moran"></table></div></div>
-      <div class="panel"><h3>Сообщества против случайного графа</h3><div class="scroll-x"><table id="comm"></table></div><p class="note">Нуль-модель — 20 случайных графов с точно теми же степенями узлов (попарные переключения рёбер, веса переставлены); модулярность взвешенная. Превышение — насколько структура сообществ сильнее случайной.</p></div>
+      <div class="panel"><h3>Сообщества против случайного графа</h3><div class="scroll-x"><table id="comm"></table></div><p class="note">Нуль-модель — 20 случайных графов с теми же степенями узлов. Превышение — насколько структура сообществ сильнее случайной.</p></div>
     </div>
   </section>
 
@@ -391,17 +449,15 @@ const DATA = /*__DATA__*/null;
   // ---------- шапка
   const nTypes = D.types.length;
   document.getElementById("lede").textContent =
-    `${D.meta.n.toLocaleString("ru-RU")} муниципалитетов, 24 месяца безналичных расходов жителей и сеть связей между ними: ` +
-    `дороги, синхронная динамика, похожие траектории. Итог — ${nTypes} типов локального потребления, ` +
-    `сопоставленных с типами рынка труда по муниципальной статистике Росстата.`;
+    `${D.meta.n.toLocaleString("ru-RU")} муниципалитетов России, 24 месяца безналичных расходов жителей и связи между территориями. ` +
+    `${nTypes} типов локального потребления сопоставлены с типами рынка труда по данным Росстата.`;
   const chosen = D.methods.find((m) => m.id === D.meta.chosen) || {};
   document.getElementById("facts").innerHTML = [
-    [D.meta.n.toLocaleString("ru-RU"), "МО с полным рядом"],
-    [nTypes, "типов"],
+    [D.meta.n.toLocaleString("ru-RU"), "муниципалитетов"],
+    [nTypes, "типов потребления"],
     [D.methods.length, "вариантов разбиения сравнено"],
-    (D.meta.stability ? [fmt(D.meta.stability.chosen, 2), `устойчивость (ARI на подвыборках; у ${Object.keys(D.meta.stability.finalists)[0]} типов — ${fmt(Object.values(D.meta.stability.finalists)[0], 2)})`]
-      : [chosen.ARI_mean != null ? fmt(chosen.ARI_mean, 2) : "—", "устойчивость (ARI на подвыборках)"]),
-    ...(D.labor ? [[fmt(D.labor.summary.agreement_no_federal.V_Cramer, 2), "связь с типами рынка труда (V Крамера)"]] : [])
+    [fmt(D.meta.stability ? D.meta.stability.chosen : chosen.ARI_mean, 2), "устойчивость итога, ARI"],
+    ...(D.labor ? [[fmt(D.labor.summary.agreement_no_federal.V_Cramer, 2), "связь с рынком труда, V Крамера"]] : [])
   ].map(([v, l]) => `<span><b>${v}</b>${l}</span>`).join("");
 
   // ---------- карта
@@ -557,7 +613,7 @@ const DATA = /*__DATA__*/null;
       <div class="bar"><span>${LABEL[r.k]}</span>
         <span class="track"><i style="left:0;width:${Math.min(100, (r.v / r.max) * 100)}%"></i><b style="left:${Math.min(100, (r.n / r.max) * 100)}%"></b></span>
         <span class="v">${pct(r.v)}</span></div>`).join("")}</div>
-      <p class="note">Доли в безналичных расходах жителя; черта — медиана по МО.</p>`;
+      <p class="note">Доли в безналичных расходах; черта — медиана по МО.</p>`;
   }
   function select(id) {
     selected = id;
@@ -569,6 +625,7 @@ const DATA = /*__DATA__*/null;
     skySelect(i);
     const lvl = D.mo.f[i][6];
     const fca = (t.fca[0] || {}).description || "";
+    document.getElementById("card").scrollTop = 0;
     document.getElementById("card").innerHTML = `
       <div><div class="eyebrow">${D.mo.region[i]}</div><h3>${D.mo.full[i]}</h3></div>
       <div><span class="chip"><span class="sw" style="background:${typeColor(t.id)};color:${typeColor(t.id)}"></span>${t.name}</span></div>
@@ -593,7 +650,7 @@ const DATA = /*__DATA__*/null;
     const cols = `grid-template-columns:repeat(${w.length},1fr)`;
     return `<div style="display:grid;gap:4px"><div class="strip" style="${cols}">${w.map((q) => `<div title="${types.has(q) ? types.get(q).name : "другая группа"}" style="background:${types.has(q) ? typeColor(q) : "var(--rule)"}"></div>`).join("")}</div>
       <div class="strip-l" style="${cols}">${lab.map((l) => `<span>${l}</span>`).join("")}</div>
-      <div class="note">Тип в скользящих окнах по 12 месяцев: признаки и связи пересчитаны в каждом окне, подпись — конец окна. Дополнительный анализ; основной тип — по 24 месяцам.</div></div>`;
+      <div class="note">Тип в скользящих 12-месячных окнах, подпись — конец окна (дополнительный анализ).</div></div>`;
   }
   function analogs(i) {
     if (!D.mo.an || !D.meta.analogs) return "";
@@ -610,9 +667,9 @@ const DATA = /*__DATA__*/null;
     const same = own ? D.mo.an[i].filter((j) => D.mo.lt[j] === D.mo.lt[i]).length : null;
     return `<div style="display:grid;gap:8px;border-top:1px solid var(--rule);padding-top:12px">
       <div class="eyebrow">Похожие МО</div>
-      <div class="note">Правило задано заранее: 7 ближайших МО того же типа по 12 признакам потребления (то же стандартизованное пространство, что в расчёте типов).${diff ? ` Чем это МО отличается от своих аналогов: ${diff}.` : ""}</div>
+      <div class="note">Семь ближайших МО того же типа по 12 признакам потребления.${diff ? ` От аналогов отличается: ${diff}.` : ""}</div>
       <div class="an-list">${rows}</div>
-      <div class="note">${own ? `Тот же тип рынка труда у ${same} из 7 аналогов. ` : ""}Различия с аналогами помогают сформулировать гипотезы о занятости, месте работы, доходах, ценах и охвате платежей; карточка не устанавливает причину, а аналоги — не контрольная группа. Для МО с надёжностью типа ниже 60% подбор менее определённый.</div></div>`;
+      <div class="note">${own ? `Тот же рынок труда у ${same} из 7 аналогов. ` : ""}Сравнение подсказывает гипотезы — о занятости, доходах, ценах, — но не устанавливает причину.</div></div>`;
   }
   const MEDRATIO = LB ? d3.median(D.mo.id.map((_, i) => (D.mo.fund[i] && D.mo.spend[i] ? D.mo.spend[i] / D.mo.fund[i] : null)).filter((v) => v != null)) : null;
   function laborCard(i) {
@@ -646,12 +703,13 @@ const DATA = /*__DATA__*/null;
   D.types.forEach((t) => {
     const c = tw.append("article").attr("class", "tcard").attr("style", `--c:${typeColor(t.id)}`);
     c.append("h3").html(`<span class="sw" style="background:${typeColor(t.id)};color:${typeColor(t.id)}"></span><span>${t.name}</span>`);
-    c.append("div").attr("class", "stats").html(
-      `<span><b>${t.n}</b> МО</span><span><b>${t.regions}</b> регионов</span>` +
-      (t.population ? `<span><b>${fmt(t.population / 1e6, 1)} млн</b> жителей</span>` : "") +
-      (t.urban != null ? `<span><b>${pct(t.urban)}</b> горожан (медиана)</span>` : `<span><b>${pct(t.city)}</b> городских округов</span>`) +
-      `<span>доступность <b>${fmt(t.ma, 0)}</b></span>` +
-      (t.jaccard != null ? `<span>устойчивость <b>${fmt(t.jaccard, 2)}</b> <span class="pill ${t.jaccard >= 0.75 ? "ok" : "no"}">${t.jaccard >= 0.75 ? "устойчивый" : t.jaccard >= 0.5 ? "сомнительный" : "неустойчивый"}</span></span>` : ""));
+    const st = t.jaccard == null ? null : t.jaccard >= 0.75 ? ["ok", "устойчивый"] : t.jaccard >= 0.5 ? ["mid", "сомнительный"] : ["no", "неустойчивый"];
+    c.append("dl").attr("class", "tstats").html(
+      `<div><dt>МО</dt><dd>${t.n}</dd></div><div><dt>регионов</dt><dd>${t.regions}</dd></div>` +
+      (t.population ? `<div><dt>жителей</dt><dd>${fmt(t.population / 1e6, 1)} млн</dd></div>` : "") +
+      (t.urban != null ? `<div><dt>горожан, медиана</dt><dd>${fmt(t.urban * 100, 0)}%</dd></div>` : `<div><dt>городских округов</dt><dd>${fmt(t.city * 100, 0)}%</dd></div>`) +
+      `<div><dt>доступность рынков</dt><dd>${fmt(t.ma, 0)}</dd></div>` +
+      (st ? `<div><dt>устойчивость</dt><dd>${fmt(t.jaccard, 2)} <span class="pill ${st[0]}">${st[1]}</span></dd></div>` : ""));
     const p = t.profile;
     c.append("div").attr("class", "bars").html(SHARE_KEYS.concat(["level_total"]).map((k) => {
       if (k === "level_total") {
@@ -660,20 +718,23 @@ const DATA = /*__DATA__*/null;
       }
       return `<div class="bar"><span>${LABEL[k]}</span><span class="track"><i style="left:0;width:${Math.min(100, p[k] / 0.6 * 100)}%"></i><b style="left:${Math.min(100, D.national[k] / 0.6 * 100)}%"></b></span><span class="v">${pct(p[k])}</span></div>`;
     }).join(""));
-    if (t.fca.length) c.append("ul").html(t.fca.map((f) => `<li>${f.description} <span class="num">· точн. ${fmt(f.precision, 2)} · покр. ${fmt(f.coverage, 2)}</span></li>`).join(""));
+    if (t.fca.length) c.append("ul").attr("class", "fca").html(t.fca.map((f) => `<li><span>${f.description}</span><small>точность ${fmt(f.precision * 100, 0)}%, покрытие ${fmt(f.coverage * 100, 0)}%</small></li>`).join(""));
   });
 
   // ---------- глава 2: потребление против рынка труда
   if (LB) {
     const S = LB.summary, A = S.agreement_no_federal;
     const lisaC = S.lisa_counts || {};
-    document.getElementById("labor-text").textContent =
-      `Типология рынка труда построена без признаков и мультиплекса потребления (общая только дорожная сеть), той же процедурой выбора (шесть индексов, Борда, устойчивость), по зарплате, числу работников, отраслевой структуре и демографии ` +
-      `(${S.labor_K} типов, ${S.labor_n.toLocaleString("ru-RU")} МО). Связь двух типологий заметная, но далёкая от совпадения: ` +
-      `V Крамера ${fmt(A.V_Cramer, 2)}, AMI ${fmt(A.AMI, 2)} (без городов федерального значения). ` +
-      `Регрессия уровня расходов на признаки рынка труда даёт R² = ${fmt(S.labor_model_R2, 2)}; остаток образует ` +
-      `пространственные скопления (локальный I Морана, ${(S.lisa_perms_total || 0).toLocaleString("ru-RU")} перестановок, поправка Бенджамини–Хохберга): ${lisaC.HH || 0} МО тратят больше ожидаемого вместе с соседями, ${lisaC.LL || 0} — меньше.` +
-      (S.lisa_counts_by ? ` С более строгой поправкой Бенджамини–Иекутиели — ${S.lisa_counts_by.HH || 0} и ${S.lisa_counts_by.LL || 0}.` : "");
+    const kpi = (v, l) => `<div class="kpi"><b>${v}</b><span>${l}</span></div>`;
+    document.getElementById("labor-kpis").innerHTML =
+      kpi(fmt(A.V_Cramer, 2), "V Крамера: две типологии связаны, но далеки от совпадения") +
+      kpi(fmt(S.labor_model_R2, 2), "R²: столько различий в уровне расходов объясняют признаки рынка труда") +
+      kpi(`${lisaC.HH || 0} / ${lisaC.LL || 0}`, "МО в скоплениях «тратят больше» и «тратят меньше», чем объясняет рынок труда");
+    document.getElementById("labor-more").innerHTML = `<ul class="points">
+      <li>Признаки: зарплата, работники на жителя, отраслевая структура занятости, возрастная структура и миграция (Росстат). Признаков потребления нет; общая с типологией потребления только дорожная сеть.</li>
+      <li>Процедура та же, что для потребления: шесть индексов качества, агрегирование рангов, проверка устойчивости. Итог — ${S.labor_K} типов, ${S.labor_n.toLocaleString("ru-RU")} МО.</li>
+      <li>Согласие двух типологий без городов федерального значения: V Крамера ${fmt(A.V_Cramer, 2)}, AMI ${fmt(A.AMI, 2)}.</li>
+      <li>Скопления — локальный I Морана для остатка модели расходов, ${(S.lisa_perms_total || 0).toLocaleString("ru-RU")} перестановок, поправка Бенджамини–Хохберга${S.lisa_counts_by ? `; с более строгой поправкой Бенджамини–Иекутиели остаются ${S.lisa_counts_by.HH || 0} и ${S.lisa_counts_by.LL || 0} МО` : ""}.</li></ul>`;
     const cr = LB.cross;
     const hcol = (v) => d3.interpolateRgb(css("--sheet"), css("--accent"))(Math.min(1, v / 80));
     document.getElementById("cross").innerHTML = `<tr><th>Тип потребления</th>${cr.cols.map((c) => `<th title="${ltypes.get(c).name}"><span class="sw" style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;background:${laborColor(c)}"></span>${ltypes.get(c).name}</th>`).join("")}</tr>` +
@@ -686,13 +747,16 @@ const DATA = /*__DATA__*/null;
         <span class="track" style="background:transparent"><i style="background:${col};left:${d.coef < 0 ? 50 - w : 50}%;width:${w}%"></i><b style="left:50%"></b></span>
         <span class="v">${d.coef > 0 ? "+" : ""}${fmt(d.coef, 2)}</span></div>`; }).join("");
     document.getElementById("gap-note").textContent =
-      `Регрессия разрыва «безналичные расходы жителя ÷ фонд оплаты труда на жителя» (логарифм) на характеристики МО, R² = ${fmt(S.gap_model_R2, 2)}, ` +
-      `${S.gap_model_n.toLocaleString("ru-RU")} МО без городов федерального значения. Стандартизованные коэффициенты; ошибки кластеризованы по регионам; бледные — незначимы (p ≥ 0,05); ` +
-      `для бинарных признаков — разница в стандартных отклонениях разрыва.` +
-      (S.gap_decomposition ? ` Разложение на числитель и знаменатель: эти связи идут в основном через учтённый фонд оплаты, а не через расходы; при контроле фонда связь расходов с долей O–Q статистически неотличима от нуля (p = ${fmt(S.gap_decomposition.oq_p_given_logF, 2)}). Показатель описывает расхождение двух статистик, а не уровень расходов или благосостояния.` : "");
+      `Чем длиннее полоса, тем сильнее связь; вправо — расходы выше относительно фонда оплаты, бледные — незначимые. ` +
+      (S.gap_decomposition ? `Связи идут в основном через фонд оплаты, а не через расходы.` : "");
+    document.getElementById("gap-more").innerHTML = `<ul class="points">
+      <li>Зависимая переменная — логарифм отношения безналичных расходов жителя к фонду оплаты труда на жителя; ${S.gap_model_n.toLocaleString("ru-RU")} МО без городов федерального значения, R² = ${fmt(S.gap_model_R2, 2)}.</li>
+      <li>Коэффициенты стандартизованы; для бинарных признаков (Север, городской округ) — разница между группами в стандартных отклонениях. Ошибки кластеризованы по регионам.</li>
+      ${S.gap_decomposition ? `<li>Разложение на числитель и знаменатель: при контроле фонда связь расходов с долей занятых в госсекторе статистически неотличима от нуля (p = ${fmt(S.gap_decomposition.oq_p_given_logF, 2)}).</li>` : ""}
+      <li>Отношение сопоставляет разные совокупности, поэтому это мера расхождения двух статистик, а не уровня расходов или благосостояния. Связи — не причинные эффекты.</li></ul>`;
     const nAll = d3.sum(LB.types, (t) => t.n);
     document.getElementById("cross-n").textContent =
-      `МО без городов федерального значения (N = ${S.agreement_no_federal.n.toLocaleString("ru-RU")}) — та же выборка, что у V Крамера и AMI.`;
+      `Выборка — ${S.agreement_no_federal.n.toLocaleString("ru-RU")} МО без городов федерального значения.`;
     const avgSec = {};
     Object.keys(LB.types[0].sectors).forEach((k) => { avgSec[k] = d3.sum(LB.types, (t) => t.sectors[k] * t.n) / nAll; });
     // отличительный сектор: среди занимающих ≥ 10% занятых — с наибольшим превышением средней доли
@@ -758,15 +822,22 @@ const DATA = /*__DATA__*/null;
   fl.append("text").attr("x", x1 + 4).attr("y", 14).text("2024");
   const stay = d3.sum(tr.rows.map((r, i) => (tr.cols.indexOf(r) >= 0 ? tr.values[i][tr.cols.indexOf(r)] : 0)));
   const tc = d3.rollup(D.mo.traj, (v) => v.length, (d) => d);
-  document.getElementById("dyn-text").textContent =
-    `Ретроспективное присвоение: каждый квартал МО относится к ближайшему из ${nTypes} фиксированных типов по признакам квартала и связям в сети (сеть и прототипы — за весь период). ` +
-    `${pct(stay / tot)} МО сохранили годовой тип в 2024 г.; у ${tc.get("устойчивый сдвиг") || 0} МО тип сменился и закрепился, у ${tc.get("колебания") || 0} — колеблется на границе типов.` +
-    (D.meta.summary.trajectory_counts_features_only ? ` Сетевой член постоянен во времени и сглаживает переходы: только по признакам кварталов стабильных МО ${pct((D.meta.summary.trajectory_counts_features_only["стабильный"] || 0) / D.meta.n)}.` : "") +
-    (D.meta.windows ? ` Дополнительно типы построены заново в ${D.meta.windows.names.length} скользящих окнах по 12 месяцев, где пересчитываются и признаки, и связи: метку во всех окнах не меняют ${pct(D.meta.windows.summary.same_type_all_windows)} МО; ядро (Москва, растущие города) устойчиво, а смены метки чаще у МО с низкой надёжностью: их делают ${pct(D.meta.windows.summary.share_changing_among_low_reliability)} МО с надёжностью типа ниже 60% и ${pct(D.meta.windows.summary.share_changing_among_high_reliability)} остальных.` +
-      (D.meta.windows.sensitivity ? ` При других seed доля МО с неизменной меткой — ${pct(D.meta.windows.sensitivity.base_stable_min)}–${pct(D.meta.windows.sensitivity.base_stable_max)}, без полугодовых признаков, чувствительных к местной сезонности, — от ${pct(D.meta.windows.sensitivity.stable_min)}; преимущество сети по устойчивости во времени не подтверждается.` : "") +
-      ` Кандидатов на переход 2023 → 2024 по объявленному правилу — ${D.meta.windows.summary.persistent_transitions} МО; список чувствителен к seed и составу признаков, экономические события независимо не установлены. Вторая полоса в карточке МО (под квартальной) показывает тип в каждом окне.` : "");
-  document.getElementById("traj").innerHTML = `<table><tr><th>Траектория</th><th>МО</th><th>Доля</th></tr>${
-    ["стабильный", "устойчивый сдвиг", "колебания"].map((k) => `<tr><td class="lbl"><span class="sw" style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:${css(TRAJ[k])}"></span>${k}</td><td>${tc.get(k) || 0}</td><td>${pct((tc.get(k) || 0) / D.meta.n)}</td></tr>`).join("")}</table>`;
+  const share = (k) => (tc.get(k) || 0) / D.meta.n;
+  document.getElementById("dyn-lead").textContent =
+    `Каждый квартал МО относится к ближайшему из ${nTypes} типов. Большинство территорий держит свой тип; меняются в основном пограничные МО.`;
+  document.getElementById("dyn-kpis").innerHTML = [
+    [pct(share("стабильный")), "МО держат один тип все 8 кварталов"],
+    [pct(stay / tot), "МО сохранили годовой тип в 2024 г."],
+    [(tc.get("устойчивый сдвиг") || 0).toLocaleString("ru-RU"), "МО сменили тип один раз, и новый тип закрепился"],
+    [(tc.get("колебания") || 0).toLocaleString("ru-RU"), "МО колеблются на границе типов"]
+  ].map(([v, l]) => `<div class="kpi"><b>${v}</b><span>${l}</span></div>`).join("");
+  const WS = D.meta.windows;
+  document.getElementById("dyn-more").innerHTML = `<ul class="points">
+    <li>Квартальные типы присваиваются при постоянной сети и прототипах за весь период; постоянная сеть сглаживает переходы${D.meta.summary.trajectory_counts_features_only ? ` (только по признакам кварталов стабильных МО ${pct((D.meta.summary.trajectory_counts_features_only["стабильный"] || 0) / D.meta.n)})` : ""}.</li>
+    ${WS ? `<li>Проверка: типы построены заново в ${WS.names.length} скользящих окнах по 12 месяцев, где пересчитываются и признаки, и связи. Метку во всех окнах не меняют ${pct(WS.summary.same_type_all_windows)} МО; ядро — Москва и растущие города.</li>
+    <li>Смены метки чаще у МО с низкой надёжностью типа: ${pct(WS.summary.share_changing_among_low_reliability)} против ${pct(WS.summary.share_changing_among_high_reliability)} у остальных.</li>
+    ${WS.sensitivity ? `<li>При других seed доля МО с неизменной меткой — ${pct(WS.sensitivity.base_stable_min)}–${pct(WS.sensitivity.base_stable_max)}, без полугодовых признаков — от ${pct(WS.sensitivity.stable_min)}. Преимущество сети по устойчивости во времени не подтверждается.</li>` : ""}
+    <li>${WS.summary.persistent_transitions} МО — кандидаты на переход 2023 → 2024 по объявленному правилу; список чувствителен к seed и составу признаков. Тип в каждом окне — вторая полоса в карточке МО.</li>` : ""}</ul>`;
 
   // ---------- глава 3: методы
   const MC = { kefrin: "--t0", leiden: "--t2", spectral: "--t4", spectral_joint: "--t6", kmeans: "--t1", gmm: "--t5", ward: "--t8", pattern: "--t3" };
@@ -786,7 +857,7 @@ const DATA = /*__DATA__*/null;
     .append("title").text((d) => `${MN[d.method]}${d.network ? " · " + netName(d.network) : ""} · K=${d.K}\nSW ${fmt(d.SW, 3)} · MQ ${fmt(d.MQ, 3)} · место по Борда ${d.borda_place ?? "—"}`);
   document.getElementById("pareto-legend").innerHTML = Object.entries(MN).map(([k, v]) =>
     `<span class="item"><span class="sw" style="background:${css(MC[k])};border-radius:50%"></span>${v}</span>`).join("");
-  document.getElementById("pareto-note").textContent = "Каждая точка — вариант разбиения. Чисто признаковые методы уходят вправо, чисто сетевые — вверх; KEFRiN занимает середину. Обведён итоговый вариант.";
+  document.getElementById("pareto-note").textContent = "Каждая точка — вариант разбиения. Методы по признакам уходят вправо, сетевые — вверх, KEFRiN — посередине. Итог обведён.";
   const top = D.methods.filter((d) => d.borda_place != null).sort((a, b) => a.borda_place - b.borda_place).slice(0, 12);
   document.getElementById("top").innerHTML = `<tr><th>Вариант</th><th>K</th><th>Борда</th><th>Коупленд</th><th>ARI</th></tr>` + top.map((d) =>
     `<tr class="${d.id === D.meta.chosen ? "chosen" : ""}"><td class="lbl">${MN[d.method]}${d.network ? " · " + netName(d.network) : ""}${d.id.includes("|xi") ? " · ξ×" + d.id.split("|xi")[1].split("|")[0] : ""}${d.id.includes("cosine") ? " · cos" : d.id.includes("euclidean") ? " · евкл." : ""}</td><td>${d.K}</td><td>${d.borda_place}</td><td>${d.copeland_place}</td><td>${d.ARI_mean == null ? "—" : fmt(d.ARI_mean, 2) + (d.ARI_mean >= 0.6 ? ' <span class="pill ok">устойчив</span>' : ' <span class="pill no">ниже порога</span>')}</td></tr>`).join("");
@@ -809,10 +880,15 @@ const DATA = /*__DATA__*/null;
   const blob = (f) => (repo ? `${repo}/blob/main/${f}` : null);
   const lnk = (f, t) => (repo ? `<a href="${blob(f)}">${t}</a>` : `${t} (<span class="num">${f}</span>)`);
   document.getElementById("foot").innerHTML = `
-    <div><b>Потребление против рынка труда: типы локальных экономик муниципалитетов.</b> Конкурс СберИндекса, направление «Кластеризация». Версия результатов: <span class="num">${PUB.results_version || "—"}</span>.</div>
-    <div>${repo ? `Код, конфигурация и результаты: <a href="${repo}">${repo.replace("https://", "")}</a>. ` : "Код, конфигурация и результаты — в репозитории проекта. "}Краткое резюме: ${lnk("reports/summary.md", "summary.md")}; полный методологический отчёт: ${lnk("reports/report.md", "report.md")}; проверка воспроизводимости с нуля: ${lnk("reports/cold_start_check.md", "cold_start_check.md")}.</div>
-    <div>Данные: СберИндекс, архив конкурса (CC BY-SA 4.0) — безналичные расходы 2023–2024 гг., расстояния между МО, индекс доступности рынков; справочник и границы МО СберИндекса; муниципальная статистика Росстата в обработке «Если быть точным» (CC BY 4.0).</div>
-    <div>Итоговый вариант: <span class="num">${D.meta.chosen}</span>. Лицензии: код — MIT, производные данные — CC BY-SA 4.0; встроенные библиотеки D3 (ISC) и TopoJSON (BSD-3-Clause). Код и тексты подготовлены с помощью ИИ-ассистента.</div>`;
+    <div class="f-title">Типы локальных экономик муниципалитетов: безналичное потребление и рынок труда</div>
+    <div>Конкурс СберИндекса, направление «Кластеризация». Версия результатов: <span class="num">${PUB.results_version || "—"}</span>.
+      ${repo ? `Код, конфигурация и результаты: <a href="${repo}">${repo.replace("https://", "")}</a>.` : "Код, конфигурация и результаты — в репозитории проекта."}
+      Краткое резюме — ${lnk("reports/summary.md", "summary.md")}, методологический отчёт — ${lnk("reports/report.md", "report.md")}, проверка воспроизводимости — ${lnk("reports/cold_start_check.md", "cold_start_check.md")}.</div>
+    <div>Данные: архив конкурса СберИндекса (CC BY-SA 4.0) — безналичные расходы 2023–2024 гг., расстояния между МО, индекс доступности рынков; справочник и границы МО СберИндекса; муниципальная статистика Росстата в обработке «Если быть точным» (CC BY 4.0). Лицензии: код — MIT, производные данные — CC BY-SA 4.0; встроенные библиотеки D3 (ISC) и TopoJSON (BSD-3-Clause).</div>
+    <section class="ai" aria-labelledby="ai-h"><h3 id="ai-h">Заявление об использовании генеративного ИИ</h3>
+      <p>При подготовке работы использовался ИИ-ассистент Claude (Anthropic; модели семейства Claude, в том числе Claude Opus 5.5) в агентной среде с доступом к коду и данным проекта. Он применялся для написания и отладки кода конвейера, тестов и этой страницы; запуска расчётов по заданным правилам и проверки воспроизводимости; подготовки черновиков отчёта, резюме и текстов страницы; оформления ссылок на литературу (подборку источников предложил рецензент, библиографические данные сверены с записями издателей); сверки чисел в тексте с файлами результатов.</p>
+      <p>ИИ не создавал и не дополнял данные: все числа получены кодом из открытых источников и воспроизводятся командой <span class="num">python run_all.py</span>. Постановку задачи, решения по методологии и по замечаниям рецензентов, проверку результатов и выводы определял автор. Автор просмотрел и отредактировал материалы и несёт полную ответственность за содержание работы.</p>
+      <p>Ряд формулировок ограничений и интерпретаций в отчёте и резюме взят из рекомендаций независимого рецензента; переписка — в репозитории (<span class="num">reports/review/</span>).</p></section>`;
 
   // ---------- галактика муниципалитетов (герой)
   (function galaxy() {
@@ -988,20 +1064,20 @@ const DATA = /*__DATA__*/null;
         ctx.globalAlpha = 1; ctx.textAlign = "center";
         labels.forEach((L) => {
           const dim = ft != null && L.t.id !== ft;
-          ctx.font = `600 ${w < 640 ? 11 : 12}px "Golos Text", "Segoe UI", sans-serif`;
+          ctx.font = `700 ${w < 640 ? 11.5 : 12.5}px "PT Sans", "Segoe UI", sans-serif`;
           ctx.fillStyle = dim ? "rgba(181,193,233,0.35)" : "#eaf0ff";
           const words = L.t.name.split(" "), maxW = (w >= 720 ? w / 4 : w / 2) - 16, lines = [];
           let line = "";
           words.forEach((wd) => { const tst = line ? line + " " + wd : wd; if (ctx.measureText(tst).width > maxW && line) { lines.push(line); line = wd; } else line = tst; });
           lines.push(line);
           lines.forEach((ln, k) => ctx.fillText(ln, L.x, L.y + k * 14));
-          ctx.font = `400 ${w < 640 ? 10.5 : 11}px "Golos Text", "Segoe UI", sans-serif`;
+          ctx.font = `400 ${w < 640 ? 10.5 : 11}px "PT Sans", "Segoe UI", sans-serif`;
           ctx.fillStyle = dim ? "rgba(139,153,201,0.35)" : "#8b99c9";
           ctx.fillText(`${L.n} МО`, L.x, L.y + lines.length * 14);
         });
       }
       if (mode === "pca" && settled) {
-        ctx.globalAlpha = 1; ctx.fillStyle = "#8b99c9"; ctx.font = `400 11px "Golos Text", "Segoe UI", sans-serif`;
+        ctx.globalAlpha = 1; ctx.fillStyle = "#8b99c9"; ctx.font = `400 11px "PT Sans", "Segoe UI", sans-serif`;
         ctx.textAlign = "right"; ctx.fillText("выше уровень расходов →", w - 14, h - 10);
         ctx.textAlign = "left"; ctx.fillText("↑ сильнее летний пик", 14, h - 10);
       }

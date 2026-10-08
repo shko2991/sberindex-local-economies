@@ -1,6 +1,6 @@
 """Сборка страницы: данные из data/processed/landing_data.json встраиваются в шаблон.
 Получается один самодостаточный файл landing/index.html (данные и библиотеки встроены; шрифты
-Unbounded и Golos Text подгружаются из Google Fonts при наличии сети, без неё — системные) —
+PT Serif и PT Sans подгружаются из Google Fonts при наличии сети, без неё — системные) —
 его можно открыть локально, выложить на GitHub Pages или опубликовать как страницу.
 
   python landing/build.py
@@ -14,6 +14,9 @@ sys.path.insert(0, str(ROOT / "src"))
 from common import load_config, path  # noqa: E402
 
 
+LICENSES = {"d3.min.js": "LICENSE-d3.txt", "topojson.min.js": "LICENSE-topojson.txt"}
+
+
 def main():
     cfg = load_config()
     data = json.loads(path(cfg, "processed", "landing_data.json").read_text(encoding="utf-8"))
@@ -24,6 +27,8 @@ def main():
     for url, local in (("https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js", "d3.min.js"),
                        ("https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js", "topojson.min.js")):
         code = (ROOT / "landing" / "vendor" / local).read_text(encoding="utf-8").replace("</script", "<\\/script")
+        lic = (ROOT / "landing" / "vendor" / LICENSES[local]).read_text(encoding="utf-8").replace("*/", "* /")
+        code = f"/*! Полный текст лицензии встроенной библиотеки:\n{lic}\n*/\n" + code
         body = body.replace(f'<script src="{url}"></script>', f"<script>{code}</script>")
     (ROOT / "landing" / "index.html").write_text(body, encoding="utf-8")
     # для GitHub Pages — полноценный документ: <title> и <link> из начала шаблона переносятся в <head>
