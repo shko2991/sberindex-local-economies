@@ -1,141 +1,210 @@
 <title>Потребление и труд</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=PT+Sans:wght@400;700&family=PT+Mono&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
 <style>
-/* Макет: статистический ежегодник в цифре — большая карта-разворот, справа карточка МО,
-   ниже главы: типы, переходы, методы, сети. Шрифты ParaType (PT Serif/Sans/Mono),
-   созданные для публичных документов на кириллице. */
+/* Макет: ночное небо над страной. Герой — «галактика муниципалитетов»: 2 016 звёзд в географических
+   центрах МО (цвет — тип, яркость — надёжность), с перестройкой в галактики типов и карту сходства.
+   Ниже — атлас и главы на тёмно-синих панелях; неон — только для активного и выбранного.
+   Шрифты: Unbounded (заголовки), Golos Text (текст и цифры). Одна тёмная тема. */
 :root {
-  --paper: #f3f4f1;
-  --sheet: #fbfbf9;
-  --ink: #1d2433;
-  --ink-2: #4a5263;
-  --ink-3: #7b8292;
-  --rule: #d9dcd6;
-  --accent: #2b4c7e;
-  --accent-soft: #dfe6f1;
-  --absent: #e3e4df;
-  --hl: #111827;
-  --t0: #2f6690; --t1: #4f8a3c; --t2: #c8553d; --t3: #d9a03f;
-  --t4: #7a5ea8; --t5: #12857f; --t6: #9a6a44; --t7: #c06c94;
-  --t8: #5c677d; --t9: #a3a83b; --t10: #6d8fc7; --t11: #8c3b4a;
-  --good: #3f7d4e; --warn: #b7791f;
-  --l0: #8c6d31; --l1: #3b6e8f; --l2: #6a994e; --l3: #bc6c25; --l4: #5e548e; --l5: #a4133c;
-  --neg: #2f6690; --pos: #c8553d;
-  --serif: "PT Serif", Georgia, "Times New Roman", serif;
-  --sans: "PT Sans", "Segoe UI", Roboto, Arial, sans-serif;
-  --mono: "PT Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: dark;
+  --space: #060b26;
+  --paper: #0a1233;
+  --sheet: #0d1741;
+  --panel: rgba(13, 23, 65, 0.8);
+  --line: rgba(130, 180, 255, 0.16);
+  --rule: #26356e;
+  --ink: #eaf0ff;
+  --ink-2: #b5c1e9;
+  --ink-3: #8b99c9;
+  --accent: #6ff3ff;
+  --accent-soft: #14214f;
+  --neon-2: #ff62d4;
+  --glow: rgba(111, 243, 255, 0.45);
+  --absent: #141c47;
+  --hl: #ffffff;
+  --t0: #4fa3ff; --t1: #7fe08a; --t2: #ff7d5c; --t3: #ffcf5a;
+  --t4: #c18bff; --t5: #2ee6c8; --t6: #ff6fb7; --t7: #a9b9e6;
+  --t8: #8f9bc4; --t9: #c7d25a; --t10: #8fb6ff; --t11: #e0607a;
+  --good: #6ff3b0; --warn: #ffc163;
+  --l0: #e2b56c; --l1: #5fb0ff; --l2: #9fe37d; --l3: #ff9a52; --l4: #9488e8; --l5: #ff5c8a;
+  --neg: #3fcfff; --pos: #ff62d4;
+  --display: "Unbounded", "Arial Black", "Segoe UI", sans-serif;
+  --sans: "Golos Text", "Segoe UI", Roboto, Arial, sans-serif;
+  --serif: var(--sans);
+  --mono: var(--sans);
   --s-1: 0.8125rem; --s0: 0.9375rem; --s1: 1.0625rem; --s2: 1.375rem; --s3: 1.875rem; --s4: 2.75rem;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #12161e; --sheet: #181d27; --ink: #e8eaee; --ink-2: #b7bdc9; --ink-3: #868e9d;
-    --rule: #2b3240; --accent: #8fb0e3; --accent-soft: #23314a; --absent: #252b36; --hl: #f5f6f8;
-    --t0: #5b9bd0; --t1: #79b464; --t2: #e57a62; --t3: #e9b95c; --t4: #a68bd6; --t5: #3fb3ab;
-    --t6: #c39368; --t7: #df8fb5; --t8: #8f9bb3; --t9: #c4c95a; --t10: #93b3e8; --t11: #c46576;
-    --good: #6fb07f; --warn: #e0a84a; color-scheme: dark;
-    --l0: #c9a45c; --l1: #6fa6c9; --l2: #94c37a; --l3: #e39a5b; --l4: #9a90cf; --l5: #e0566f;
-    --neg: #6aa7da; --pos: #e57a62;
-  }
-}
-:root[data-theme="dark"] {
-  --paper: #12161e; --sheet: #181d27; --ink: #e8eaee; --ink-2: #b7bdc9; --ink-3: #868e9d;
-  --rule: #2b3240; --accent: #8fb0e3; --accent-soft: #23314a; --absent: #252b36; --hl: #f5f6f8;
-  --t0: #5b9bd0; --t1: #79b464; --t2: #e57a62; --t3: #e9b95c; --t4: #a68bd6; --t5: #3fb3ab;
-  --t6: #c39368; --t7: #df8fb5; --t8: #8f9bb3; --t9: #c4c95a; --t10: #93b3e8; --t11: #c46576;
-  --good: #6fb07f; --warn: #e0a84a; color-scheme: dark;
-  --l0: #c9a45c; --l1: #6fa6c9; --l2: #94c37a; --l3: #e39a5b; --l4: #9a90cf; --l5: #e0566f;
-  --neg: #6aa7da; --pos: #e57a62;
+  --nav-h: 52px;
 }
 * { box-sizing: border-box; }
-body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: var(--s0); line-height: 1.5; }
-.wrap { max-width: 1280px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 64px; display: grid; gap: 40px; }
-h1, h2, h3 { font-family: var(--serif); font-weight: 700; text-wrap: balance; margin: 0; line-height: 1.15; }
-h1 { font-size: var(--s4); letter-spacing: -0.01em; }
-h2 { font-size: var(--s3); }
-h3 { font-size: var(--s1); }
-p { margin: 0; max-width: 68ch; }
-.eyebrow { font-family: var(--mono); font-size: var(--s-1); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
-.lede { font-family: var(--serif); font-size: var(--s1); color: var(--ink-2); }
-.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-header.top { display: grid; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--rule); }
-.facts { display: flex; flex-wrap: wrap; gap: 8px 28px; color: var(--ink-2); font-size: var(--s-1); }
-.facts b { font-family: var(--mono); color: var(--ink); font-weight: 400; font-size: var(--s0); margin-right: 4px; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 12px); }
+body { background: var(--space); color: var(--ink); font-family: var(--sans); font-size: var(--s0); line-height: 1.55;
+  background-image: radial-gradient(ellipse 70% 50% at 12% -8%, rgba(92, 70, 220, 0.32), transparent 70%),
+    radial-gradient(ellipse 55% 40% at 92% 6%, rgba(0, 170, 230, 0.2), transparent 70%),
+    radial-gradient(ellipse 80% 50% at 50% 115%, rgba(170, 50, 190, 0.16), transparent 70%);
+  background-attachment: fixed; }
+/* неподвижное звёздное небо за всей страницей */
+body::before, body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1; }
+body::before { background-image:
+    radial-gradient(1px 1px at 23px 41px, rgba(255,255,255,.75), transparent 60%),
+    radial-gradient(1px 1px at 157px 97px, rgba(200,225,255,.6), transparent 60%),
+    radial-gradient(1.5px 1.5px at 241px 203px, rgba(255,255,255,.8), transparent 60%),
+    radial-gradient(1px 1px at 91px 263px, rgba(180,210,255,.55), transparent 60%),
+    radial-gradient(1px 1px at 301px 31px, rgba(255,230,250,.6), transparent 60%);
+  background-size: 331px 307px; opacity: 0.55; }
+body::after { background-image:
+    radial-gradient(1px 1px at 61px 151px, rgba(255,255,255,.9), transparent 60%),
+    radial-gradient(1.5px 1.5px at 199px 47px, rgba(160,240,255,.8), transparent 60%),
+    radial-gradient(1px 1px at 127px 221px, rgba(255,255,255,.7), transparent 60%);
+  background-size: 263px 281px; opacity: 0.35; animation: twinkle 7s ease-in-out infinite alternate; }
+@keyframes twinkle { from { opacity: 0.15; } to { opacity: 0.5; } }
 
-/* карта и карточка */
-.atlas { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
-@media (max-width: 960px) { .atlas { grid-template-columns: minmax(0, 1fr); } }
-.mapbox { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; display: grid; gap: 0; min-width: 0; }
-.toolbar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--rule); }
-.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; max-width: 100%; }
-.seg button { font: inherit; font-size: var(--s-1); background: transparent; color: var(--ink-2); border: 0; padding: 6px 10px; cursor: pointer; }
-.seg button + button { border-left: 1px solid var(--rule); }
-.seg button[aria-pressed="true"] { background: var(--accent); color: var(--sheet); }
-.seg button:focus-visible, .chip:focus-visible, input:focus-visible, .zoom button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1280px; margin: 0 auto; padding-inline: 16px; padding-block: 0 64px; display: grid; gap: 48px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.15; }
+h1, h2 { font-family: var(--display); font-weight: 700; }
+h1 { font-size: clamp(2.1rem, 5.4vw, 4.2rem); letter-spacing: -0.02em; line-height: 1.02; color: #f6f9ff;
+  text-shadow: 0 0 18px rgba(111, 243, 255, 0.45), 0 0 46px rgba(111, 243, 255, 0.22); }
+h2 { font-size: clamp(1.45rem, 2.6vw, var(--s3)); letter-spacing: -0.01em; }
+h3 { font-family: var(--sans); font-weight: 600; font-size: var(--s1); }
+p { margin: 0; max-width: 70ch; }
+.eyebrow { font-size: var(--s-1); color: var(--ink-3); }
+.lede { font-size: var(--s1); color: var(--ink-2); max-width: 58ch; }
+.num { font-variant-numeric: tabular-nums; }
+a { color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* навигация */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(6, 11, 38, 0.78);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.nav-in { max-width: 1280px; margin: 0 auto; padding-inline: 16px; min-height: var(--nav-h); display: flex; align-items: center; gap: 8px 24px; }
+.brand { font-family: var(--display); font-weight: 700; font-size: 0.95rem; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.brand i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); margin-right: 8px; vertical-align: 1px; }
+.nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; min-width: 0; }
+.nav ul::-webkit-scrollbar { display: none; }
+.nav a.l { display: block; padding: 6px 10px; border-radius: 8px; color: var(--ink-2); text-decoration: none; font-size: var(--s-1); white-space: nowrap; }
+.nav a.l:hover { color: var(--ink); background: rgba(111, 243, 255, 0.07); }
+.nav a.l.on { color: var(--accent); text-shadow: 0 0 10px var(--glow); }
+
+/* герой */
+.hero { display: grid; gap: 22px; padding-top: 40px; }
+.hero-text { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px 48px; align-items: end; }
+@media (max-width: 900px) { .hero-text { grid-template-columns: minmax(0, 1fr); } }
+.hero-text .lead { display: grid; gap: 14px; }
+.kicker { font-size: var(--s-1); color: var(--accent); }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 26px; color: var(--ink-2); font-size: var(--s-1); }
+.facts b { display: block; font-family: var(--display); font-weight: 500; font-size: 1.35rem; color: var(--ink); line-height: 1.2; font-variant-numeric: tabular-nums; }
+.hero-text .facts span { max-width: 15em; }
+.galaxy { position: relative; border-radius: 20px; border: 1px solid var(--line); overflow: hidden; height: clamp(360px, 50vw, 610px);
+  background: radial-gradient(ellipse 60% 70% at 30% 45%, rgba(60, 80, 200, 0.22), transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 60%, rgba(150, 40, 170, 0.14), transparent 70%), #050a22;
+  box-shadow: 0 0 0 1px rgba(111, 243, 255, 0.05), 0 30px 80px -40px rgba(80, 120, 255, 0.45); }
+#sky { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: crosshair; touch-action: pan-y; }
+.g-top { position: absolute; left: 14px; top: 14px; right: 14px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: flex-start; pointer-events: none; }
+@media (max-width: 640px) {
+  .galaxy { display: flex; flex-direction: column; height: auto; }
+  .g-top { position: static; padding: 12px 12px 0; order: -1; }
+  #sky { position: relative; inset: auto; height: 440px; flex: none; }
+  .hero-text .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+  .facts b { font-size: 1.1rem; }
+  .hero { padding-top: 24px; }
+}
+.g-top > * { pointer-events: auto; }
+.g-cap { font-size: var(--s-1); color: var(--ink-2); max-width: 46ch; text-shadow: 0 1px 6px #050a22; }
+.g-legend { display: flex; flex-wrap: wrap; gap: 6px 8px; }
+.g-foot { display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between; align-items: baseline; font-size: var(--s-1); color: var(--ink-3); }
+.gtip { position: absolute; pointer-events: none; z-index: 3; background: rgba(8, 14, 46, 0.92); border: 1px solid rgba(111, 243, 255, 0.35);
+  box-shadow: 0 0 18px rgba(111, 243, 255, 0.18); color: var(--ink); font-size: var(--s-1); padding: 8px 10px; border-radius: 10px; max-width: 280px; }
+.gtip b { font-weight: 600; }
+
+/* переключатели и чипы */
+.seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: rgba(6, 11, 38, 0.7); max-width: 100%; }
+.seg button { font: inherit; font-size: var(--s-1); background: transparent; color: var(--ink-2); border: 0; padding: 6px 11px; border-radius: 9px; cursor: pointer; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: rgba(111, 243, 255, 0.14); color: var(--accent); box-shadow: inset 0 0 0 1px rgba(111, 243, 255, 0.45), 0 0 14px rgba(111, 243, 255, 0.18); }
+.chip { display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: var(--s-1); padding: 3px 10px 3px 8px; border-radius: 999px;
+  border: 1px solid var(--line); background: rgba(6, 11, 38, 0.6); color: var(--ink-2); }
+button.chip { cursor: pointer; }
+button.chip:hover, button.chip[aria-pressed="true"] { color: var(--ink); border-color: currentColor; }
+.chip .sw { width: 8px; height: 8px; border-radius: 50%; flex: none; box-shadow: 0 0 8px currentColor; }
+
+/* атлас */
+.atlas { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 20px; align-items: start; }
+@media (max-width: 980px) { .atlas { grid-template-columns: minmax(0, 1fr); } }
+.sec-head { display: grid; gap: 8px; }
+.mapbox { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; display: grid; min-width: 0; overflow: hidden; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); }
 .search { position: relative; flex: 1 1 200px; min-width: 0; }
-.search input { width: 100%; font: inherit; font-size: var(--s-1); padding: 6px 10px; border: 1px solid var(--rule); border-radius: 3px; background: var(--paper); color: var(--ink); }
+.search input { width: 100%; font: inherit; font-size: var(--s-1); padding: 7px 12px; border: 1px solid var(--line); border-radius: 10px; background: rgba(6, 11, 38, 0.8); color: var(--ink); }
+.search input::placeholder { color: var(--ink-3); }
 .qctl { display: flex; gap: 8px; align-items: center; font-size: var(--s-1); color: var(--ink-2); }
 .qctl input { width: 160px; accent-color: var(--accent); }
-.svgwrap { position: relative; }
+.svgwrap { position: relative; background: radial-gradient(ellipse 70% 80% at 40% 40%, rgba(50, 70, 180, 0.18), transparent 70%); }
 #map { width: 100%; height: auto; display: block; aspect-ratio: 16 / 9.2; max-width: 100%; touch-action: none; }
-#map path.mo { stroke: var(--sheet); stroke-width: 0.25; vector-effect: non-scaling-stroke; cursor: pointer; }
+#map path.mo { stroke: var(--space); stroke-width: 0.25; vector-effect: non-scaling-stroke; cursor: pointer; }
 #map path.mo:hover { stroke: var(--hl); stroke-width: 1.2; }
-#map path.sel { stroke: var(--hl); stroke-width: 2; }
+#map path.sel { stroke: var(--accent); stroke-width: 2; filter: drop-shadow(0 0 3px var(--accent)); }
+#map circle.pulse { fill: none; stroke: var(--accent); pointer-events: none; vector-effect: non-scaling-stroke; stroke-width: 1.5; transform-box: fill-box; transform-origin: center; animation: pulse 1.8s ease-out infinite; }
+@keyframes pulse { from { transform: scale(0.4); opacity: 1; } to { transform: scale(2.6); opacity: 0; } }
 .zoom { position: absolute; right: 10px; top: 10px; display: grid; gap: 4px; }
 @media (max-width: 600px) { .zoom { position: static; display: flex; gap: 6px; padding: 8px 14px 0; } }
-.zoom button { font: inherit; font-size: var(--s-1); background: var(--sheet); color: var(--ink); border: 1px solid var(--rule); border-radius: 3px; padding: 4px 8px; cursor: pointer; }
-.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--paper); font-size: var(--s-1); padding: 6px 8px; border-radius: 3px; max-width: 260px; }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 14px; border-top: 1px solid var(--rule); font-size: var(--s-1); color: var(--ink-2); }
-.legend .sw { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.zoom button { font: inherit; font-size: var(--s-1); background: rgba(6, 11, 38, 0.8); color: var(--ink-2); border: 1px solid var(--line); border-radius: 8px; padding: 4px 9px; cursor: pointer; }
+.zoom button:hover { color: var(--accent); border-color: rgba(111, 243, 255, 0.45); }
+.tip { position: absolute; pointer-events: none; background: rgba(8, 14, 46, 0.94); color: var(--ink); border: 1px solid rgba(111, 243, 255, 0.35); font-size: var(--s-1); padding: 7px 9px; border-radius: 10px; max-width: 260px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 14px; border-top: 1px solid var(--line); font-size: var(--s-1); color: var(--ink-2); }
+.legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
 .legend .item { cursor: pointer; }
 .legend .item.dim { opacity: 0.35; }
-.ramp { height: 10px; width: 180px; border-radius: 2px; }
+.ramp { height: 10px; width: 180px; border-radius: 5px; }
 
-.card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 16px; display: grid; gap: 14px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
-@media (max-width: 960px) { .card { position: static; } }
+.card { background: var(--panel); border: 1px solid rgba(111, 243, 255, 0.28); border-radius: 16px; padding: 18px; display: grid; gap: 14px;
+  position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 12px); box-shadow: 0 0 30px -12px rgba(111, 243, 255, 0.35); }
+@media (max-width: 980px) { .card { position: static; } }
+.card h3 { font-family: var(--display); font-weight: 500; font-size: 1.15rem; line-height: 1.25; }
 .card .meta { color: var(--ink-3); font-size: var(--s-1); }
-.chip { display: inline-flex; align-items: center; gap: 6px; font-size: var(--s-1); padding: 2px 8px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); }
-.chip .sw { width: 9px; height: 9px; border-radius: 50%; }
-.strip { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
-#card a { color: var(--accent); }
+.card .facts b { font-family: var(--sans); font-weight: 600; font-size: var(--s0); display: inline; margin-right: 4px; }
+.strip { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
+.strip div { height: 16px; border-radius: 4px; }
+.strip-l { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; font-size: 0.6875rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .an-list { display: grid; gap: 6px; }
-.an-row { display: grid; gap: 1px; padding-bottom: 6px; border-bottom: 1px dotted var(--rule); font-size: var(--s-1); }
+.an-row { display: grid; gap: 1px; padding-bottom: 6px; border-bottom: 1px dashed var(--rule); font-size: var(--s-1); }
 .an-row .note b { color: var(--ink); font-weight: 600; }
-.strip div { height: 18px; border-radius: 2px; }
-.strip-l { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; font-family: var(--mono); font-size: 0.6875rem; color: var(--ink-3); }
-.bars { display: grid; gap: 6px; }
+.bars { display: grid; gap: 7px; }
 .bar { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) 4.2em; gap: 8px; align-items: center; font-size: var(--s-1); }
-.bar .track { position: relative; height: 8px; background: var(--absent); border-radius: 2px; }
-.bar .track i { position: absolute; top: 0; bottom: 0; background: var(--accent); border-radius: 2px; }
-.bar .track b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); }
-.bar .v { text-align: right; font-family: var(--mono); color: var(--ink-2); }
+.bar .track { position: relative; height: 6px; background: var(--absent); border-radius: 3px; }
+.bar .track i { position: absolute; top: 0; bottom: 0; background: var(--accent); border-radius: 3px; box-shadow: 0 0 8px rgba(111, 243, 255, 0.35); }
+.bar .track b { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--ink); border-radius: 1px; }
+.bar .v { text-align: right; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .note { font-size: var(--s-1); color: var(--ink-3); }
-.desc { font-family: var(--serif); font-size: var(--s0); color: var(--ink-2); }
+.desc { font-size: var(--s0); color: var(--ink-2); }
 
 /* главы */
-section.ch { display: grid; gap: 18px; padding-top: 24px; border-top: 1px solid var(--rule); }
-.ch-head { display: grid; gap: 8px; }
+section.ch { display: grid; gap: 20px; }
+.ch-head { display: grid; gap: 10px; }
+.ch-n { font-size: var(--s-1); color: var(--accent); }
 .types { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
-.tcard { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
-.tcard h3 { display: flex; gap: 8px; align-items: baseline; }
-.tcard h3 .sw { width: 12px; height: 12px; border-radius: 2px; flex: none; transform: translateY(1px); }
+.tcard { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 10px; align-content: start; min-width: 0;
+  transition: border-color 0.25s, box-shadow 0.25s; }
+.tcard:hover { border-color: color-mix(in srgb, var(--c, var(--accent)) 60%, transparent); box-shadow: 0 0 26px -10px var(--c, var(--accent)); }
+.tcard h3 { display: flex; gap: 9px; align-items: baseline; }
+.tcard h3 .sw { width: 10px; height: 10px; border-radius: 50%; flex: none; transform: translateY(-1px); box-shadow: 0 0 10px currentColor; }
 .tcard .stats { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: var(--s-1); color: var(--ink-3); }
-.tcard .stats b { font-family: var(--mono); font-weight: 400; color: var(--ink); }
+.tcard .stats b { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
 .tcard ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; font-size: var(--s-1); color: var(--ink-2); }
 .tcard ul .num { color: var(--ink-3); }
 .two { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px; align-items: start; }
 @media (max-width: 860px) { .two { grid-template-columns: minmax(0, 1fr); } }
-.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 14px; min-width: 0; display: grid; gap: 10px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; min-width: 0; display: grid; gap: 10px; }
 .scroll-x { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: var(--s-1); }
-th, td { padding: 6px 8px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
+th, td { padding: 7px 8px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; }
-th { font-weight: 700; color: var(--ink-2); font-family: var(--sans); }
-td { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-tr.chosen td { background: var(--accent-soft); }
-td.lbl { font-family: var(--sans); }
-.pill { display: inline-block; font-family: var(--sans); font-size: 0.75rem; padding: 0 6px; border-radius: 999px; border: 1px solid currentColor; }
+th { font-weight: 600; color: var(--ink-2); }
+td { font-variant-numeric: tabular-nums; }
+tr.chosen td { background: rgba(111, 243, 255, 0.1); }
+tr.chosen td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
+td.lbl { font-variant-numeric: normal; }
+.pill { display: inline-block; font-size: 0.75rem; padding: 0 7px; border-radius: 999px; border: 1px solid currentColor; }
 .pill.ok { color: var(--good); } .pill.no { color: var(--warn); }
 svg text { fill: var(--ink-2); font-family: var(--sans); font-size: 11px; }
 svg .axis line, svg .axis path { stroke: var(--rule); }
@@ -145,24 +214,60 @@ table.cross th { white-space: normal; vertical-align: bottom; min-width: 7em; }
 .duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 700px) { .duo { grid-template-columns: minmax(0, 1fr); } }
 .duo-map { width: 100%; height: auto; aspect-ratio: 16 / 9.2; display: block; touch-action: none; }
-.duo-map path { stroke: var(--sheet); stroke-width: 0.2; vector-effect: non-scaling-stroke; }
-.duo-map path.hl { stroke: var(--hl); stroke-width: 1.5; }
+.duo-map path { stroke: var(--space); stroke-width: 0.2; vector-effect: non-scaling-stroke; }
+.duo-map path.hl { stroke: var(--accent); stroke-width: 1.5; }
+#flows path.fl { transition: stroke-opacity 0.2s; }
+#flows.focus path.fl { stroke-opacity: 0.08 !important; }
+#flows.focus path.fl.on { stroke-opacity: 0.9 !important; }
 .case dl { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: 2px 10px; margin: 0; font-size: var(--s-1); }
-.case dt { color: var(--ink-2); } .case dd { margin: 0; text-align: right; font-family: var(--mono); }
-.case .hd { color: var(--ink-3); font-family: var(--sans); }
-footer { color: var(--ink-3); font-size: var(--s-1); display: grid; gap: 6px; border-top: 1px solid var(--rule); padding-top: 16px; }
-footer a, .panel a, p a { color: var(--accent); }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+.case dt { color: var(--ink-2); } .case dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.case .hd { color: var(--ink-3); }
+footer { color: var(--ink-3); font-size: var(--s-1); display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 18px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, body::after { transition: none !important; animation: none !important; } }
 </style>
 
-<div class="wrap">
-  <header class="top">
-    <div class="eyebrow">Конкурс СберИндекса · кластеризация муниципалитетов</div>
-    <h1>Потребление и труд</h1>
-    <p class="lede" id="lede"></p>
-    <div class="facts" id="facts"></div>
+<nav class="nav" aria-label="Разделы">
+  <div class="nav-in">
+    <a class="brand" href="#page"><i></i>Потребление и труд</a>
+    <ul id="navl">
+      <li><a class="l" href="#galaxy">Галактика</a></li>
+      <li><a class="l" href="#atlas">Атлас</a></li>
+      <li><a class="l" href="#types-ch">Типы</a></li>
+      <li><a class="l" href="#labor-ch">Рынок труда</a></li>
+      <li><a class="l" href="#time-ch">Время</a></li>
+      <li><a class="l" href="#method-ch">Метод</a></li>
+      <li><a class="l" href="#net-ch">Сеть</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="wrap" id="page">
+  <header class="hero" id="galaxy">
+    <div class="hero-text">
+      <div class="lead">
+        <div class="kicker">Конкурс СберИндекса, направление «Кластеризация»</div>
+        <h1>Потребление и труд</h1>
+        <p class="lede" id="lede"></p>
+      </div>
+      <div class="facts" id="facts"></div>
+    </div>
+    <div class="galaxy">
+      <canvas id="sky" role="img" aria-label="Муниципалитеты как звёзды: цвет — тип потребления, яркость — надёжность типа"></canvas>
+      <div class="g-top">
+        <div class="seg" role="group" aria-label="Расположение звёзд" id="gmode"></div>
+        <p class="g-cap" id="gcap"></p>
+      </div>
+      <div class="gtip" id="gtip" hidden></div>
+    </div>
+    <div class="g-legend" id="glegend" role="group" aria-label="Типы потребления"></div>
+    <div class="g-foot"><span>Каждая звезда — муниципалитет. Цвет — тип потребления, яркость — надёжность типа. Наведите на звезду: линии ведут к семи похожим МО. Нажмите — откроется карточка.</span><span id="gstat"></span></div>
   </header>
 
+  <section class="ch" id="atlas">
+    <div class="sec-head">
+      <div class="ch-n">Атлас</div>
+      <h2>Карта типов и карточка муниципалитета</h2>
+    </div>
   <div class="atlas">
     <div class="mapbox">
       <div class="toolbar">
@@ -190,10 +295,11 @@ footer a, .panel a, p a { color: var(--accent); }
     </div>
     <aside class="card" id="card" aria-live="polite"></aside>
   </div>
+  </section>
 
   <section class="ch" id="types-ch">
     <div class="ch-head">
-      <div class="eyebrow">Глава 1</div>
+      <div class="ch-n">Глава 1</div>
       <h2>Типы потребления</h2>
       <p>Описания получены анализом формальных понятий: короткое сочетание признаков, характерное для части МО типа. ↑ — верхняя треть МО по показателю, ↓ — нижняя, ↑↑ и ↓↓ — верхние и нижние 10%. Точность — доля МО типа среди всех, кто подходит под описание; покрытие — доля типа, которую описание охватывает (у части типов — меньше половины). Устойчивость типа — средний коэффициент Жаккара с ближайшим кластером на 50 подвыборках по 80% МО: ≥ 0,75 — устойчивый, 0,5–0,75 — сомнительный, &lt; 0,5 — неустойчивый.</p>
     </div>
@@ -202,35 +308,35 @@ footer a, .panel a, p a { color: var(--accent); }
 
   <section class="ch" id="labor-ch">
     <div class="ch-head">
-      <div class="eyebrow">Глава 2</div>
+      <div class="ch-n">Глава 2</div>
       <h2>Потребление против рынка труда</h2>
       <p id="labor-text"></p>
     </div>
     <div class="panel"><h3>Две карты рядом: потребление и рынок труда</h3>
       <div class="duo"><div><div class="eyebrow">Типы потребления</div><svg id="duo-a" class="duo-map" role="img" aria-label="Карта типов потребления"></svg></div>
       <div><div class="eyebrow">Типы рынка труда</div><svg id="duo-b" class="duo-map" role="img" aria-label="Карта типов рынка труда"></svg></div></div>
-      <p class="note">Масштаб и наведение синхронизированы: наведите курсор на МО на одной карте, оно подсветится на обеих. Серым — МО без полного ряда расходов или без данных Росстата.</p></div>
+      <p class="note">Масштаб и наведение синхронизированы: наведите курсор на МО на одной карте, оно подсветится на обеих. Тёмным — МО без полного ряда расходов или без данных Росстата.</p></div>
     <div class="panel"><h3>Типы потребления × типы рынка труда</h3><div class="scroll-x"><table class="heat cross" id="cross"></table></div><p class="note"><span id="cross-n"></span> Доля МО типа потребления (строка), попавших в каждый тип рынка труда, %. Строка с одной яркой клеткой — потреблению соответствует один рынок труда; размытая строка — за одинаковым потреблением стоят разные рынки труда.</p></div>
     <div class="panel"><h3>Типы рынка труда</h3><div class="scroll-x"><table id="ltypes"></table></div><p class="note">Зарплата и численность работников — организации без малого бизнеса, по месту работы (Росстат). Поэтому в части деловых районов мегаполисов работников больше, чем жителей. Отличительный сектор — тот, чья доля в занятости сильнее всего превышает среднюю.</p></div>
     <div class="panel" id="cases-panel" hidden><h3>Разобранные случаи</h3><div class="types" id="cases"></div><p class="note">Отбор по правилу, без ручного выбора: самый сильный остаток в скоплении «тратят больше» и «тратят меньше» (только МО с одинаковой меткой во всех пяти seed), северное МО с наименьшим отношением расходов к фонду оплаты, пригород (до 60 км от центра региона) с наибольшим. Только МО с надёжностью типа ≥ 80%. Какое МО окажется крайним, зависит от процедуры поиска скоплений, поэтому случаи — иллюстрации механизмов, а не доказательство. Объяснения — гипотезы.</p></div>
     <div class="panel"><h3>Что объясняет разрыв между расходами и фондом оплаты труда</h3><div id="gapmodel" class="bars" style="max-width:760px"></div><p class="note" id="gap-note"></p></div>
   </section>
 
-  <section class="ch">
+  <section class="ch" id="time-ch">
     <div class="ch-head">
-      <div class="eyebrow">Глава 3</div>
+      <div class="ch-n">Глава 3</div>
       <h2>Как типы меняются во времени</h2>
       <p id="dyn-text"></p>
     </div>
     <div class="two">
-      <div class="panel"><h3>Переходы 2023 → 2024</h3><div class="scroll-x"><svg id="flows" width="660" height="360"></svg></div><p class="note">Тип МО за год — самый частый тип по кварталам года. Полосы толще — больше МО.</p></div>
+      <div class="panel"><h3>Переходы 2023 → 2024</h3><div class="scroll-x"><svg id="flows" width="660" height="360"></svg></div><p class="note">Тип МО за год — самый частый тип по кварталам года. Полосы толще — больше МО. Наведите на тип слева или справа, чтобы оставить только его переходы.</p></div>
       <div class="panel"><h3>Траектории за 8 кварталов</h3><div id="traj"></div><p class="note">Устойчивый сдвиг — одна смена типа, новый тип держится до конца периода; колебания — возвраты на границе типов.</p></div>
     </div>
   </section>
 
-  <section class="ch">
+  <section class="ch" id="method-ch">
     <div class="ch-head">
-      <div class="eyebrow">Глава 4</div>
+      <div class="ch-n">Глава 4</div>
       <h2>Выбор метода</h2>
       <p>Каждый вариант (метод, число типов, сеть, вес сети) оценён шестью внутренними индексами: силуэт, Калински–Харабаш и S_Dbw — по сходству потребления; AVI, AVU и модулярность — по связности на сети дорог. Индексы тянут в разные стороны, поэтому итог выбран агрегированием рангов по Борда и Коупленду, а затем проверен на устойчивость на подвыборках. Итог — компромисс: первый по AVU и без провалов по остальным индексам, поэтому без AVU он опускается на 17-е место. Вариант с 6 типами устойчивее (ARI на подвыборках 0,81 против 0,67; не все шесть одинаково надёжны), восемь типов — основной результат по заданному правилу, в основном детализирующий шесть; наименее устойчивый тип — «удалённые районы с сезонными пиками». Надёжность типа каждого МО — отдельный слой карты. Крупные контрасты во многом воспроизводятся по одним признакам: совпадение с k-means по тем же признакам — 0,81 при K = 7 и 0,63 при K = 8. Сеть меняет границы и повышает пространственную концентрацию типов: в крупнейшей связной части своего типа на дорожной сети находится 42% МО против 33% у k-means с K = 8 (сами типы при этом не связны: у каждого несколько частей).</p>
     </div>
@@ -240,9 +346,9 @@ footer a, .panel a, p a { color: var(--accent); }
     </div>
   </section>
 
-  <section class="ch">
+  <section class="ch" id="net-ch">
     <div class="ch-head">
-      <div class="eyebrow">Глава 5</div>
+      <div class="ch-n">Глава 5</div>
       <h2>Какая сеть связывает муниципалитеты</h2>
       <p>Сравнены четыре понятия близости: сходство всех признаков МО (структура, уровень, динамика расходов), синхронная динамика (корреляции относительных траекторий — без общего национального компонента), похожая форма траектории (DTW) и расстояние по дорогам. Гипотеза «столица опережает периферию» проверена: при выбранной процедуре свидетельств систематического опережения не обнаружено, поэтому направленные рёбра не вводились. I Морана показывает, насколько соседи по сети похожи по каждому показателю.</p>
     </div>
@@ -280,6 +386,7 @@ const DATA = /*__DATA__*/null;
   const NET = { structure: "все признаки МО", comovement: "синхронная динамика", leadlag: "форма траектории (DTW)",
     geography: "дороги", multiplex: "мультиплекс" };
   const netName = (n) => NET[n] || n;
+  let skySelect = () => {};
 
   // ---------- шапка
   const nTypes = D.types.length;
@@ -322,7 +429,8 @@ const DATA = /*__DATA__*/null;
   const paths = g.selectAll("path").data(fc.features).join("path")
     .attr("class", "mo").attr("d", geo)
     .attr("data-id", (d) => d.properties.territory_id);
-  const zoom = d3.zoom().scaleExtent([1, 60]).on("zoom", (e) => g.attr("transform", e.transform));
+  let zk = 1;
+  const zoom = d3.zoom().scaleExtent([1, 60]).on("zoom", (e) => { g.attr("transform", e.transform); zk = e.transform.k; g.selectAll("circle.pulse").attr("r", 7 / zk); });
   svg.call(zoom);
   function zoomTo(lon, lat, k) {
     const [x, y] = proj([lon, lat]);
@@ -455,11 +563,15 @@ const DATA = /*__DATA__*/null;
     selected = id;
     paths.classed("sel", (d) => +d.properties.territory_id === id);
     const i = idx.get(id), t = types.get(D.mo.type[i]);
+    const feat = fc.features.find((f) => +f.properties.territory_id === id);
+    g.selectAll("circle.pulse").remove();
+    if (feat) { const [cx, cy] = geo.centroid(feat); g.append("circle").attr("class", "pulse").attr("cx", cx).attr("cy", cy).attr("r", 7 / zk); }
+    skySelect(i);
     const lvl = D.mo.f[i][6];
     const fca = (t.fca[0] || {}).description || "";
     document.getElementById("card").innerHTML = `
       <div><div class="eyebrow">${D.mo.region[i]}</div><h3>${D.mo.full[i]}</h3></div>
-      <div><span class="chip"><span class="sw" style="background:${typeColor(t.id)}"></span>${t.name}</span></div>
+      <div><span class="chip"><span class="sw" style="background:${typeColor(t.id)};color:${typeColor(t.id)}"></span>${t.name}</span></div>
       <div class="desc">${fca ? "Тип узнаётся по сочетанию: " + fca + "." : ""}</div>
       <div style="display:grid;gap:4px"><div class="strip">${D.mo.q[i].map((q) => `<div title="${types.get(q).name}" style="background:${typeColor(q)}"></div>`).join("")}</div>
       <div class="strip-l">${QN.map((q) => `<span>${q.slice(2)}</span>`).join("")}</div>
@@ -510,7 +622,7 @@ const DATA = /*__DATA__*/null;
     const lisa = LISA[D.mo.lisa[i]];
     return `<div style="display:grid;gap:10px;border-top:1px solid var(--rule);padding-top:12px">
       <div class="eyebrow">Рынок труда</div>
-      <div><span class="chip"><span class="sw" style="background:${laborColor(lt.id)}"></span>${lt.name}</span></div>
+      <div><span class="chip"><span class="sw" style="background:${laborColor(lt.id)};color:${laborColor(lt.id)}"></span>${lt.name}</span></div>
       <div class="facts" style="gap:6px 20px">
         <span><b>${fmt(D.mo.spend[i], 0)} ₽</b>безналичные расходы жителя в месяц</span>
         <span><b>${fmt(D.mo.fund[i], 0)} ₽</b>фонд оплаты труда на жителя в месяц</span>
@@ -532,8 +644,8 @@ const DATA = /*__DATA__*/null;
   // ---------- глава 1: типы
   const tw = d3.select("#types");
   D.types.forEach((t) => {
-    const c = tw.append("article").attr("class", "tcard");
-    c.append("h3").html(`<span class="sw" style="background:${typeColor(t.id)}"></span><span>${t.name}</span>`);
+    const c = tw.append("article").attr("class", "tcard").attr("style", `--c:${typeColor(t.id)}`);
+    c.append("h3").html(`<span class="sw" style="background:${typeColor(t.id)};color:${typeColor(t.id)}"></span><span>${t.name}</span>`);
     c.append("div").attr("class", "stats").html(
       `<span><b>${t.n}</b> МО</span><span><b>${t.regions}</b> регионов</span>` +
       (t.population ? `<span><b>${fmt(t.population / 1e6, 1)} млн</b> жителей</span>` : "") +
@@ -624,19 +736,24 @@ const DATA = /*__DATA__*/null;
   let y0 = pad; const left = {}; tr.rows.forEach((r, i) => { const v = d3.sum(tr.values[i]); left[r] = { y: y0, h: v * sc, off: 0 }; y0 += v * sc + gapN; });
   let y1 = pad; const right = {}; tr.cols.forEach((c, j) => { const v = d3.sum(tr.values.map((row) => row[j])); right[c] = { y: y1, h: v * sc, off: 0 }; y1 += v * sc + gapN; });
   const x0 = 200, x1 = FW - 200;
-  const short = (s) => (s.length > 30 ? s.slice(0, 29) + "…" : s);
+  const short = (s) => (s.length > 27 ? s.slice(0, 26) + "…" : s);
   tr.rows.forEach((r, i) => tr.cols.forEach((c, j) => {
     const v = tr.values[i][j]; if (!v) return;
     const h = v * sc, a = left[r], b = right[c];
     const ya = a.y + a.off + h / 2, yb = b.y + b.off + h / 2; a.off += h; b.off += h;
-    fl.append("path").attr("d", `M${x0},${ya} C${(x0 + x1) / 2},${ya} ${(x0 + x1) / 2},${yb} ${x1},${yb}`)
+    fl.append("path").attr("class", `fl r${r} c${c}`).attr("d", `M${x0},${ya} C${(x0 + x1) / 2},${ya} ${(x0 + x1) / 2},${yb} ${x1},${yb}`)
       .attr("fill", "none").attr("stroke", typeColor(r)).attr("stroke-opacity", r === c ? 0.35 : 0.75).attr("stroke-width", Math.max(1, h))
       .append("title").text(`${types.get(r).name} → ${types.get(c).name}: ${v} МО`);
   }));
+  const flFocus = (sel) => { fl.classed("focus", !!sel); fl.selectAll("path.fl").classed("on", false); if (sel) fl.selectAll(sel).classed("on", true); };
+  fl.on("pointerleave", () => flFocus(null));
+  fl.selectAll("path.fl").on("pointerenter", (e) => { e.currentTarget.classList.add("on"); fl.classed("focus", true); }).on("pointerleave", (e) => e.currentTarget.classList.remove("on"));
   tr.rows.forEach((r) => { fl.append("rect").attr("x", x0 - 8).attr("y", left[r].y).attr("width", 8).attr("height", Math.max(1, left[r].h)).attr("fill", typeColor(r));
-    fl.append("text").attr("x", x0 - 12).attr("y", left[r].y + left[r].h / 2 + 4).attr("text-anchor", "end").text(short(types.get(r).name)); });
+    fl.append("text").attr("x", x0 - 12).attr("y", left[r].y + left[r].h / 2 + 4).attr("text-anchor", "end").text(short(types.get(r).name));
+    fl.append("rect").attr("x", 0).attr("y", left[r].y - 2).attr("width", x0).attr("height", Math.max(10, left[r].h + 4)).attr("fill", "transparent").style("cursor", "pointer").on("pointerenter", () => flFocus(`path.r${r}`)); });
   tr.cols.forEach((c) => { fl.append("rect").attr("x", x1).attr("y", right[c].y).attr("width", 8).attr("height", Math.max(1, right[c].h)).attr("fill", typeColor(c));
-    fl.append("text").attr("x", x1 + 12).attr("y", right[c].y + right[c].h / 2 + 4).text(short(types.get(c).name)); });
+    fl.append("text").attr("x", x1 + 12).attr("y", right[c].y + right[c].h / 2 + 4).text(short(types.get(c).name));
+    fl.append("rect").attr("x", x1).attr("y", right[c].y - 2).attr("width", FW - x1).attr("height", Math.max(10, right[c].h + 4)).attr("fill", "transparent").style("cursor", "pointer").on("pointerenter", () => flFocus(`path.c${c}`)); });
   fl.append("text").attr("x", x0 - 4).attr("y", 14).attr("text-anchor", "end").text("2023");
   fl.append("text").attr("x", x1 + 4).attr("y", 14).text("2024");
   const stay = d3.sum(tr.rows.map((r, i) => (tr.cols.indexOf(r) >= 0 ? tr.values[i][tr.cols.indexOf(r)] : 0)));
@@ -665,7 +782,7 @@ const DATA = /*__DATA__*/null;
   ps.selectAll("circle.m").data(ms).join("circle").attr("class", "m")
     .attr("cx", (d) => xs(d.SW)).attr("cy", (d) => ys(d.MQ)).attr("r", (d) => d.id === D.meta.chosen ? 7 : 3.5)
     .attr("fill", (d) => css(MC[d.method])).attr("fill-opacity", 0.8)
-    .attr("stroke", (d) => d.id === D.meta.chosen ? css("--ink") : "none").attr("stroke-width", 2)
+    .attr("stroke", (d) => d.id === D.meta.chosen ? css("--accent") : "none").attr("stroke-width", 2).style("filter", (d) => d.id === D.meta.chosen ? "drop-shadow(0 0 4px #6ff3ff)" : null)
     .append("title").text((d) => `${MN[d.method]}${d.network ? " · " + netName(d.network) : ""} · K=${d.K}\nSW ${fmt(d.SW, 3)} · MQ ${fmt(d.MQ, 3)} · место по Борда ${d.borda_place ?? "—"}`);
   document.getElementById("pareto-legend").innerHTML = Object.entries(MN).map(([k, v]) =>
     `<span class="item"><span class="sw" style="background:${css(MC[k])};border-radius:50%"></span>${v}</span>`).join("");
@@ -697,9 +814,282 @@ const DATA = /*__DATA__*/null;
     <div>Данные: СберИндекс, архив конкурса (CC BY-SA 4.0) — безналичные расходы 2023–2024 гг., расстояния между МО, индекс доступности рынков; справочник и границы МО СберИндекса; муниципальная статистика Росстата в обработке «Если быть точным» (CC BY 4.0).</div>
     <div>Итоговый вариант: <span class="num">${D.meta.chosen}</span>. Лицензии: код — MIT, производные данные — CC BY-SA 4.0; встроенные библиотеки D3 (ISC) и TopoJSON (BSD-3-Clause). Код и тексты подготовлены с помощью ИИ-ассистента.</div>`;
 
+  // ---------- галактика муниципалитетов (герой)
+  (function galaxy() {
+    const cv = document.getElementById("sky"), box = cv.parentNode, ctx = cv.getContext("2d");
+    const gtip = document.getElementById("gtip");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const N = D.mo.id.length;
+    const rel = D.mo.rel || D.mo.id.map(() => 0.85);
+    const featById = new Map(fc.features.map((f) => [+f.properties.territory_id, f]));
+    const geoXY = D.mo.id.map((id) => { const f = featById.get(id); return f ? geo.centroid(f) : [NaN, NaN]; });
+    const ok = geoXY.map((p) => Number.isFinite(p[0]) && Number.isFinite(p[1]));
+
+    // сходство расходов: две главные компоненты тех же 12 признаков (CLR долей, стандартизация, веса блоков как в расчёте)
+    const rowsF = D.mo.f.map((f) => { const sh = f.slice(0, 6).map((v) => Math.log(Math.max(v, 1e-4))); const m = d3.mean(sh); return sh.map((v) => v - m).concat(f.slice(6)); });
+    const P = rowsF[0].length;
+    const mu = d3.range(P).map((j) => d3.mean(rowsF, (r) => r[j])), sd = d3.range(P).map((j) => d3.deviation(rowsF, (r) => r[j]) || 1);
+    const wgt = d3.range(P).map((j) => (j < 6 ? 1 / Math.sqrt(6) : j === 6 ? 1 : 1 / Math.sqrt(P - 7)));
+    const Z = rowsF.map((r) => r.map((v, j) => ((v - mu[j]) / sd[j]) * wgt[j]));
+    const C = d3.range(P).map((a) => d3.range(P).map((b) => d3.sum(Z, (z) => z[a] * z[b]) / (N - 1)));
+    const trace = d3.sum(d3.range(P), (j) => C[j][j]);
+    function eig(M) {
+      let v = d3.range(P).map((j) => 1 + j / P);
+      for (let it = 0; it < 300; it++) {
+        const w = M.map((row) => d3.sum(row, (x, j) => x * v[j]));
+        const n = Math.hypot(...w); v = w.map((x) => x / n);
+      }
+      const lam = d3.sum(M.map((row, a) => v[a] * d3.sum(row, (x, j) => x * v[j])));
+      return [v, lam];
+    }
+    const [v1, l1] = eig(C);
+    const [v2, l2] = eig(C.map((row, a) => row.map((x, b) => x - l1 * v1[a] * v1[b])));
+    if (v1[6] < 0) v1.forEach((x, j) => (v1[j] = -x));          // вправо — выше уровень расходов
+    if (v2[8] < 0) v2.forEach((x, j) => (v2[j] = -x));          // вверх — сильнее летний пик
+    const pcRaw = Z.map((z) => [d3.sum(z, (x, j) => x * v1[j]), -d3.sum(z, (x, j) => x * v2[j])]);
+    // asinh сжимает длинные хвосты (Крайний Север), сохраняя порядок точек
+    const sdx = d3.deviation(pcRaw, (p) => p[0]), sdy = d3.deviation(pcRaw, (p) => p[1]);
+    const pcXY = pcRaw.map(([x, y]) => [Math.asinh(x / sdx) * sdx, Math.asinh(y / sdy) * sdy]);
+    const explained = (l1 + l2) / trace;
+
+    // фоновые звёзды
+    const rnd = d3.randomLcg(42);
+    const bg = d3.range(480).map(() => ({ x: rnd(), y: rnd(), r: 0.3 + rnd() * 0.9, a: 0.08 + rnd() * 0.4, ph: rnd() * 6.28, sp: 0.4 + rnd() * 1.4 }));
+    const ph = D.mo.id.map(() => rnd() * 6.28), sp = D.mo.id.map(() => 0.5 + rnd());
+    const delay = D.mo.id.map(() => rnd());
+
+    // спрайты свечения по цветам типов
+    const sprite = new Map();
+    function makeSprites() {
+      D.types.forEach((t) => {
+        const c = typeColor(t.id), s = 64, o = document.createElement("canvas"); o.width = o.height = s;
+        const g2 = o.getContext("2d"), rg = g2.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+        const col = d3.color(c);
+        rg.addColorStop(0, "rgba(255,255,255,1)"); rg.addColorStop(0.1, col.copy({ opacity: 1 }).formatRgb());
+        rg.addColorStop(0.32, col.copy({ opacity: 0.35 }).formatRgb()); rg.addColorStop(1, col.copy({ opacity: 0 }).formatRgb());
+        g2.fillStyle = rg; g2.fillRect(0, 0, s, s); sprite.set(t.id, o);
+      });
+    }
+    makeSprites();
+
+    let w = 0, h = 0, dpr = 1, mode = "geo";
+    let cur = [], from = [], to = [], t0 = 0, dur = 0, spread = 0, settled = false, qt = null;
+    let hover = null, focusT = null, lockT = null, selI = null, labels = [], running = false, visible = true;
+    const gtop = box.querySelector(".g-top");
+    const TOP = () => (getComputedStyle(gtop).position === "static" ? 14 : 64);
+
+    function fit(pts, padX, top, bottom, keepAspect, clip) {
+      const xsP = pts.filter((p, i) => ok[i] || mode !== "geo").map((p) => p[0]), ysP = pts.filter((p, i) => ok[i] || mode !== "geo").map((p) => p[1]);
+      const sx = xsP.slice().sort(d3.ascending), sy = ysP.slice().sort(d3.ascending);
+      const q = (a, p) => d3.quantileSorted(a, p);
+      const x0 = clip ? q(sx, 0.005) : sx[0], x1 = clip ? q(sx, 0.995) : sx[sx.length - 1];
+      const y0 = clip ? q(sy, 0.005) : sy[0], y1 = clip ? q(sy, 0.995) : sy[sy.length - 1];
+      let kx = (w - 2 * padX) / (x1 - x0), ky = (h - top - bottom) / (y1 - y0);
+      if (keepAspect) kx = ky = Math.min(kx, ky);
+      const ox = (w - (x1 - x0) * kx) / 2, oy = top + (h - top - bottom - (y1 - y0) * ky) / 2;
+      return pts.map((p) => [ox + (Math.max(x0, Math.min(x1, p[0])) - x0) * kx, oy + (Math.max(y0, Math.min(y1, p[1])) - y0) * ky]);
+    }
+    function layout(m) {
+      labels = [];
+      if (m === "geo") return fit(geoXY.map((p, i) => (ok[i] ? p : [0, 0])), 20, TOP(), 18, true, false);
+      if (m === "pca") return fit(pcXY, 28, TOP() + 6, 28, false, true);
+      // галактики типов: ядро — самые надёжные МО, окраина — пограничные
+      const T = D.types, cols = w >= 720 ? 4 : 2, rowsN = Math.ceil(T.length / cols);
+      const top = TOP() + 4, bottom = 8, cw = w / cols, ch = (h - top - bottom) / rowsN;
+      const maxN = d3.max(T, (t) => t.n), R = Math.min(cw * 0.42, ch * (cols === 2 ? 0.3 : 0.4));
+      const out = new Array(N);
+      T.forEach((t, k) => {
+        const cx = cw * ((k % cols) + 0.5), cy = top + ch * (Math.floor(k / cols) + 0.42);
+        const mem = D.mo.id.map((_, i) => i).filter((i) => D.mo.type[i] === t.id).sort((a, b) => (rel[b] ?? 0) - (rel[a] ?? 0));
+        const Rt = R * Math.sqrt(mem.length / maxN) * 0.95 + 6;
+        mem.forEach((i, j) => {
+          const rr = Rt * Math.sqrt((j + 0.5) / mem.length), a = j * 2.39996 + rr * 0.045 + k;
+          out[i] = [cx + rr * Math.cos(a), cy + rr * Math.sin(a) * 0.72];
+        });
+        labels.push({ t, x: cx, y: cy + Rt * 0.72 + 15, n: mem.length });
+      });
+      return out;
+    }
+    function nebula() {
+      const cx = w * 0.5, cy = h * 0.55, R = Math.min(w, h) * 0.5;
+      return D.mo.id.map((_, i) => { const r = Math.sqrt(delay[i]) * R, a = ph[i] * 3 + r * 0.03;
+        return [cx + r * Math.cos(a), cy + r * Math.sin(a) * 0.45]; });
+    }
+    function morph(target, d, sprd) {
+      from = cur.length ? cur.map((p) => p.slice()) : target; to = target; t0 = performance.now(); dur = reduce ? 0 : d; spread = reduce ? 0 : sprd;
+      settled = false; qt = null; hover = null; gtip.hidden = true;
+      if (reduce) step(performance.now());
+      kick();
+    }
+    function resize(first) {
+      const r = cv.getBoundingClientRect(); dpr = Math.min(2, window.devicePixelRatio || 1);
+      w = r.width; h = r.height; cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      if (first) { cur = nebula(); morph(layout(mode), 2400, 900); }
+      else { cur = layout(mode); from = cur; to = cur; settled = true; buildQ(); draw(performance.now()); }
+    }
+    function buildQ() { qt = d3.quadtree().x((i) => cur[i][0]).y((i) => cur[i][1]).addAll(d3.range(N).filter((i) => mode !== "geo" || ok[i])); }
+    function step(t) {
+      if (settled) return;
+      let done = true;
+      for (let i = 0; i < N; i++) {
+        const e = dur ? Math.max(0, Math.min(1, (t - t0 - delay[i] * spread) / dur)) : 1;
+        if (e < 1) done = false;
+        const k = d3.easeCubicInOut(e);
+        cur[i] = [from[i][0] + (to[i][0] - from[i][0]) * k, from[i][1] + (to[i][1] - from[i][1]) * k];
+      }
+      if (done) { settled = true; buildQ(); }
+    }
+    function draw(t) {
+      step(t);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = "#ffffff";
+      for (const s of bg) {
+        ctx.globalAlpha = s.a * (reduce ? 1 : 0.7 + 0.3 * Math.sin(t * 0.001 * s.sp + s.ph));
+        ctx.fillRect(s.x * w, s.y * h, s.r, s.r);
+      }
+      const ft = lockT ?? focusT;
+      const hi = hover != null ? new Set([hover, ...(D.mo.an ? D.mo.an[hover] : [])]) : null;
+      // созвездие: линии к семи похожим МО
+      if (hover != null && D.mo.an) {
+        const [hx, hy] = cur[hover];
+        ctx.globalCompositeOperation = "lighter"; ctx.lineWidth = 1;
+        D.mo.an[hover].forEach((j) => {
+          if (mode === "geo" && !ok[j]) return;
+          const [x, y] = cur[j], gr = ctx.createLinearGradient(hx, hy, x, y);
+          gr.addColorStop(0, typeColor(D.mo.type[hover])); gr.addColorStop(1, typeColor(D.mo.type[j]));
+          ctx.strokeStyle = gr; ctx.globalAlpha = 0.85; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(x, y); ctx.stroke();
+        });
+      }
+      ctx.globalCompositeOperation = "lighter";
+      const base = w < 640 ? 6 : 10;
+      for (let i = 0; i < N; i++) {
+        if (mode === "geo" && !ok[i]) continue;
+        const ty = D.mo.type[i];
+        let a = 0.3 + 0.7 * (rel[i] ?? 0.8);
+        if (!reduce) a *= 0.8 + 0.2 * Math.sin(t * 0.0016 * sp[i] + ph[i]);
+        if (ft != null && ty !== ft) a *= 0.09;
+        if (hi && !hi.has(i)) a *= 0.35;
+        const s = hi && hi.has(i) ? base * 1.9 : base;
+        ctx.globalAlpha = a;
+        ctx.drawImage(sprite.get(ty), cur[i][0] - s / 2, cur[i][1] - s / 2, s, s);
+      }
+      ctx.globalCompositeOperation = "source-over";
+      const ring = (i, rad, alpha) => { ctx.globalAlpha = alpha; ctx.strokeStyle = css("--accent"); ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(cur[i][0], cur[i][1], rad, 0, 6.2832); ctx.stroke(); };
+      if (selI != null && (mode !== "geo" || ok[selI])) {
+        const ph2 = reduce ? 0.5 : ((t / 1600) % 1);
+        ring(selI, 5 + ph2 * 16, 1 - ph2); ring(selI, 4.5, 0.9);
+      }
+      if (hover != null) ring(hover, 7, 0.95);
+      // подписи галактик
+      if (mode === "types" && settled) {
+        ctx.globalAlpha = 1; ctx.textAlign = "center";
+        labels.forEach((L) => {
+          const dim = ft != null && L.t.id !== ft;
+          ctx.font = `600 ${w < 640 ? 11 : 12}px "Golos Text", "Segoe UI", sans-serif`;
+          ctx.fillStyle = dim ? "rgba(181,193,233,0.35)" : "#eaf0ff";
+          const words = L.t.name.split(" "), maxW = (w >= 720 ? w / 4 : w / 2) - 16, lines = [];
+          let line = "";
+          words.forEach((wd) => { const tst = line ? line + " " + wd : wd; if (ctx.measureText(tst).width > maxW && line) { lines.push(line); line = wd; } else line = tst; });
+          lines.push(line);
+          lines.forEach((ln, k) => ctx.fillText(ln, L.x, L.y + k * 14));
+          ctx.font = `400 ${w < 640 ? 10.5 : 11}px "Golos Text", "Segoe UI", sans-serif`;
+          ctx.fillStyle = dim ? "rgba(139,153,201,0.35)" : "#8b99c9";
+          ctx.fillText(`${L.n} МО`, L.x, L.y + lines.length * 14);
+        });
+      }
+      if (mode === "pca" && settled) {
+        ctx.globalAlpha = 1; ctx.fillStyle = "#8b99c9"; ctx.font = `400 11px "Golos Text", "Segoe UI", sans-serif`;
+        ctx.textAlign = "right"; ctx.fillText("выше уровень расходов →", w - 14, h - 10);
+        ctx.textAlign = "left"; ctx.fillText("↑ сильнее летний пик", 14, h - 10);
+      }
+      ctx.globalAlpha = 1;
+    }
+    function loop(t) { if (!running) return; draw(t); requestAnimationFrame(loop); }
+    function kick() {
+      if (reduce) { draw(performance.now()); return; }
+      if (!running && visible && !document.hidden) { running = true; requestAnimationFrame(loop); }
+    }
+    function stop() { running = false; }
+    new IntersectionObserver((es) => { visible = es[0].isIntersecting; visible ? kick() : stop(); }).observe(box);
+    document.addEventListener("visibilitychange", () => (document.hidden ? stop() : kick()));
+    new ResizeObserver(() => { const r = cv.getBoundingClientRect(); if (Math.abs(r.width - w) > 1 || Math.abs(r.height - h) > 1) resize(false); }).observe(cv);
+
+    // взаимодействие
+    function pick(e) {
+      if (!settled || !qt) return null;
+      const r = cv.getBoundingClientRect();
+      return qt.find(e.clientX - r.left, e.clientY - r.top, 14) ?? null;
+    }
+    function showTip(i, e) {
+      const r = box.getBoundingClientRect(), t = types.get(D.mo.type[i]);
+      gtip.innerHTML = `<b>${D.mo.name[i]}</b><br>${D.mo.region[i]}<br><span style="color:${typeColor(t.id)}">●</span> ${t.name}` +
+        (D.mo.rel && D.mo.rel[i] != null ? `<br>надёжность типа ${fmt(D.mo.rel[i] * 100, 0)}%` : "") +
+        (D.mo.an ? `<br><span style="color:var(--ink-3)">линии — 7 похожих МО</span>` : "");
+      gtip.hidden = false;
+      const x = e.clientX - r.left, y = e.clientY - r.top;  // r — рамка .galaxy, в ней позиционируется подсказка
+      gtip.style.left = Math.max(8, Math.min(x + 14, r.width - 290)) + "px";
+      gtip.style.top = (y > r.height - 130 ? y - 120 : y + 14) + "px";
+    }
+    cv.addEventListener("pointermove", (e) => {
+      if (e.pointerType === "touch") return;
+      const i = pick(e); if (i !== hover) { hover = i; if (reduce) draw(performance.now()); }
+      cv.style.cursor = i != null ? "pointer" : "crosshair";
+      if (i != null) showTip(i, e); else gtip.hidden = true;
+    });
+    cv.addEventListener("pointerleave", () => { hover = null; gtip.hidden = true; if (reduce) draw(performance.now()); });
+    cv.addEventListener("click", (e) => {
+      const i = pick(e); if (i == null) { hover = null; gtip.hidden = true; if (reduce) draw(performance.now()); return; }
+      if (e.pointerType === "touch" && hover !== i) { hover = i; showTip(i, e); if (reduce) draw(performance.now()); return; }
+      select(D.mo.id[i]);
+      document.getElementById("atlas").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    });
+
+    const CAP = {
+      geo: "Звёзды стоят в географических центрах МО. Самые плотные скопления — внутригородские территории Москвы и Петербурга.",
+      types: "Каждый тип собран в свою галактику. В ядре — МО с самой высокой надёжностью типа, на окраине — пограничные.",
+      pca: `Ближе — похожее потребление: две главные компоненты тех же 12 признаков, ${fmt(explained * 100, 0)}% разброса. Типы перекрываются: профили расходов образуют континуум.`
+    };
+    const MODES = [{ id: "geo", name: "География" }, { id: "types", name: "Галактики типов" }, { id: "pca", name: "Сходство расходов" }];
+    const gm = d3.select("#gmode");
+    gm.selectAll("button").data(MODES).join("button").attr("type", "button").text((d) => d.name)
+      .attr("aria-pressed", (d) => d.id === mode)
+      .on("click", (e, d) => {
+        if (d.id === mode) return;
+        mode = d.id; gm.selectAll("button").attr("aria-pressed", (x) => x.id === mode);
+        document.getElementById("gcap").textContent = CAP[mode];
+        morph(layout(mode), 1300, 500);
+      });
+    document.getElementById("gcap").textContent = CAP[mode];
+    const counts = d3.rollup(D.mo.type, (v) => v.length, (d) => d);
+    const lg = d3.select("#glegend");
+    lg.selectAll("button").data(D.types).join("button").attr("type", "button").attr("class", "chip").attr("aria-pressed", "false")
+      .html((t) => `<span class="sw" style="background:${typeColor(t.id)};color:${typeColor(t.id)}"></span>${t.name} <span class="num" style="color:var(--ink-3)">${counts.get(t.id) || 0}</span>`)
+      .on("pointerenter", (e, t) => { focusT = t.id; if (reduce) draw(performance.now()); })
+      .on("pointerleave", () => { focusT = null; if (reduce) draw(performance.now()); })
+      .on("click", (e, t) => { lockT = lockT === t.id ? null : t.id; lg.selectAll("button").attr("aria-pressed", (x) => String(x.id === lockT)); if (reduce) draw(performance.now()); });
+    const low = D.mo.rel ? D.mo.rel.filter((v) => v != null && v < 0.6).length : null;
+    document.getElementById("gstat").textContent = low != null ? `Тусклые звёзды — ${low} МО с надёжностью типа ниже 60%` : "";
+
+    skySelect = (i) => { selI = i; if (reduce) draw(performance.now()); };
+    resize(true);
+  })();
+
+  // подсветка раздела в навигации
+  const navLinks = [...document.querySelectorAll("#navl a.l")];
+  const secs = navLinks.map((a) => document.querySelector(a.getAttribute("href"))).filter(Boolean);
+  const seen = new Map();
+  const navIO = new IntersectionObserver((es) => {
+    es.forEach((e) => seen.set(e.target.id, e.isIntersecting ? e.intersectionRatio : 0));
+    const best = secs.map((s) => [s.id, seen.get(s.id) || 0]).sort((a, b) => b[1] - a[1])[0];
+    navLinks.forEach((a) => a.classList.toggle("on", !!best && best[1] > 0 && a.getAttribute("href") === "#" + best[0]));
+  }, { threshold: [0, 0.1, 0.25, 0.5, 0.75], rootMargin: "-60px 0px -35% 0px" });
+  secs.forEach((s) => navIO.observe(s));
+
   paint();
   // стартовая карточка: крупнейшее МО самого массового типа с полным рядом
   select(D.mo.id[d3.maxIndex(D.mo.ma.map((v, i) => (D.mo.type[i] === D.types[0].id ? v : -1)))]);
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { paint(); if (selected) select(selected); });
 })();
 </script>

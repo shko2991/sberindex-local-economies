@@ -1,6 +1,6 @@
 """Сборка страницы: данные из data/processed/landing_data.json встраиваются в шаблон.
-Получается один самодостаточный файл landing/index.html (данные и библиотеки встроены; шрифты PT
-подгружаются из Google Fonts при наличии сети, без неё — системные) —
+Получается один самодостаточный файл landing/index.html (данные и библиотеки встроены; шрифты
+Unbounded и Golos Text подгружаются из Google Fonts при наличии сети, без неё — системные) —
 его можно открыть локально, выложить на GitHub Pages или опубликовать как страницу.
 
   python landing/build.py
@@ -32,7 +32,7 @@ def main():
     head, rest = "\n".join(lines[:n_head]), "\n".join(lines[n_head:])
     page = ("<!doctype html>\n<html lang=\"ru\">\n<head>\n<meta charset=\"utf-8\">\n"
             "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">\n"
-            + head + "\n<style>html{color-scheme:light dark}body{margin:0}[hidden]{display:none!important}</style>\n</head>\n<body>\n"
+            + head + "\n<style>html{color-scheme:dark;background:#060b26}body{margin:0}[hidden]{display:none!important}</style>\n</head>\n<body>\n"
             + rest + "\n</body>\n</html>\n")
     (ROOT / "docs").mkdir(exist_ok=True)
     (ROOT / "docs" / "index.html").write_text(page, encoding="utf-8")
