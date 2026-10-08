@@ -8,7 +8,7 @@
 > соответствие утверждений файлам результатов (раздел 12). Все числа воспроизводятся командой
 > `python run_all.py` (раздел 11). Код и инструкция: [github.com/shko2991/sberindex-local-economies](https://github.com/shko2991/sberindex-local-economies),
 > интерактивная страница: [shko2991.github.io/sberindex-local-economies](https://shko2991.github.io/sberindex-local-economies/), основной отчёт:
-> [report.pdf](https://shko2991.github.io/sberindex-local-economies/report.pdf).
+> [report.pdf](https://shko2991.github.io/sberindex-local-economies/report.pdf), слайды по приложению: [presentation.pdf](https://shko2991.github.io/sberindex-local-economies/presentation.pdf).
 
 ## Связь с литературой
 

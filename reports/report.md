@@ -15,7 +15,8 @@
 > [github.com/shko2991/sberindex-local-economies](https://github.com/shko2991/sberindex-local-economies). Интерактивная страница:
 > [shko2991.github.io/sberindex-local-economies](https://shko2991.github.io/sberindex-local-economies/). Полное техническое описание —
 > [техническое приложение](https://github.com/shko2991/sberindex-local-economies/blob/main/reports/technical_appendix.md) в репозитории
-> (`reports/technical_appendix.md`); ссылки вида «Приложение, 5.5» ведут в его разделы. Все числа
+> (`reports/technical_appendix.md`), его краткая версия — [слайды (PDF)](https://shko2991.github.io/sberindex-local-economies/presentation.pdf); ссылки вида
+> «Приложение, 5.5» ведут в разделы приложения. Все числа
 > воспроизводятся командой `python run_all.py`.
 
 ## 1. Задача и главные выводы

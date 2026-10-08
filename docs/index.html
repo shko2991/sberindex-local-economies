@@ -1034,15 +1034,16 @@ const DATA = {"meta":{"chosen":"kefrin|multiplex|euclidean|xi1|k8","n":2016,"qua
   const pages = repo ? repo.replace(/^https:\/\/github\.com\/([^/]+)\/([^/]+).*$/, "https://$1.github.io/$2/") : "";
   const pdf = (f) => (pages ? pages + f : f);
   document.getElementById("hero-links").innerHTML =
-    `<a href="${pdf("report.pdf")}"><b>PDF</b>Методологический отчёт</a>` +
-    (repo ? `<a href="${blob("reports/technical_appendix.md")}"><b>GitHub</b>Техническое приложение</a>` : "") +
-    (repo ? `<a href="${repo}"><b>GitHub</b>Код и инструкция</a>` : "");
+    `<a href="${pdf("report.pdf")}"><b>PDF</b>Отчёт</a>` +
+    `<a href="${pdf("presentation.pdf")}"><b>PDF</b>Слайды</a>` +
+    (repo ? `<a href="${blob("reports/technical_appendix.md")}"><b>GitHub</b>Приложение</a>` : "") +
+    (repo ? `<a href="${repo}"><b>GitHub</b>Код</a>` : "");
   const A = (href, t) => `<a href="${href}">${t}</a>`;
   document.getElementById("foot").innerHTML = `
     <div class="f-title">Типы локальных экономик муниципалитетов: безналичное потребление и рынок труда</div>
     <div>Конкурс СберИндекса, направление «Кластеризация». Версия результатов: <span class="num">${PUB.results_version || "—"}</span>.
       ${repo ? `Код, конфигурация, результаты и инструкция по запуску: ${A(repo, repo.replace("https://", ""))}.` : "Код, конфигурация и результаты — в репозитории проекта."}
-      ${A(pdf("report.pdf"), "Методологический отчёт (PDF)")}, ${lnk("reports/technical_appendix.md", "техническое приложение")}, проверка воспроизводимости — ${lnk("reports/cold_start_check.md", "cold_start_check.md")}.</div>
+      ${A(pdf("report.pdf"), "Методологический отчёт (PDF)")}, ${lnk("reports/technical_appendix.md", "техническое приложение")} и ${A(pdf("presentation.pdf"), "слайды по нему (PDF)")}, проверка воспроизводимости — ${lnk("reports/cold_start_check.md", "cold_start_check.md")}.</div>
     <div>Данные: ${A("https://sberindex.ru/ru/research/data-sense-opisanie-nabora-dannikh-khakatona-sberindeksa-po-munitsipalnim-dannim", "архив конкурса СберИндекса")} — безналичные расходы 2023–2024 гг., расстояния между МО, индекс доступности рынков (${A("https://creativecommons.org/licenses/by-sa/4.0/deed.ru", "CC BY-SA 4.0")}); ${A("https://sberindex.ru/ru/research/dataset-borders-and-changes-of-municipalities", "справочник и границы МО СберИндекса")} (границы — © ${A("https://www.openstreetmap.org/copyright", "участники OpenStreetMap")}, ${A("https://opendatacommons.org/licenses/odbl/", "ODbL")}); ${A("https://tochno.st/datasets/bdmo", "муниципальная статистика Росстата в обработке «Если быть точным»")} (${A("https://creativecommons.org/licenses/by/4.0/deed.ru", "CC BY")}). Архив конкурса и справочник МО скачиваются с сайтов СберИндекса по инструкции в репозитории; выгрузка муниципальной статистики хранится в репозитории.
       Лицензии: код — MIT; производные табличные данные — CC BY-SA 4.0; встроенные границы МО — ODbL; библиотеки D3 (ISC) и TopoJSON (BSD-3-Clause).</div>
     <section class="ai" aria-labelledby="ai-h"><h3 id="ai-h">Заявление об использовании генеративного ИИ</h3>

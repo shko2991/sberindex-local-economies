@@ -10,6 +10,7 @@
 |---|---|
 | Методологический отчёт (PDF, 8 страниц) | [`reports/report.pdf`](reports/report.pdf) · Markdown: [`reports/report.md`](reports/report.md) |
 | Техническое приложение: паспорта данных, полные таблицы альтернатив, синтетика, история исправлений, соответствие утверждений файлам | [`reports/technical_appendix.md`](reports/technical_appendix.md) |
+| Слайды по техническому приложению (PDF, 29 слайдов) | [`docs/presentation.pdf`](docs/presentation.pdf) |
 | Связь с литературой и библиография | раздел «Связь с литературой» и раздел 10 приложения; [`reports/references.bib`](reports/references.bib) |
 | Интерактивная страница | https://shko2991.github.io/sberindex-local-economies/ (`docs/index.html`, GitHub Pages для папки `docs`) |
 | Код | https://github.com/shko2991/sberindex-local-economies |
@@ -155,7 +156,7 @@ src/figures.py       рисунки для отчёта
 src/landing_data.py  данные для интерактивной страницы
 landing/             шаблон и сборка страницы; docs/index.html — готовая страница (GitHub Pages)
 reports/report.md    методологический отчёт (8 страниц в PDF); report.pdf — его PDF; references.bib — библиография
-reports/technical_appendix.md  техническое приложение (полное описание)
+reports/technical_appendix.md  техническое приложение (полное описание); слайды по нему — docs/presentation.pdf
 reports/build_pdf.py сборка report.pdf (Chromium через Playwright); копия — в docs/ для ссылки со страницы
 tests/               проверки методов на синтетике с известным ответом, подготовки данных Росстата и сверки прогонов
 ```
