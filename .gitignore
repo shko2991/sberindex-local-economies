@@ -1,0 +1,10 @@
+data/raw/
+data/external/
+data/interim/
+data/processed/*.parquet
+__pycache__/
+.pytest_cache/
+*.pyc
+reports/explore/
+data/processed/landing_data.json
+landing/index.html

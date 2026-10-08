@@ -1,0 +1,6 @@
+comovement,leadlag,multiplex
+kefrin|multiplex|euclidean|xi1|k7,kefrin|leadlag|euclidean|xi1|k7,kefrin|multiplex|cosine|xi4|k5
+kefrin|comovement|euclidean|xi1|k7,kefrin|leadlag|euclidean|xi1|k9,kefrin|multiplex|cosine|xi4|k4
+kefrin|multiplex|euclidean|xi1|k9,kefrin|multiplex|euclidean|xi1|k9,kefrin|multiplex|cosine|xi4|k6
+kefrin|multiplex|euclidean|xi1|k6,kefrin|multiplex|euclidean|xi1|k8,spectral_joint|comovement|k5
+kefrin|multiplex|euclidean|xi1|k8,kefrin|comovement|euclidean|xi1|k7,kefrin|multiplex|euclidean|xi1|k8

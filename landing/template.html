@@ -1,0 +1,488 @@
+<title>Потребление и труд</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=PT+Sans:wght@400;700&family=PT+Mono&display=swap">
+<style>
+/* Макет: статистический ежегодник в цифре — большая карта-разворот, справа карточка МО,
+   ниже главы: типы, переходы, методы, сети. Шрифты ParaType (PT Serif/Sans/Mono),
+   созданные для публичных документов на кириллице. */
+:root {
+  --paper: #f3f4f1;
+  --sheet: #fbfbf9;
+  --ink: #1d2433;
+  --ink-2: #4a5263;
+  --ink-3: #7b8292;
+  --rule: #d9dcd6;
+  --accent: #2b4c7e;
+  --accent-soft: #dfe6f1;
+  --absent: #e3e4df;
+  --hl: #111827;
+  --t0: #2f6690; --t1: #4f8a3c; --t2: #c8553d; --t3: #d9a03f;
+  --t4: #7a5ea8; --t5: #12857f; --t6: #9a6a44; --t7: #c06c94;
+  --t8: #5c677d; --t9: #a3a83b; --t10: #6d8fc7; --t11: #8c3b4a;
+  --good: #3f7d4e; --warn: #b7791f;
+  --serif: "PT Serif", Georgia, "Times New Roman", serif;
+  --sans: "PT Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --mono: "PT Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --s-1: 0.8125rem; --s0: 0.9375rem; --s1: 1.0625rem; --s2: 1.375rem; --s3: 1.875rem; --s4: 2.75rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161e; --sheet: #181d27; --ink: #e8eaee; --ink-2: #b7bdc9; --ink-3: #868e9d;
+    --rule: #2b3240; --accent: #8fb0e3; --accent-soft: #23314a; --absent: #252b36; --hl: #f5f6f8;
+    --t0: #5b9bd0; --t1: #79b464; --t2: #e57a62; --t3: #e9b95c; --t4: #a68bd6; --t5: #3fb3ab;
+    --t6: #c39368; --t7: #df8fb5; --t8: #8f9bb3; --t9: #c4c95a; --t10: #93b3e8; --t11: #c46576;
+    --good: #6fb07f; --warn: #e0a84a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161e; --sheet: #181d27; --ink: #e8eaee; --ink-2: #b7bdc9; --ink-3: #868e9d;
+  --rule: #2b3240; --accent: #8fb0e3; --accent-soft: #23314a; --absent: #252b36; --hl: #f5f6f8;
+  --t0: #5b9bd0; --t1: #79b464; --t2: #e57a62; --t3: #e9b95c; --t4: #a68bd6; --t5: #3fb3ab;
+  --t6: #c39368; --t7: #df8fb5; --t8: #8f9bb3; --t9: #c4c95a; --t10: #93b3e8; --t11: #c46576;
+  --good: #6fb07f; --warn: #e0a84a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: var(--s0); line-height: 1.5; }
+.wrap { max-width: 1280px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 64px; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--serif); font-weight: 700; text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: var(--s4); letter-spacing: -0.01em; }
+h2 { font-size: var(--s3); }
+h3 { font-size: var(--s1); }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font-family: var(--mono); font-size: var(--s-1); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.lede { font-family: var(--serif); font-size: var(--s1); color: var(--ink-2); }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+header.top { display: grid; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--rule); }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 28px; color: var(--ink-2); font-size: var(--s-1); }
+.facts b { font-family: var(--mono); color: var(--ink); font-weight: 400; font-size: var(--s0); margin-right: 4px; }
+
+/* карта и карточка */
+.atlas { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
+@media (max-width: 960px) { .atlas { grid-template-columns: minmax(0, 1fr); } }
+.mapbox { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; display: grid; gap: 0; min-width: 0; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--rule); }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; max-width: 100%; }
+.seg button { font: inherit; font-size: var(--s-1); background: transparent; color: var(--ink-2); border: 0; padding: 6px 10px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--sheet); }
+.seg button:focus-visible, .chip:focus-visible, input:focus-visible, .zoom button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.search { position: relative; flex: 1 1 200px; min-width: 0; }
+.search input { width: 100%; font: inherit; font-size: var(--s-1); padding: 6px 10px; border: 1px solid var(--rule); border-radius: 3px; background: var(--paper); color: var(--ink); }
+.qctl { display: flex; gap: 8px; align-items: center; font-size: var(--s-1); color: var(--ink-2); }
+.qctl input { width: 160px; accent-color: var(--accent); }
+.svgwrap { position: relative; }
+#map { width: 100%; height: auto; display: block; aspect-ratio: 16 / 9.2; max-width: 100%; touch-action: none; }
+#map path.mo { stroke: var(--sheet); stroke-width: 0.25; vector-effect: non-scaling-stroke; cursor: pointer; }
+#map path.mo:hover { stroke: var(--hl); stroke-width: 1.2; }
+#map path.sel { stroke: var(--hl); stroke-width: 2; }
+.zoom { position: absolute; right: 10px; top: 10px; display: grid; gap: 4px; }
+@media (max-width: 600px) { .zoom { position: static; display: flex; gap: 6px; padding: 8px 14px 0; } }
+.zoom button { font: inherit; font-size: var(--s-1); background: var(--sheet); color: var(--ink); border: 1px solid var(--rule); border-radius: 3px; padding: 4px 8px; cursor: pointer; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--paper); font-size: var(--s-1); padding: 6px 8px; border-radius: 3px; max-width: 260px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 14px; border-top: 1px solid var(--rule); font-size: var(--s-1); color: var(--ink-2); }
+.legend .sw { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.legend .item { cursor: pointer; }
+.legend .item.dim { opacity: 0.35; }
+.ramp { height: 10px; width: 180px; border-radius: 2px; }
+
+.card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 16px; display: grid; gap: 14px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
+@media (max-width: 960px) { .card { position: static; } }
+.card .meta { color: var(--ink-3); font-size: var(--s-1); }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: var(--s-1); padding: 2px 8px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); }
+.chip .sw { width: 9px; height: 9px; border-radius: 50%; }
+.strip { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
+.strip div { height: 18px; border-radius: 2px; }
+.strip-l { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; font-family: var(--mono); font-size: 0.6875rem; color: var(--ink-3); }
+.bars { display: grid; gap: 6px; }
+.bar { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) 4.2em; gap: 8px; align-items: center; font-size: var(--s-1); }
+.bar .track { position: relative; height: 8px; background: var(--absent); border-radius: 2px; }
+.bar .track i { position: absolute; top: 0; bottom: 0; background: var(--accent); border-radius: 2px; }
+.bar .track b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); }
+.bar .v { text-align: right; font-family: var(--mono); color: var(--ink-2); }
+.note { font-size: var(--s-1); color: var(--ink-3); }
+.desc { font-family: var(--serif); font-size: var(--s0); color: var(--ink-2); }
+
+/* главы */
+section.ch { display: grid; gap: 18px; padding-top: 24px; border-top: 1px solid var(--rule); }
+.ch-head { display: grid; gap: 8px; }
+.types { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.tcard { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.tcard h3 { display: flex; gap: 8px; align-items: baseline; }
+.tcard h3 .sw { width: 12px; height: 12px; border-radius: 2px; flex: none; transform: translateY(1px); }
+.tcard .stats { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: var(--s-1); color: var(--ink-3); }
+.tcard .stats b { font-family: var(--mono); font-weight: 400; color: var(--ink); }
+.tcard ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; font-size: var(--s-1); color: var(--ink-2); }
+.tcard ul .num { color: var(--ink-3); }
+.two { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 860px) { .two { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 14px; min-width: 0; display: grid; gap: 10px; }
+.scroll-x { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: var(--s-1); }
+th, td { padding: 6px 8px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font-weight: 700; color: var(--ink-2); font-family: var(--sans); }
+td { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+tr.chosen td { background: var(--accent-soft); }
+td.lbl { font-family: var(--sans); }
+.pill { display: inline-block; font-family: var(--sans); font-size: 0.75rem; padding: 0 6px; border-radius: 999px; border: 1px solid currentColor; }
+.pill.ok { color: var(--good); } .pill.no { color: var(--warn); }
+svg text { fill: var(--ink-2); font-family: var(--sans); font-size: 11px; }
+svg .axis line, svg .axis path { stroke: var(--rule); }
+.heat td { text-align: center; color: var(--ink); }
+.heat td.lbl { text-align: left; }
+footer { color: var(--ink-3); font-size: var(--s-1); display: grid; gap: 6px; border-top: 1px solid var(--rule); padding-top: 16px; }
+footer a, .panel a, p a { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Конкурс СберИндекса · кластеризация муниципалитетов</div>
+    <h1>Потребление и труд</h1>
+    <p class="lede" id="lede"></p>
+    <div class="facts" id="facts"></div>
+  </header>
+
+  <div class="atlas">
+    <div class="mapbox">
+      <div class="toolbar">
+        <div class="seg" role="group" aria-label="Слой карты" id="layers"></div>
+        <div class="qctl" id="qctl" hidden>
+          <label for="qslider">Квартал</label>
+          <input type="range" id="qslider" min="0" max="7" step="1" value="7">
+          <span class="num" id="qlabel"></span>
+        </div>
+        <div class="search">
+          <input id="search" list="molist" placeholder="Найти МО по названию" autocomplete="off" aria-label="Поиск МО">
+          <datalist id="molist"></datalist>
+        </div>
+      </div>
+      <div class="svgwrap">
+        <svg id="map" role="img" aria-label="Карта типов муниципальных образований"></svg>
+        <div class="zoom">
+          <button id="z-msk" type="button">Москва</button>
+          <button id="z-spb" type="button">Петербург</button>
+          <button id="z-all" type="button">Вся страна</button>
+        </div>
+        <div class="tip" id="tip" hidden></div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <aside class="card" id="card" aria-live="polite"></aside>
+  </div>
+
+  <section class="ch" id="types-ch">
+    <div class="ch-head">
+      <div class="eyebrow">Глава 1</div>
+      <h2>Типы потребления</h2>
+      <p>Описания получены анализом формальных понятий: короткий набор признаков, которым обладает большинство МО типа. ↑ — верхняя треть МО по показателю, ↓ — нижняя. Точность — доля МО типа среди всех, кто подходит под описание; покрытие — доля типа, которую описание охватывает.</p>
+    </div>
+    <div class="types" id="types"></div>
+  </section>
+
+  <section class="ch">
+    <div class="ch-head">
+      <div class="eyebrow">Глава 2</div>
+      <h2>Как типы меняются во времени</h2>
+      <p id="dyn-text"></p>
+    </div>
+    <div class="two">
+      <div class="panel"><h3>Переходы 2023 → 2024</h3><div class="scroll-x"><svg id="flows" width="660" height="360"></svg></div><p class="note">Тип МО за год — самый частый тип по кварталам года. Полосы толще — больше МО.</p></div>
+      <div class="panel"><h3>Траектории за 8 кварталов</h3><div id="traj"></div><p class="note">Устойчивый сдвиг — одна смена типа, новый тип держится до конца периода; колебания — возвраты на границе типов.</p></div>
+    </div>
+  </section>
+
+  <section class="ch">
+    <div class="ch-head">
+      <div class="eyebrow">Глава 3</div>
+      <h2>Выбор метода</h2>
+      <p>Каждый вариант (метод, число типов, сеть, вес сети) оценён шестью внутренними индексами: силуэт, Калински–Харабаш и S_Dbw — по сходству потребления; AVI, AVU и модулярность — по связности на сети дорог. Индексы тянут в разные стороны, поэтому итог выбран агрегированием рангов по Борда и Коупленду, а затем проверен на устойчивость на подвыборках.</p>
+    </div>
+    <div class="two">
+      <div class="panel"><h3>Сходство потребления против связности</h3><div class="scroll-x"><svg id="pareto" width="600" height="380"></svg></div><div class="legend" id="pareto-legend" style="padding:0;border:0"></div><p class="note" id="pareto-note"></p></div>
+      <div class="panel"><h3>Лучшие варианты</h3><div class="scroll-x"><table id="top"></table></div></div>
+    </div>
+  </section>
+
+  <section class="ch">
+    <div class="ch-head">
+      <div class="eyebrow">Глава 4</div>
+      <h2>Какая сеть связывает муниципалитеты</h2>
+      <p>Сравнены четыре понятия близости: похожий состав расходов, синхронная динамика (корреляции очищенных рядов), похожая форма траектории (DTW) и расстояние по дорогам. I Морана показывает, насколько соседи по сети похожи по каждому показателю.</p>
+    </div>
+    <div class="two">
+      <div class="panel"><h3>I Морана по сетям</h3><div class="scroll-x"><table class="heat" id="moran"></table></div></div>
+      <div class="panel"><h3>Сообщества против случайного графа</h3><div class="scroll-x"><table id="comm"></table></div><p class="note">Нуль-модель — случайный граф с теми же степенями узлов. Превышение — насколько структура сообществ сильнее случайной.</p></div>
+    </div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+const DATA = /*__DATA__*/null;
+</script>
+<script>
+(function () {
+  const D = DATA;
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const typeColor = (t) => css(`--t${t % 12}`);
+  const fmt = (v, d = 1) => (v == null ? "—" : v.toLocaleString("ru-RU", { minimumFractionDigits: d, maximumFractionDigits: d }));
+  const pct = (v) => (v == null ? "—" : fmt(v * 100, 1) + "%");
+  const idx = new Map(D.mo.id.map((id, i) => [id, i]));
+  const types = new Map(D.types.map((t) => [t.id, t]));
+  const QN = D.meta.quarters.map((q) => q.replace("Q", " К"));
+  const LABEL = {
+    "share_Продовольствие": "Продовольствие", "share_Здоровье": "Здоровье", "share_Маркетплейсы": "Маркетплейсы",
+    "share_Общественное питание": "Общепит", "share_Транспорт": "Транспорт", "share_Прочее": "Прочее",
+    level_total: "Уровень расходов", growth_rel: "Рост 2024/2023", summer_peak: "Летний пик", dec_peak: "Декабрьский пик",
+    volatility: "Волатильность", mp_shift: "Сдвиг к маркетплейсам"
+  };
+  const SHARE_KEYS = D.keys.slice(0, 6);
+  const NET = { structure: "состав расходов", comovement: "синхронная динамика", leadlag: "форма траектории (DTW)",
+    geography: "дороги", multiplex: "мультиплекс" };
+  const netName = (n) => NET[n] || n;
+
+  // ---------- шапка
+  const nTypes = D.types.length;
+  document.getElementById("lede").textContent =
+    `${D.meta.n.toLocaleString("ru-RU")} муниципалитетов, 24 месяца безналичных расходов жителей и сеть связей между ними: ` +
+    `дороги, синхронная динамика, похожие траектории. Итог — ${nTypes} типов локального потребления.`;
+  const chosen = D.methods.find((m) => m.id === D.meta.chosen) || {};
+  document.getElementById("facts").innerHTML = [
+    [D.meta.n.toLocaleString("ru-RU"), "МО с полным рядом"],
+    [nTypes, "типов"],
+    [D.methods.length, "вариантов разбиения сравнено"],
+    [chosen.ARI_mean != null ? fmt(chosen.ARI_mean, 2) : "—", "устойчивость (ARI на подвыборках)"]
+  ].map(([v, l]) => `<span><b>${v}</b>${l}</span>`).join("");
+
+  // ---------- карта
+  const svg = d3.select("#map");
+  const W = 1000, H = 575;
+  svg.attr("viewBox", `0 0 ${W} ${H}`);
+  const topo = D.topo;
+  const objName = Object.keys(topo.objects)[0];
+  const fc = topojson.feature(topo, topo.objects[objName]);
+  // d3-geo понимает кольца на сфере: внешнее кольцо должно охватывать малую площадь, дыра — «всё,
+  // кроме себя». После упрощения часть колец развёрнута — разворачиваем по площади на сфере.
+  const ringArea = (r) => d3.geoArea({ type: "Polygon", coordinates: [r] });
+  const fixPoly = (poly) => poly.map((r, i) => {
+    const big = ringArea(r) > 2 * Math.PI;
+    return (i === 0 ? big : !big) ? r.slice().reverse() : r;
+  });
+  fc.features.forEach((f) => {
+    const gm = f.geometry; if (!gm) return;
+    if (gm.type === "Polygon") gm.coordinates = fixPoly(gm.coordinates);
+    if (gm.type === "MultiPolygon") gm.coordinates = gm.coordinates.map(fixPoly);
+  });
+  const proj = d3.geoConicEqualArea().parallels([52, 64]).rotate([-100, 0]).fitExtent([[8, 8], [W - 8, H - 8]], fc);
+  const geo = d3.geoPath(proj);
+  const g = svg.append("g");
+  const paths = g.selectAll("path").data(fc.features).join("path")
+    .attr("class", "mo").attr("d", geo)
+    .attr("data-id", (d) => d.properties.territory_id);
+  const zoom = d3.zoom().scaleExtent([1, 60]).on("zoom", (e) => g.attr("transform", e.transform));
+  svg.call(zoom);
+  function zoomTo(lon, lat, k) {
+    const [x, y] = proj([lon, lat]);
+    svg.transition().duration(600).call(zoom.transform, d3.zoomIdentity.translate(W / 2, H / 2).scale(k).translate(-x, -y));
+  }
+  document.getElementById("z-msk").onclick = () => zoomTo(37.62, 55.75, 28);
+  document.getElementById("z-spb").onclick = () => zoomTo(30.32, 59.94, 30);
+  document.getElementById("z-all").onclick = () => svg.transition().duration(600).call(zoom.transform, d3.zoomIdentity);
+
+  const LAYERS = [
+    { id: "type", name: "Тип" },
+    { id: "quarter", name: "По кварталам" },
+    { id: "traj", name: "Траектория" },
+    { id: "ma", name: "Доступность рынков" },
+    { id: "level", name: "Уровень расходов" }
+  ];
+  let layer = "type", quarter = 7, hidden = new Set(), selected = null;
+  const TRAJ = { "стабильный": "--t5", "устойчивый сдвиг": "--t2", "колебания": "--t3" };
+  const seq = (v, lo, hi) => d3.interpolateRgb(css("--accent-soft"), css("--accent"))(Math.max(0, Math.min(1, (v - lo) / (hi - lo))));
+  function colorOf(id) {
+    const i = idx.get(id);
+    if (i === undefined) return css("--absent");
+    const t = D.mo.type[i];
+    if (layer === "type") return hidden.has(t) ? css("--absent") : typeColor(t);
+    if (layer === "quarter") { const q = D.mo.q[i][quarter]; return hidden.has(q) ? css("--absent") : typeColor(q); }
+    if (layer === "traj") return css(TRAJ[D.mo.traj[i]] || "--ink-3");
+    if (layer === "ma") return D.mo.ma[i] == null ? css("--absent") : seq(Math.log1p(D.mo.ma[i]), Math.log1p(30), Math.log1p(1000));
+    if (layer === "level") return seq(D.mo.f[i][6], -0.6, 0.8);
+  }
+  function paint() { paths.attr("fill", (d) => colorOf(+d.properties.territory_id)); legend(); }
+
+  const seg = d3.select("#layers");
+  seg.selectAll("button").data(LAYERS).join("button").attr("type", "button")
+    .text((d) => d.name).attr("aria-pressed", (d) => d.id === layer)
+    .on("click", (e, d) => {
+      layer = d.id; seg.selectAll("button").attr("aria-pressed", (x) => x.id === layer);
+      document.getElementById("qctl").hidden = layer !== "quarter"; paint();
+    });
+  const qs = document.getElementById("qslider"), ql = document.getElementById("qlabel");
+  qs.oninput = () => { quarter = +qs.value; ql.textContent = QN[quarter]; paint(); };
+  ql.textContent = QN[quarter];
+
+  function legend() {
+    const L = d3.select("#legend").html("");
+    if (layer === "type" || layer === "quarter") {
+      const counts = d3.rollup(D.mo.id.map((_, i) => layer === "type" ? D.mo.type[i] : D.mo.q[i][quarter]), (v) => v.length, (d) => d);
+      D.types.forEach((t) => {
+        const it = L.append("span").attr("class", "item" + (hidden.has(t.id) ? " dim" : "")).attr("role", "button").attr("tabindex", 0)
+          .on("click", () => { hidden.has(t.id) ? hidden.delete(t.id) : hidden.add(t.id); paint(); });
+        it.append("span").attr("class", "sw").style("background", typeColor(t.id));
+        it.append("span").text(`${t.name} · ${counts.get(t.id) || 0}`);
+      });
+      L.append("span").html(`<span class="sw" style="background:${css("--absent")}"></span>нет полного ряда`);
+    } else if (layer === "traj") {
+      const c = d3.rollup(D.mo.traj, (v) => v.length, (d) => d);
+      Object.entries(TRAJ).forEach(([k, v]) => L.append("span").html(`<span class="sw" style="background:${css(v)}"></span>${k} · ${c.get(k) || 0}`));
+    } else {
+      const lo = layer === "ma" ? "30" : "−45%", hi = layer === "ma" ? "1000" : "+120%";
+      L.append("span").text(layer === "ma" ? "Индекс доступности рынков (0–1000, лог. шкала)" : "Расходы жителя относительно медианного МО");
+      L.append("span").html(`<span class="num">${lo}</span> <span class="ramp" style="display:inline-block;vertical-align:middle;background:linear-gradient(90deg, ${css("--accent-soft")}, ${css("--accent")})"></span> <span class="num">${hi}</span>`);
+    }
+  }
+
+  const tip = document.getElementById("tip");
+  paths.on("pointermove", (e, d) => {
+    const i = idx.get(+d.properties.territory_id);
+    const box = e.currentTarget.ownerSVGElement.parentNode.getBoundingClientRect();
+    if (i === undefined) { tip.textContent = "Нет полного ряда расходов"; }
+    else {
+      const t = types.get(layer === "quarter" ? D.mo.q[i][quarter] : D.mo.type[i]);
+      tip.innerHTML = `<b>${D.mo.name[i]}</b><br>${D.mo.region[i]}<br>${t.name}`;
+    }
+    tip.hidden = false;
+    tip.style.left = Math.min(e.clientX - box.left + 12, box.width - 270) + "px";
+    tip.style.top = (e.clientY - box.top + 12) + "px";
+  }).on("pointerleave", () => { tip.hidden = true; })
+    .on("click", (e, d) => { const id = +d.properties.territory_id; if (idx.has(id)) select(id); });
+
+  // ---------- карточка МО
+  function bars(i) {
+    const f = D.mo.f[i];
+    const rows = SHARE_KEYS.map((k, j) => ({ k, v: f[j], n: D.national[k], max: 0.6 }));
+    return `<div class="bars">${rows.map((r) => `
+      <div class="bar"><span>${LABEL[r.k]}</span>
+        <span class="track"><i style="left:0;width:${Math.min(100, (r.v / r.max) * 100)}%"></i><b style="left:${Math.min(100, (r.n / r.max) * 100)}%"></b></span>
+        <span class="v">${pct(r.v)}</span></div>`).join("")}</div>
+      <p class="note">Доли в безналичных расходах жителя; черта — медиана по МО.</p>`;
+  }
+  function select(id) {
+    selected = id;
+    paths.classed("sel", (d) => +d.properties.territory_id === id);
+    const i = idx.get(id), t = types.get(D.mo.type[i]);
+    const lvl = D.mo.f[i][6];
+    const fca = (t.fca[0] || {}).description || "";
+    document.getElementById("card").innerHTML = `
+      <div><div class="eyebrow">${D.mo.region[i]}</div><h3>${D.mo.full[i]}</h3></div>
+      <div><span class="chip"><span class="sw" style="background:${typeColor(t.id)}"></span>${t.name}</span></div>
+      <div class="desc">${fca ? "Тип узнаётся по сочетанию: " + fca + "." : ""}</div>
+      <div style="display:grid;gap:4px"><div class="strip">${D.mo.q[i].map((q) => `<div title="${types.get(q).name}" style="background:${typeColor(q)}"></div>`).join("")}</div>
+      <div class="strip-l">${QN.map((q) => `<span>${q.slice(2)}</span>`).join("")}</div>
+      <div class="note">Траектория: ${D.mo.traj[i]}</div></div>
+      <div class="facts" style="gap:6px 20px"><span><b>${lvl >= 0 ? "+" : "−"}${fmt(Math.abs(Math.expm1(lvl)) * 100, 0)}%</b>к медианному МО по расходам</span>
+      <span><b>${D.mo.ma[i] == null ? "—" : fmt(D.mo.ma[i], 0)}</b>индекс доступности рынков</span></div>
+      ${bars(i)}`;
+  }
+
+  // поиск
+  const dl = document.getElementById("molist");
+  dl.innerHTML = D.mo.id.map((id, i) => `<option value="${D.mo.name[i]} — ${D.mo.region[i]}"></option>`).join("");
+  const byLabel = new Map(D.mo.id.map((id, i) => [`${D.mo.name[i]} — ${D.mo.region[i]}`, id]));
+  document.getElementById("search").addEventListener("change", (e) => { const id = byLabel.get(e.target.value); if (id) select(id); });
+
+  // ---------- глава 1: типы
+  const tw = d3.select("#types");
+  D.types.forEach((t) => {
+    const c = tw.append("article").attr("class", "tcard");
+    c.append("h3").html(`<span class="sw" style="background:${typeColor(t.id)}"></span><span>${t.name}</span>`);
+    c.append("div").attr("class", "stats").html(
+      `<span><b>${t.n}</b> МО</span><span><b>${t.regions}</b> регионов</span><span><b>${pct(t.city)}</b> городских округов</span><span>доступность <b>${fmt(t.ma, 0)}</b></span>`);
+    const p = t.profile;
+    c.append("div").attr("class", "bars").html(SHARE_KEYS.concat(["level_total"]).map((k) => {
+      if (k === "level_total") {
+        const v = Math.expm1(p[k]);
+        return `<div class="bar"><span>Уровень расходов</span><span class="track"><i style="left:${v < 0 ? 50 + v * 50 : 50}%;width:${Math.min(50, Math.abs(v) * 50)}%"></i><b style="left:50%"></b></span><span class="v">${v >= 0 ? "+" : "−"}${fmt(Math.abs(v) * 100, 0)}%</span></div>`;
+      }
+      return `<div class="bar"><span>${LABEL[k]}</span><span class="track"><i style="left:0;width:${Math.min(100, p[k] / 0.6 * 100)}%"></i><b style="left:${Math.min(100, D.national[k] / 0.6 * 100)}%"></b></span><span class="v">${pct(p[k])}</span></div>`;
+    }).join(""));
+    if (t.fca.length) c.append("ul").html(t.fca.map((f) => `<li>${f.description} <span class="num">· точн. ${fmt(f.precision, 2)} · покр. ${fmt(f.coverage, 2)}</span></li>`).join(""));
+  });
+
+  // ---------- глава 2: переходы
+  const tr = D.transition, fl = d3.select("#flows");
+  const FW = 660, FH = 360, pad = 24, gapN = 6;
+  const tot = d3.sum(tr.values.flat());
+  const sc = (FH - pad * 2 - gapN * Math.max(tr.rows.length, tr.cols.length)) / tot;
+  let y0 = pad; const left = {}; tr.rows.forEach((r, i) => { const v = d3.sum(tr.values[i]); left[r] = { y: y0, h: v * sc, off: 0 }; y0 += v * sc + gapN; });
+  let y1 = pad; const right = {}; tr.cols.forEach((c, j) => { const v = d3.sum(tr.values.map((row) => row[j])); right[c] = { y: y1, h: v * sc, off: 0 }; y1 += v * sc + gapN; });
+  const x0 = 200, x1 = FW - 200;
+  const short = (s) => (s.length > 30 ? s.slice(0, 29) + "…" : s);
+  tr.rows.forEach((r, i) => tr.cols.forEach((c, j) => {
+    const v = tr.values[i][j]; if (!v) return;
+    const h = v * sc, a = left[r], b = right[c];
+    const ya = a.y + a.off + h / 2, yb = b.y + b.off + h / 2; a.off += h; b.off += h;
+    fl.append("path").attr("d", `M${x0},${ya} C${(x0 + x1) / 2},${ya} ${(x0 + x1) / 2},${yb} ${x1},${yb}`)
+      .attr("fill", "none").attr("stroke", typeColor(r)).attr("stroke-opacity", r === c ? 0.35 : 0.75).attr("stroke-width", Math.max(1, h))
+      .append("title").text(`${types.get(r).name} → ${types.get(c).name}: ${v} МО`);
+  }));
+  tr.rows.forEach((r) => { fl.append("rect").attr("x", x0 - 8).attr("y", left[r].y).attr("width", 8).attr("height", Math.max(1, left[r].h)).attr("fill", typeColor(r));
+    fl.append("text").attr("x", x0 - 12).attr("y", left[r].y + left[r].h / 2 + 4).attr("text-anchor", "end").text(short(types.get(r).name)); });
+  tr.cols.forEach((c) => { fl.append("rect").attr("x", x1).attr("y", right[c].y).attr("width", 8).attr("height", Math.max(1, right[c].h)).attr("fill", typeColor(c));
+    fl.append("text").attr("x", x1 + 12).attr("y", right[c].y + right[c].h / 2 + 4).text(short(types.get(c).name)); });
+  fl.append("text").attr("x", x0 - 4).attr("y", 14).attr("text-anchor", "end").text("2023");
+  fl.append("text").attr("x", x1 + 4).attr("y", 14).text("2024");
+  const stay = d3.sum(tr.rows.map((r, i) => (tr.cols.indexOf(r) >= 0 ? tr.values[i][tr.cols.indexOf(r)] : 0)));
+  const tc = d3.rollup(D.mo.traj, (v) => v.length, (d) => d);
+  document.getElementById("dyn-text").textContent =
+    `Каждый квартал МО относится к ближайшему из ${nTypes} фиксированных типов по признакам квартала и связям в сети. ` +
+    `${pct(stay / tot)} МО сохранили годовой тип в 2024 г.; у ${tc.get("устойчивый сдвиг") || 0} МО тип сменился и закрепился, у ${tc.get("колебания") || 0} — колеблется на границе типов.`;
+  document.getElementById("traj").innerHTML = `<table><tr><th>Траектория</th><th>МО</th><th>Доля</th></tr>${
+    ["стабильный", "устойчивый сдвиг", "колебания"].map((k) => `<tr><td class="lbl"><span class="sw" style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:${css(TRAJ[k])}"></span>${k}</td><td>${tc.get(k) || 0}</td><td>${pct((tc.get(k) || 0) / D.meta.n)}</td></tr>`).join("")}</table>`;
+
+  // ---------- глава 3: методы
+  const MC = { kefrin: "--t0", leiden: "--t2", spectral: "--t4", spectral_joint: "--t6", kmeans: "--t1", gmm: "--t5", ward: "--t8", pattern: "--t3" };
+  const MN = { kefrin: "KEFRiN", leiden: "Leiden", spectral: "спектральная (сеть)", spectral_joint: "спектральная (признаки+сеть)", kmeans: "k-means", gmm: "GMM", ward: "Уорд", pattern: "паттерны" };
+  const ms = D.methods.filter((m) => m.admissible);
+  const ps = d3.select("#pareto"), PW = 600, PH = 380, m = { l: 48, r: 14, t: 12, b: 40 };
+  const xs = d3.scaleLinear().domain(d3.extent(ms, (d) => d.SW)).nice().range([m.l, PW - m.r]);
+  const ys = d3.scaleLinear().domain(d3.extent(ms, (d) => d.MQ)).nice().range([PH - m.b, m.t]);
+  ps.append("g").attr("class", "axis").attr("transform", `translate(0,${PH - m.b})`).call(d3.axisBottom(xs).ticks(6));
+  ps.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(ys).ticks(6));
+  ps.append("text").attr("x", PW - m.r).attr("y", PH - 6).attr("text-anchor", "end").text("силуэт по признакам потребления →");
+  ps.append("text").attr("x", m.l + 4).attr("y", m.t + 10).text("↑ модулярность на сети дорог");
+  ps.selectAll("circle.m").data(ms).join("circle").attr("class", "m")
+    .attr("cx", (d) => xs(d.SW)).attr("cy", (d) => ys(d.MQ)).attr("r", (d) => d.id === D.meta.chosen ? 7 : 3.5)
+    .attr("fill", (d) => css(MC[d.method])).attr("fill-opacity", 0.8)
+    .attr("stroke", (d) => d.id === D.meta.chosen ? css("--ink") : "none").attr("stroke-width", 2)
+    .append("title").text((d) => `${MN[d.method]}${d.network ? " · " + netName(d.network) : ""} · K=${d.K}\nSW ${fmt(d.SW, 3)} · MQ ${fmt(d.MQ, 3)} · место по Борда ${d.borda_place ?? "—"}`);
+  document.getElementById("pareto-legend").innerHTML = Object.entries(MN).map(([k, v]) =>
+    `<span class="item"><span class="sw" style="background:${css(MC[k])};border-radius:50%"></span>${v}</span>`).join("");
+  document.getElementById("pareto-note").textContent = "Каждая точка — вариант разбиения. Чисто признаковые методы уходят вправо, чисто сетевые — вверх; KEFRiN занимает середину. Обведён итоговый вариант.";
+  const top = D.methods.filter((d) => d.borda_place != null).sort((a, b) => a.borda_place - b.borda_place).slice(0, 12);
+  document.getElementById("top").innerHTML = `<tr><th>Вариант</th><th>K</th><th>Борда</th><th>Коупленд</th><th>ARI</th></tr>` + top.map((d) =>
+    `<tr class="${d.id === D.meta.chosen ? "chosen" : ""}"><td class="lbl">${MN[d.method]}${d.network ? " · " + netName(d.network) : ""}${d.id.includes("|xi") ? " · ξ×" + d.id.split("|xi")[1].split("|")[0] : ""}${d.id.includes("cosine") ? " · cos" : d.id.includes("euclidean") ? " · евкл." : ""}</td><td>${d.K}</td><td>${d.borda_place}</td><td>${d.copeland_place}</td><td>${d.ARI_mean == null ? "—" : fmt(d.ARI_mean, 2) + (d.ARI_mean >= 0.6 ? ' <span class="pill ok">устойчив</span>' : ' <span class="pill no">ниже порога</span>')}</td></tr>`).join("");
+
+  // ---------- глава 4: сети
+  const mor = D.network.moran, nets = Object.keys(mor), feats = Object.keys(mor[nets[0]]);
+  const mcol = (v) => d3.interpolateRgb(css("--sheet"), css("--accent"))(Math.max(0, Math.min(1, v)));
+  document.getElementById("moran").innerHTML = `<tr><th>Показатель</th>${nets.map((n) => `<th>${netName(n)}</th>`).join("")}</tr>` + feats.map((f) =>
+    `<tr><td class="lbl">${LABEL[f] || f}</td>${nets.map((n) => { const v = mor[n][f]; return `<td style="background:${mcol(v)};color:${v > 0.6 ? css("--sheet") : css("--ink")}">${fmt(v, 2)}</td>`; }).join("")}</tr>`).join("");
+  document.getElementById("comm").innerHTML = `<tr><th>Сеть</th><th>Модулярность</th><th>Нуль-модель</th><th>Превышение</th><th>Сообществ</th></tr>` +
+    D.network.community.map((r) => `<tr><td class="lbl">${netName(r["сеть"])}</td><td>${fmt(r["модулярность"], 3)}</td><td>${fmt(r["модулярность (нуль-модель)"], 3)}</td><td>${fmt(r["превышение"], 3)}</td><td>${r["сообществ"]}</td></tr>`).join("");
+
+  document.getElementById("foot").innerHTML = `<div>Данные: СберИндекс, архив конкурса (CC BY-SA 4.0) — безналичные расходы 2023–2024 гг., расстояния между МО, индекс доступности рынков; справочник и границы МО СберИндекса.</div>
+    <div>Итоговый вариант: <span class="num">${D.meta.chosen}</span>. Методология, код и конфигурация — в репозитории проекта.</div>`;
+
+  paint();
+  // стартовая карточка: крупнейшее МО самого массового типа с полным рядом
+  select(D.mo.id[d3.maxIndex(D.mo.ma.map((v, i) => (D.mo.type[i] === D.types[0].id ? v : -1)))]);
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { paint(); if (selected) select(selected); });
+})();
+</script>

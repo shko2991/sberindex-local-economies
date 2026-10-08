@@ -1,0 +1,119 @@
+# Конфигурация проекта «Потребление против рынка труда: типы локальных экономик МО»
+# Все пути — относительно корня репозитория. Гиперпараметры методов — здесь же.
+
+seed: 42
+
+paths:
+  raw: "data/raw/hackathon"              # архив конкурса (consumption, connection, market_access)
+  external: "data/external"              # справочник МО СберИндекса, муниципальная статистика Росстата
+  interim: "data/interim"
+  processed: "data/processed"
+  reports: "reports"
+  figures: "reports/figures"
+
+data:
+  consumption: "consumption.parquet"
+  connection: "connection.parquet"
+  market_access: "market_access.parquet"
+  # официальный источник для скрипта скачивания (лицензия CC BY-SA 4.0)
+  source_url: "https://www.sberbank.com/common/img/uploaded/files/pdf/sberindex/hackathonlicence.zip"
+  source_page: "https://sberindex.ru/ru/research/data-sense-opisanie-nabora-dannikh-khakatona-sberindeksa-po-munitsipalnim-dannim"
+
+reference:
+  # Версионный справочник МО СберИндекса (страница «Границы и изменения муниципальных образований»)
+  page: "https://sberindex.ru/ru/research/dataset-borders-and-changes-of-municipalities"
+  table: "sberindex_dict/t_dict_municipal_districts.xlsx"
+  polygons: "sberindex_dict/t_dict_municipal_districts_poly.gpkg"
+
+sample:
+  months_required: 24          # базовая выборка: МО с полным рядом (2 016)
+  # Варианты с доступностью рынков и автодорогами сравниваются на общей выборке (2 004).
+
+features:
+  categories: ["Продовольствие", "Здоровье", "Маркетплейсы", "Общественное питание", "Транспорт"]
+  total: "Все категории"
+  other_label: "Прочее"
+  # Блоки признаков узла: структура (доли 5 категорий + прочее), относительный уровень
+  # (лог-разность с медианой МО в том же месяце), динамика (рост, сезонность, волатильность).
+  blocks: ["structure", "level", "dynamics"]
+  period: "Q"                  # период для динамической сети: Q — квартал
+
+graphs:
+  knn: 10                      # число соседей при разрежении графа
+  mutual: false                # true — только взаимные соседи
+  structure:
+    metric: "cosine"           # близость структуры и уровня расходов
+  comovement:
+    series: "residual"         # ряды без общего тренда и сезонности (относительно медианы МО)
+    min_corr: 0.0
+  leadlag:
+    max_lag: 3                 # месяцев
+    dtw_window: 3              # окно Сакое–Чибы для DTW
+  geography:
+    type: "highway"            # highway | railway
+    knn: 8
+    zero_km: 1.0               # нулевые расстояния (общий центр) заменяются на 1 км
+    sigma_km: 150.0            # ширина ядра exp(-d/sigma)
+  # Мультиплекс — только «реляционные» слои; граф structure строится из тех же признаков,
+  # что и блок Y в KEFRiN, и в мультиплексе дал бы двойной учёт признаков.
+  multiplex_layers: ["geography", "comovement", "leadlag"]
+
+methods:
+  k_range: [4, 5, 6, 7, 8, 9, 10, 11, 12]
+  kmeans: {n_init: 20}
+  gmm: {covariance_type: "full", n_init: 5}
+  ward: {}
+  spectral: {assign_labels: "cluster_qr"}
+  leiden: {resolutions: [0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0], n_iterations: -1}
+  networks: ["geography", "comovement", "leadlag", "multiplex"]   # сети для сетевых методов
+  kefrin:
+    distance: "cosine"         # euclidean | cosine | manhattan (Shalileh & Mirkin, 2022)
+    distances: ["cosine", "euclidean"]   # варианты в сравнении (manhattan — медленный, вне сетки)
+    rho_feature: 1.0           # вес блока признаков в критерии
+    rho_network: 1.0           # вес блока связей (ξ в статье); в сетке умножается на xi_grid
+    xi_grid: [1, 4, 16]        # 1 — как в статье; 4, 16 — усиление сети (разреженный kNN-граф
+                               # объясняет малую долю разброса строк, см. отчёт)
+    balance_scatter: true      # euclidean: ξ дополнительно умножается на разброс(Y)/разброс(P)
+    n_init: 20
+    n_init_bootstrap: 5
+    max_iter: 100
+  pattern:
+    tolerance: 0.0             # 0 — точное равенство, как в исходном методе
+    indicators: "shares_z"     # z-оценки долей 5 категорий (сопоставимые величины)
+
+evaluation:
+  icvi: ["SW", "CH", "S_Dbw", "AVI", "AVU", "MQ"]
+  network: "geography"         # сеть для AVI/AVU/MQ в основной спецификации (дана организаторами)
+  sensitivity_networks: ["comovement", "leadlag", "multiplex"]
+  min_cluster_share: 0.01      # допустимость: каждый кластер ≥ 1% МО (иначе тип не интерпретируем)
+  max_cluster_share: 0.6       # и ни один кластер не поглощает больше 60% МО
+  bootstrap: 50                # повторов для устойчивости (ARI на подвыборках)
+  subsample: 0.8
+  stability_min: 0.6           # порог устойчивости итогового разбиения (средний ARI)
+  bootstrap_top: 12            # устойчивость считается для лучших по Борда кандидатов
+  ranking: ["borda", "copeland"]
+
+dynamics:
+  min_run: 2                   # «устойчивый сдвиг»: новый тип держится ≥ 2 кварталов до конца периода
+
+fca:
+  max_len: 3                   # не более 3 признаков в описании типа
+  min_precision: 0.6           # доля МО типа в объёме понятия
+  min_extent: 10
+  top: 3
+
+network_choice:
+  perms: 199                   # перестановок для p-значений I Морана
+  nulls: 5                     # случайных графов в нуль-модели
+
+# Названия типов итогового разбиения (номер = место по размеру, 0 — самый крупный).
+# Даны по профилям и описаниям АФП после выбора разбиения; при смене разбиения их нужно пересмотреть.
+type_names:
+  0: "Периферия с низкими расходами"
+  1: "Средний уровень, ровный сезон"
+  2: "Растущие города"
+  3: "Удалённые районы с сезонными пиками"
+  4: "Москва и ближнее Подмосковье"
+  5: "Северные ресурсные территории"
+  6: "Санкт-Петербург"
+  7: "Крайний Север с летним пиком"
