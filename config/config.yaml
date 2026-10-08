@@ -144,5 +144,5 @@ stability:
   init_runs: 10                # запусков на полных данных с другими seed (устойчивость оптимизации)
 
 publication:
-  repo_url: ""                    # https://github.com/<логин>/<репозиторий>; пусто — на GitHub Pages определяется по адресу страницы
+  repo_url: "https://github.com/shko2991/sberindex-local-economies"   # пусто — на GitHub Pages определяется по адресу страницы
   results_version: "2026-10-08"   # версия результатов, показывается на странице

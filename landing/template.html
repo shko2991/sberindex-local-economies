@@ -10,7 +10,7 @@
    на кириллице. Одна тёмная тема. */
 :root {
   color-scheme: dark;
-  --space: #060b26;
+  --space: #070720;
   --paper: #0a1233;
   --sheet: #0d1741;
   --panel: rgba(13, 23, 65, 0.8);
@@ -19,18 +19,19 @@
   --ink: #eaf0ff;
   --ink-2: #b5c1e9;
   --ink-3: #8b99c9;
-  --accent: #6ff3ff;
-  --accent-soft: #14214f;
+  --accent: #b48cff;
+  --accent-soft: #1f1850;
   --neon-2: #ff62d4;
-  --glow: rgba(111, 243, 255, 0.45);
+  --glow: rgba(180, 140, 255, 0.5);
   --absent: #141c47;
   --hl: #ffffff;
-  --t0: #4fa3ff; --t1: #7fe08a; --t2: #ff7d5c; --t3: #ffcf5a;
-  --t4: #c18bff; --t5: #2ee6c8; --t6: #ff6fb7; --t7: #a9b9e6;
+  /* цвета типов — общие с рисунками отчёта (src/figures.py, TYPE_COLORS) */
+  --t0: #3d8ef0; --t1: #4cb85c; --t2: #e5484d; --t3: #f08a24;
+  --t4: #e0b000; --t5: #19b39b; --t6: #e255a8; --t7: #8a96c8;
   --t8: #8f9bc4; --t9: #c7d25a; --t10: #8fb6ff; --t11: #e0607a;
   --good: #6ff3b0; --warn: #ffc163; --bad: #ff7b8f;
   --l0: #e2b56c; --l1: #5fb0ff; --l2: #9fe37d; --l3: #ff9a52; --l4: #9488e8; --l5: #ff5c8a;
-  --neg: #3fcfff; --pos: #ff62d4;
+  --neg: #5b9dff; --pos: #ff62d4;
   --display: "PT Serif", Georgia, "Times New Roman", serif;
   --sans: "PT Sans", "Segoe UI", Roboto, Arial, sans-serif;
   --serif: var(--sans);
@@ -40,32 +41,29 @@
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 12px); }
+html, body { overflow-x: clip; }
 body { background: var(--space); color: var(--ink); font-family: var(--sans); font-size: var(--s0); line-height: 1.55;
-  background-image: radial-gradient(ellipse 70% 50% at 12% -8%, rgba(92, 70, 220, 0.32), transparent 70%),
-    radial-gradient(ellipse 55% 40% at 92% 6%, rgba(0, 170, 230, 0.2), transparent 70%),
-    radial-gradient(ellipse 80% 50% at 50% 115%, rgba(170, 50, 190, 0.16), transparent 70%);
+  background-image: radial-gradient(ellipse 70% 50% at 12% -8%, rgba(110, 60, 230, 0.34), transparent 70%),
+    radial-gradient(ellipse 55% 40% at 92% 6%, rgba(150, 70, 255, 0.22), transparent 70%),
+    radial-gradient(ellipse 80% 50% at 50% 115%, rgba(190, 50, 200, 0.16), transparent 70%);
   background-attachment: fixed; }
-/* неподвижное звёздное небо за всей страницей */
-body::before, body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1; }
-body::before { background-image:
-    radial-gradient(1px 1px at 23px 41px, rgba(255,255,255,.75), transparent 60%),
-    radial-gradient(1px 1px at 157px 97px, rgba(200,225,255,.6), transparent 60%),
-    radial-gradient(1.5px 1.5px at 241px 203px, rgba(255,255,255,.8), transparent 60%),
-    radial-gradient(1px 1px at 91px 263px, rgba(180,210,255,.55), transparent 60%),
-    radial-gradient(1px 1px at 301px 31px, rgba(255,230,250,.6), transparent 60%);
-  background-size: 331px 307px; opacity: 0.55; }
-body::after { background-image:
-    radial-gradient(1px 1px at 61px 151px, rgba(255,255,255,.9), transparent 60%),
-    radial-gradient(1.5px 1.5px at 199px 47px, rgba(160,240,255,.8), transparent 60%),
-    radial-gradient(1px 1px at 127px 221px, rgba(255,255,255,.7), transparent 60%);
+/* космос за страницей: звёздное поле и пылевые облака рисуются на холсте #cosmos; редкий слой мерцает */
+#cosmos { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; display: block; }
+body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1; background-image:
+    radial-gradient(1.5px 1.5px at 61px 151px, rgba(255,255,255,.95), transparent 60%),
+    radial-gradient(1.5px 1.5px at 199px 47px, rgba(210,190,255,.9), transparent 60%),
+    radial-gradient(1px 1px at 127px 221px, rgba(255,225,200,.8), transparent 60%);
   background-size: 263px 281px; opacity: 0.35; animation: twinkle 7s ease-in-out infinite alternate; }
+.nightsky { position: absolute; top: -60px; right: -40px; width: min(780px, 58vw); aspect-ratio: 1; pointer-events: none; z-index: -1;
+  -webkit-mask-image: radial-gradient(circle, #000 58%, transparent 74%); mask-image: radial-gradient(circle, #000 58%, transparent 74%); }
+@media (max-width: 900px) { .nightsky { top: -30px; right: -50%; width: 110vw; opacity: 0.3; } }
 @keyframes twinkle { from { opacity: 0.15; } to { opacity: 0.5; } }
 
 .wrap { max-width: 1280px; margin: 0 auto; padding-inline: 16px; padding-block: 0 64px; display: grid; gap: 48px; }
 h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.15; }
 h1, h2 { font-family: var(--display); font-weight: 700; }
-h1 { font-size: clamp(2rem, 4.6vw, 3.7rem); letter-spacing: -0.01em; line-height: 1.06; color: #f6f9ff; max-width: 18ch;
-  text-shadow: 0 0 18px rgba(111, 243, 255, 0.45), 0 0 46px rgba(111, 243, 255, 0.22); }
+h1 { font-size: clamp(2rem, 4.6vw, 3.7rem); letter-spacing: -0.01em; line-height: 1.06; color: #f7f3ff; max-width: 18ch;
+  text-shadow: 0 0 18px rgba(180, 140, 255, 0.55), 0 0 46px rgba(150, 90, 255, 0.3); }
 h2 { font-size: clamp(1.45rem, 2.6vw, var(--s3)); letter-spacing: -0.01em; }
 h3 { font-family: var(--sans); font-weight: 700; font-size: var(--s1); }
 p { margin: 0; max-width: 70ch; }
@@ -81,26 +79,34 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .nav-in { max-width: 1280px; margin: 0 auto; padding-inline: 16px; min-height: var(--nav-h); display: flex; flex-wrap: wrap; align-items: center; gap: 0 24px; }
 @media (max-width: 640px) { .nav-in { padding-block: 6px; } .nav ul { width: 100%; } }
 .brand { font-family: var(--display); font-weight: 700; font-size: 1rem; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.brand .b-short { display: none; }
+@media (max-width: 480px) { .brand .b-long { display: none; } .brand .b-short { display: inline; } }
 .brand i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); margin-right: 8px; vertical-align: 1px; }
 .nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; min-width: 0; }
 .nav ul::-webkit-scrollbar { display: none; }
 .nav a.l { display: block; padding: 6px 10px; border-radius: 8px; color: var(--ink-2); text-decoration: none; font-size: var(--s-1); white-space: nowrap; }
-.nav a.l:hover { color: var(--ink); background: rgba(111, 243, 255, 0.07); }
+.nav a.l:hover { color: var(--ink); background: rgba(180, 140, 255, 0.07); }
 .nav a.l.on { color: var(--accent); text-shadow: 0 0 10px var(--glow); }
 
 /* герой */
-.hero { display: grid; gap: 22px; padding-top: 40px; }
-.hero-text { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px 48px; align-items: end; }
-@media (max-width: 900px) { .hero-text { grid-template-columns: minmax(0, 1fr); } }
+.hero { display: grid; gap: 22px; padding-top: 40px; position: relative; isolation: isolate; }
+.hero-text { display: grid; grid-template-columns: minmax(0, 46rem); gap: 22px; align-items: end; }
+.hero-text .facts { text-shadow: 0 1px 8px #070720; }
+.hero-links { display: flex; flex-wrap: wrap; gap: 10px; }
+.hero-links a { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; border: 1px solid rgba(180, 140, 255, 0.45); background: rgba(20, 12, 60, 0.6); color: var(--ink); text-decoration: none; font-size: var(--s-1); }
+.hero-links a:hover { border-color: var(--accent); box-shadow: 0 0 16px rgba(180, 140, 255, 0.3); }
+.hero-links a b { color: var(--accent); font-weight: 700; }
+.attrib { padding: 0 14px 10px; font-size: 0.75rem; color: var(--ink-3); }
+.attrib a { color: var(--ink-2); }
 .hero-text .lead { display: grid; gap: 14px; }
 .kicker { font-size: var(--s-1); color: var(--accent); }
 .facts { display: flex; flex-wrap: wrap; gap: 10px 26px; color: var(--ink-2); font-size: var(--s-1); }
 .facts b { display: block; font-family: var(--display); font-weight: 700; font-size: 1.45rem; color: var(--ink); line-height: 1.2; font-variant-numeric: tabular-nums; }
 .hero-text .facts span { max-width: 15em; }
 .galaxy { position: relative; border-radius: 20px; border: 1px solid var(--line); overflow: hidden; height: clamp(360px, 50vw, 610px);
-  background: radial-gradient(ellipse 60% 70% at 30% 45%, rgba(60, 80, 200, 0.22), transparent 70%),
-    radial-gradient(ellipse 50% 60% at 80% 60%, rgba(150, 40, 170, 0.14), transparent 70%), #050a22;
-  box-shadow: 0 0 0 1px rgba(111, 243, 255, 0.05), 0 30px 80px -40px rgba(80, 120, 255, 0.45); }
+  background: radial-gradient(ellipse 60% 70% at 30% 45%, rgba(90, 60, 210, 0.24), transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 60%, rgba(170, 50, 190, 0.16), transparent 70%), rgba(6, 5, 26, 0.88);
+  box-shadow: 0 0 0 1px rgba(180, 140, 255, 0.05), 0 30px 80px -40px rgba(80, 120, 255, 0.45); }
 #sky { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: crosshair; touch-action: pan-y; }
 .g-top { position: absolute; left: 14px; top: 14px; right: 14px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: flex-start; pointer-events: none; }
 @media (max-width: 640px) {
@@ -112,18 +118,18 @@ a { color: var(--accent); text-underline-offset: 3px; }
   .hero { padding-top: 24px; }
 }
 .g-top > * { pointer-events: auto; }
-.g-cap { font-size: var(--s-1); color: var(--ink-2); max-width: 46ch; text-shadow: 0 1px 6px #050a22; }
+.g-cap { font-size: var(--s-1); color: var(--ink-2); max-width: 46ch; text-shadow: 0 1px 6px #06051a; }
 .g-legend { display: flex; flex-wrap: wrap; gap: 6px 8px; }
 .g-foot { display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between; align-items: baseline; font-size: var(--s-1); color: var(--ink-3); }
-.gtip { position: absolute; pointer-events: none; z-index: 3; background: rgba(8, 14, 46, 0.92); border: 1px solid rgba(111, 243, 255, 0.35);
-  box-shadow: 0 0 18px rgba(111, 243, 255, 0.18); color: var(--ink); font-size: var(--s-1); padding: 8px 10px; border-radius: 10px; max-width: 280px; }
+.gtip { position: absolute; pointer-events: none; z-index: 3; background: rgba(8, 14, 46, 0.92); border: 1px solid rgba(180, 140, 255, 0.35);
+  box-shadow: 0 0 18px rgba(180, 140, 255, 0.18); color: var(--ink); font-size: var(--s-1); padding: 8px 10px; border-radius: 10px; max-width: 280px; }
 .gtip b { font-weight: 700; }
 
 /* переключатели и чипы */
 .seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: rgba(6, 11, 38, 0.7); max-width: 100%; }
 .seg button { font: inherit; font-size: var(--s-1); background: transparent; color: var(--ink-2); border: 0; padding: 6px 11px; border-radius: 9px; cursor: pointer; }
 .seg button:hover { color: var(--ink); }
-.seg button[aria-pressed="true"] { background: rgba(111, 243, 255, 0.14); color: var(--accent); box-shadow: inset 0 0 0 1px rgba(111, 243, 255, 0.45), 0 0 14px rgba(111, 243, 255, 0.18); }
+.seg button[aria-pressed="true"] { background: rgba(180, 140, 255, 0.14); color: var(--accent); box-shadow: inset 0 0 0 1px rgba(180, 140, 255, 0.45), 0 0 14px rgba(180, 140, 255, 0.18); }
 .chip { display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: var(--s-1); padding: 3px 10px 3px 8px; border-radius: 999px;
   border: 1px solid var(--line); background: rgba(6, 11, 38, 0.6); color: var(--ink-2); }
 button.chip { cursor: pointer; }
@@ -152,16 +158,16 @@ button.chip:hover, button.chip[aria-pressed="true"] { color: var(--ink); border-
 .zoom { position: absolute; right: 10px; top: 10px; display: grid; gap: 4px; }
 @media (max-width: 600px) { .zoom { position: static; display: flex; gap: 6px; padding: 8px 14px 0; } }
 .zoom button { font: inherit; font-size: var(--s-1); background: rgba(6, 11, 38, 0.8); color: var(--ink-2); border: 1px solid var(--line); border-radius: 8px; padding: 4px 9px; cursor: pointer; }
-.zoom button:hover { color: var(--accent); border-color: rgba(111, 243, 255, 0.45); }
-.tip { position: absolute; pointer-events: none; background: rgba(8, 14, 46, 0.94); color: var(--ink); border: 1px solid rgba(111, 243, 255, 0.35); font-size: var(--s-1); padding: 7px 9px; border-radius: 10px; max-width: 260px; }
+.zoom button:hover { color: var(--accent); border-color: rgba(180, 140, 255, 0.45); }
+.tip { position: absolute; pointer-events: none; background: rgba(8, 14, 46, 0.94); color: var(--ink); border: 1px solid rgba(180, 140, 255, 0.35); font-size: var(--s-1); padding: 7px 9px; border-radius: 10px; max-width: 260px; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 14px; border-top: 1px solid var(--line); font-size: var(--s-1); color: var(--ink-2); }
 .legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
 .legend .item { cursor: pointer; }
 .legend .item.dim { opacity: 0.35; }
 .ramp { height: 10px; width: 180px; border-radius: 5px; }
 
-.card { background: var(--panel); border: 1px solid rgba(111, 243, 255, 0.28); border-radius: 16px; padding: 18px; display: grid; gap: 14px; align-content: start;
-  box-shadow: 0 0 30px -12px rgba(111, 243, 255, 0.35); scrollbar-width: thin; scrollbar-color: rgba(111, 243, 255, 0.35) transparent; }
+.card { background: var(--panel); border: 1px solid rgba(180, 140, 255, 0.28); border-radius: 16px; padding: 18px; display: grid; gap: 14px; align-content: start;
+  box-shadow: 0 0 30px -12px rgba(180, 140, 255, 0.35); scrollbar-width: thin; scrollbar-color: rgba(180, 140, 255, 0.35) transparent; }
 /* на широком экране карточка не длиннее карты: прокручивается внутри, под картой не остаётся пустоты */
 @media (min-width: 981px) { .card { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; } }
 .card h3 { font-family: var(--display); font-weight: 700; font-size: 1.2rem; line-height: 1.25; }
@@ -176,7 +182,7 @@ button.chip:hover, button.chip[aria-pressed="true"] { color: var(--ink); border-
 .bars { display: grid; gap: 7px; }
 .bar { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) 4.2em; gap: 8px; align-items: center; font-size: var(--s-1); }
 .bar .track { position: relative; height: 6px; background: var(--absent); border-radius: 3px; }
-.bar .track i { position: absolute; top: 0; bottom: 0; background: var(--accent); border-radius: 3px; box-shadow: 0 0 8px rgba(111, 243, 255, 0.35); }
+.bar .track i { position: absolute; top: 0; bottom: 0; background: var(--accent); border-radius: 3px; box-shadow: 0 0 8px rgba(180, 140, 255, 0.35); }
 .bar .track b { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--ink); border-radius: 1px; }
 .bar .v { text-align: right; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .note { font-size: var(--s-1); color: var(--ink-3); }
@@ -207,7 +213,7 @@ th, td { padding: 7px 8px; border-bottom: 1px solid var(--rule); text-align: rig
 th:first-child, td:first-child { text-align: left; }
 th { font-weight: 700; color: var(--ink-2); }
 td { font-variant-numeric: tabular-nums; }
-tr.chosen td { background: rgba(111, 243, 255, 0.1); }
+tr.chosen td { background: rgba(180, 140, 255, 0.1); }
 tr.chosen td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
 td.lbl { font-variant-numeric: normal; }
 .pill { display: inline-block; font-size: 0.75rem; padding: 0 7px; border-radius: 999px; border: 1px solid currentColor; }
@@ -241,7 +247,7 @@ footer > div { max-width: 100ch; }
 .key dd { margin: 0; color: var(--ink-2); font-size: var(--s-1); line-height: 1.45; }
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px 28px; }
 .kpi { display: grid; gap: 4px; align-content: start; padding-top: 12px; border-top: 1px solid var(--line); }
-.kpi b { font-family: var(--display); font-size: 2rem; font-weight: 700; color: #f6f9ff; line-height: 1.1; font-variant-numeric: tabular-nums; text-shadow: 0 0 16px rgba(111, 243, 255, 0.3); }
+.kpi b { font-family: var(--display); font-size: 2rem; font-weight: 700; color: #f6f9ff; line-height: 1.1; font-variant-numeric: tabular-nums; text-shadow: 0 0 16px rgba(180, 140, 255, 0.3); }
 .kpi span { color: var(--ink-2); font-size: var(--s-1); max-width: 34ch; }
 .points { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; max-width: 80ch; color: var(--ink-2); }
 .points b { color: var(--ink); }
@@ -264,9 +270,10 @@ footer > div { max-width: 100ch; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, body::after { transition: none !important; animation: none !important; } }
 </style>
 
+<canvas id="cosmos" aria-hidden="true"></canvas>
 <nav class="nav" aria-label="Разделы">
   <div class="nav-in">
-    <a class="brand" href="#page"><i></i>Локальные экономики муниципалитетов</a>
+    <a class="brand" href="#page"><i></i><span class="b-long">Локальные экономики муниципалитетов</span><span class="b-short">Локальные экономики МО</span></a>
     <ul id="navl">
       <li><a class="l" href="#galaxy">Галактика</a></li>
       <li><a class="l" href="#atlas">Атлас</a></li>
@@ -281,6 +288,7 @@ footer > div { max-width: 100ch; }
 
 <div class="wrap" id="page">
   <header class="hero" id="galaxy">
+    <canvas class="nightsky" id="nightsky" role="img" aria-label="Ночное небо: Большая Медведица медленно вращается вокруг Полярной звезды"></canvas>
     <div class="hero-text">
       <div class="lead">
         <div class="kicker">Конкурс СберИндекса, направление «Кластеризация»</div>
@@ -289,6 +297,7 @@ footer > div { max-width: 100ch; }
         <p class="lede" id="lede"></p>
       </div>
       <div class="facts" id="facts"></div>
+      <nav class="hero-links" id="hero-links" aria-label="Материалы проекта"></nav>
     </div>
     <div class="galaxy">
       <canvas id="sky" role="img" aria-label="Муниципалитеты как звёзды: цвет — тип потребления, яркость — надёжность типа"></canvas>
@@ -331,6 +340,7 @@ footer > div { max-width: 100ch; }
         <div class="tip" id="tip" hidden></div>
       </div>
       <div class="legend" id="legend"></div>
+      <div class="attrib">Границы МО: <a href="https://sberindex.ru/ru/research/dataset-borders-and-changes-of-municipalities">справочник СберИндекса</a> по данным © <a href="https://www.openstreetmap.org/copyright">участники OpenStreetMap</a>, лицензия <a href="https://opendatacommons.org/licenses/odbl/">ODbL</a>.</div>
     </div>
     <div class="cardwrap"><aside class="card" id="card" aria-live="polite" tabindex="0" aria-label="Карточка муниципалитета"></aside></div>
   </div>
@@ -362,7 +372,7 @@ footer > div { max-width: 100ch; }
     <div class="panel"><h3>Две карты рядом</h3>
       <div class="duo"><div><div class="eyebrow">Типы потребления</div><svg id="duo-a" class="duo-map" role="img" aria-label="Карта типов потребления"></svg></div>
       <div><div class="eyebrow">Типы рынка труда</div><svg id="duo-b" class="duo-map" role="img" aria-label="Карта типов рынка труда"></svg></div></div>
-      <p class="note">Масштаб и наведение синхронизированы. Тёмным — нет данных.</p></div>
+      <p class="note">Масштаб и наведение синхронизированы. Тёмным — нет данных. Границы МО: <a href="https://sberindex.ru/ru/research/dataset-borders-and-changes-of-municipalities">справочник СберИндекса</a> по данным © <a href="https://www.openstreetmap.org/copyright">участники OpenStreetMap</a>, лицензия <a href="https://opendatacommons.org/licenses/odbl/">ODbL</a>.</p></div>
     <div class="panel"><h3>Какой рынок труда стоит за каждым типом потребления</h3><div class="scroll-x"><table class="heat cross" id="cross"></table></div><p class="note">Доля МО типа потребления в каждом типе рынка труда, %. Одна яркая клетка в строке — потребление повторяет рынок труда; размытая строка — за похожим потреблением стоят разные рынки труда. <span id="cross-n"></span></p></div>
     <div class="panel"><h3>Типы рынка труда</h3><div class="scroll-x"><table id="ltypes"></table></div><p class="note">Росстат учитывает организации без малого бизнеса и по месту работы, поэтому в деловых районах работников бывает больше, чем жителей.</p></div>
     <div class="panel"><h3>С чем связан разрыв между расходами и фондом оплаты труда</h3><div id="gapmodel" class="bars" style="max-width:760px"></div><p class="note" id="gap-note"></p>
@@ -596,7 +606,7 @@ const DATA = /*__DATA__*/null;
       let extra = t.name;
       if (LB && (layer === "labor") && D.mo.lt[i] != null) extra = ltypes.get(D.mo.lt[i]).name;
       if (LB && (layer === "gap" || layer === "lisa") && D.mo.gap[i] != null)
-        extra = `расходы ÷ фонд оплаты: ${fmt(D.mo.spend[i] / D.mo.fund[i], 2)} (медиана ${fmt(MEDRATIO, 2)})`;
+        extra = `расходы ÷ фонд оплаты: ${fmt(D.mo.spend[i] / D.mo.fund[i], 2)} (медиана по ${NMED.toLocaleString("ru-RU")} МО — ${fmt(MEDRATIO, 2)})`;
       tip.innerHTML = `<b>${D.mo.name[i]}</b><br>${D.mo.region[i]}<br>${extra}`;
     }
     tip.hidden = false;
@@ -671,6 +681,7 @@ const DATA = /*__DATA__*/null;
       <div class="an-list">${rows}</div>
       <div class="note">${own ? `Тот же рынок труда у ${same} из 7 аналогов. ` : ""}Сравнение подсказывает гипотезы — о занятости, доходах, ценах, — но не устанавливает причину.</div></div>`;
   }
+  const NMED = LB ? D.mo.id.filter((_, i) => D.mo.fund[i] && D.mo.spend[i]).length : 0;
   const MEDRATIO = LB ? d3.median(D.mo.id.map((_, i) => (D.mo.fund[i] && D.mo.spend[i] ? D.mo.spend[i] / D.mo.fund[i] : null)).filter((v) => v != null)) : null;
   function laborCard(i) {
     if (!LB || D.mo.lt[i] == null) return "";
@@ -683,7 +694,7 @@ const DATA = /*__DATA__*/null;
       <div class="facts" style="gap:6px 20px">
         <span><b>${fmt(D.mo.spend[i], 0)} ₽</b>безналичные расходы жителя в месяц</span>
         <span><b>${fmt(D.mo.fund[i], 0)} ₽</b>фонд оплаты труда на жителя в месяц</span>
-        <span><b>${fmt(ratio, 2)}</b>их отношение (медиана ${fmt(MEDRATIO, 2)})</span>
+        <span><b>${fmt(ratio, 2)}</b>их отношение (медиана ${fmt(MEDRATIO, 2)} по ${NMED.toLocaleString("ru-RU")} МО, включая города федерального значения)</span>
         <span><b>${fmt(D.mo.wage[i], 0)} ₽</b>средняя зарплата</span>
         <span><b>${fmt(D.mo.emp[i] * 100, 0)}</b>работников на 100 жителей</span>
         <span><b>${pct(D.mo.old[i])}</b>старше трудоспособного возраста</span>
@@ -853,7 +864,7 @@ const DATA = /*__DATA__*/null;
   ps.selectAll("circle.m").data(ms).join("circle").attr("class", "m")
     .attr("cx", (d) => xs(d.SW)).attr("cy", (d) => ys(d.MQ)).attr("r", (d) => d.id === D.meta.chosen ? 7 : 3.5)
     .attr("fill", (d) => css(MC[d.method])).attr("fill-opacity", 0.8)
-    .attr("stroke", (d) => d.id === D.meta.chosen ? css("--accent") : "none").attr("stroke-width", 2).style("filter", (d) => d.id === D.meta.chosen ? "drop-shadow(0 0 4px #6ff3ff)" : null)
+    .attr("stroke", (d) => d.id === D.meta.chosen ? css("--accent") : "none").attr("stroke-width", 2).style("filter", (d) => d.id === D.meta.chosen ? "drop-shadow(0 0 4px #b48cff)" : null)
     .append("title").text((d) => `${MN[d.method]}${d.network ? " · " + netName(d.network) : ""} · K=${d.K}\nSW ${fmt(d.SW, 3)} · MQ ${fmt(d.MQ, 3)} · место по Борда ${d.borda_place ?? "—"}`);
   document.getElementById("pareto-legend").innerHTML = Object.entries(MN).map(([k, v]) =>
     `<span class="item"><span class="sw" style="background:${css(MC[k])};border-radius:50%"></span>${v}</span>`).join("");
@@ -879,16 +890,24 @@ const DATA = /*__DATA__*/null;
   }
   const blob = (f) => (repo ? `${repo}/blob/main/${f}` : null);
   const lnk = (f, t) => (repo ? `<a href="${blob(f)}">${t}</a>` : `${t} (<span class="num">${f}</span>)`);
+  // PDF раздаются GitHub Pages из папки docs/: https://логин.github.io/репозиторий/report.pdf
+  const pages = repo ? repo.replace(/^https:\/\/github\.com\/([^/]+)\/([^/]+).*$/, "https://$1.github.io/$2/") : "";
+  const pdf = (f) => (pages ? pages + f : f);
+  document.getElementById("hero-links").innerHTML =
+    `<a href="${pdf("report.pdf")}"><b>PDF</b>Методологический отчёт</a>` +
+    `<a href="${pdf("technical_appendix.pdf")}"><b>PDF</b>Техническое приложение</a>` +
+    (repo ? `<a href="${repo}"><b>GitHub</b>Код и инструкция</a>` : "");
+  const A = (href, t) => `<a href="${href}">${t}</a>`;
   document.getElementById("foot").innerHTML = `
     <div class="f-title">Типы локальных экономик муниципалитетов: безналичное потребление и рынок труда</div>
     <div>Конкурс СберИндекса, направление «Кластеризация». Версия результатов: <span class="num">${PUB.results_version || "—"}</span>.
-      ${repo ? `Код, конфигурация и результаты: <a href="${repo}">${repo.replace("https://", "")}</a>.` : "Код, конфигурация и результаты — в репозитории проекта."}
-      Краткое резюме — ${lnk("reports/summary.md", "summary.md")}, методологический отчёт — ${lnk("reports/report.md", "report.md")}, проверка воспроизводимости — ${lnk("reports/cold_start_check.md", "cold_start_check.md")}.</div>
-    <div>Данные: архив конкурса СберИндекса (CC BY-SA 4.0) — безналичные расходы 2023–2024 гг., расстояния между МО, индекс доступности рынков; справочник и границы МО СберИндекса; муниципальная статистика Росстата в обработке «Если быть точным» (CC BY 4.0). Лицензии: код — MIT, производные данные — CC BY-SA 4.0; встроенные библиотеки D3 (ISC) и TopoJSON (BSD-3-Clause).</div>
+      ${repo ? `Код, конфигурация, результаты и инструкция по запуску: ${A(repo, repo.replace("https://", ""))}.` : "Код, конфигурация и результаты — в репозитории проекта."}
+      ${A(pdf("report.pdf"), "Методологический отчёт (PDF)")}, ${A(pdf("technical_appendix.pdf"), "техническое приложение (PDF)")}, проверка воспроизводимости — ${lnk("reports/cold_start_check.md", "cold_start_check.md")}.</div>
+    <div>Данные: ${A("https://sberindex.ru/ru/research/data-sense-opisanie-nabora-dannikh-khakatona-sberindeksa-po-munitsipalnim-dannim", "архив конкурса СберИндекса")} — безналичные расходы 2023–2024 гг., расстояния между МО, индекс доступности рынков (${A("https://creativecommons.org/licenses/by-sa/4.0/deed.ru", "CC BY-SA 4.0")}); ${A("https://sberindex.ru/ru/research/dataset-borders-and-changes-of-municipalities", "справочник и границы МО СберИндекса")} (границы — © ${A("https://www.openstreetmap.org/copyright", "участники OpenStreetMap")}, ${A("https://opendatacommons.org/licenses/odbl/", "ODbL")}); ${A("https://tochno.st/datasets/bdmo", "муниципальная статистика Росстата в обработке «Если быть точным»")} (${A("https://creativecommons.org/licenses/by/4.0/deed.ru", "CC BY 4.0")}). Исходные данные скачиваются с сайтов источников по инструкции в репозитории.
+      Лицензии: код — MIT; производные табличные данные — CC BY-SA 4.0; встроенные границы МО — ODbL; библиотеки D3 (ISC) и TopoJSON (BSD-3-Clause).</div>
     <section class="ai" aria-labelledby="ai-h"><h3 id="ai-h">Заявление об использовании генеративного ИИ</h3>
-      <p>При подготовке работы использовался ИИ-ассистент Claude (Anthropic; модели семейства Claude, в том числе Claude Opus 5.5) в агентной среде с доступом к коду и данным проекта. Он применялся для написания и отладки кода конвейера, тестов и этой страницы; запуска расчётов по заданным правилам и проверки воспроизводимости; подготовки черновиков отчёта, резюме и текстов страницы; оформления ссылок на литературу (подборку источников предложил рецензент, библиографические данные сверены с записями издателей); сверки чисел в тексте с файлами результатов.</p>
-      <p>ИИ не создавал и не дополнял данные: все числа получены кодом из открытых источников и воспроизводятся командой <span class="num">python run_all.py</span>. Постановку задачи, решения по методологии и по замечаниям рецензентов, проверку результатов и выводы определял автор. Автор просмотрел и отредактировал материалы и несёт полную ответственность за содержание работы.</p>
-      <p>Ряд формулировок ограничений и интерпретаций в отчёте и резюме взят из рекомендаций независимого рецензента; переписка — в репозитории (<span class="num">reports/review/</span>).</p></section>`;
+      <p>При подготовке работы использовались генеративные ИИ-ассистенты. Claude (Anthropic; модели семейства Claude, в том числе Claude Opus 5.5) в агентной среде с доступом к коду и данным проекта — для написания и отладки кода конвейера, тестов и этой страницы, запуска расчётов по заданным правилам и проверки воспроизводимости, подготовки черновиков отчёта и текстов страницы, оформления ссылок на литературу (библиографические данные сверены с записями издателей) и сверки чисел в тексте с файлами результатов. ChatGPT (OpenAI) — для независимой проверки работы: замечаний к методологии, коду, расчётам, текстам и оформлению, предложений по литературе.</p>
+      <p>ИИ не создавал и не дополнял данные: все числа получены кодом из открытых источников и воспроизводятся командой <span class="num">python run_all.py</span>. Постановку задачи, решения по методологии, проверку результатов и выводы определял автор. Автор просмотрел и отредактировал материалы и несёт полную ответственность за содержание работы.</p></section>`;
 
   // ---------- галактика муниципалитетов (герой)
   (function galaxy() {
@@ -1163,6 +1182,146 @@ const DATA = /*__DATA__*/null;
     navLinks.forEach((a) => a.classList.toggle("on", !!best && best[1] > 0 && a.getAttribute("href") === "#" + best[0]));
   }, { threshold: [0, 0.1, 0.25, 0.5, 0.75], rootMargin: "-60px 0px -35% 0px" });
   secs.forEach((s) => navIO.observe(s));
+
+  // ---------- космический фон: звёздное поле с пылевыми облаками и спиральная галактика в шапке
+  (function cosmos() {
+    const STAR = ["255,255,255", "214,226,255", "186,204,255", "255,226,200", "255,196,160", "222,200,255"];
+    const WSTAR = [0.38, 0.2, 0.12, 0.14, 0.06, 0.1];
+    const pickC = (u) => { let a = 0; for (let k = 0; k < STAR.length; k++) { a += WSTAR[k]; if (u < a) return STAR[k]; } return STAR[0]; };
+    function glow(ctx, x, y, r, c, a) {
+      const g2 = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g2.addColorStop(0, `rgba(${c},${a})`); g2.addColorStop(0.35, `rgba(${c},${a * 0.35})`); g2.addColorStop(1, `rgba(${c},0)`);
+      ctx.fillStyle = g2; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
+    }
+    const cv = document.getElementById("cosmos");
+    function sky() {
+      const dpr = Math.min(2, window.devicePixelRatio || 1), w = window.innerWidth, h = window.innerHeight;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const r = d3.randomLcg(11), n = d3.randomNormal.source(r);
+      // пылевые облака
+      [[0.18, 0.3, 0.45, "120,70,230", 0.10], [0.82, 0.18, 0.4, "170,80,255", 0.08], [0.65, 0.78, 0.5, "90,60,200", 0.08], [0.1, 0.9, 0.35, "200,70,200", 0.06]]
+        .forEach(([x, y, rr, c, a]) => glow(ctx, x * w, y * h, rr * Math.max(w, h), c, a));
+      // полоса «Млечного пути» по диагонали
+      const nx = n(0, 1), cnt = Math.round((w * h) / 900);
+      for (let k = 0; k < cnt; k++) {
+        const t = r(), off = nx() * 0.12;
+        const x = (t + off * 0.6) * w, y = (0.15 + t * 0.7 + off) * h;
+        ctx.fillStyle = `rgba(${pickC(r())},${0.12 + r() * 0.35})`;
+        ctx.fillRect(x, y, 0.6 + r() * 0.8, 0.6 + r() * 0.8);
+      }
+      // отдельные звёзды, часть — с ореолом
+      const m = Math.round((w * h) / 2600);
+      for (let k = 0; k < m; k++) {
+        const x = r() * w, y = r() * h, c = pickC(r()), big = r() < 0.06;
+        ctx.fillStyle = `rgba(${c},${0.35 + r() * 0.6})`;
+        const s = big ? 1.6 + r() * 1.2 : 0.5 + r() * 1.1;
+        ctx.beginPath(); ctx.arc(x, y, s / 2, 0, 6.2832); ctx.fill();
+        if (big) glow(ctx, x, y, 5 + r() * 9, c, 0.35);
+      }
+    }
+    sky();
+    let rt = null;
+    window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(sky, 200); });
+
+    // ночное небо в шапке: Большая Медведица, Полярная звезда, Малая Медведица и Кассиопея по реальным
+    // координатам (прямое восхождение, склонение), азимутальная проекция вокруг полюса мира; всё небо
+    // медленно вращается против часовой стрелки вокруг Полярной, как при взгляде на север
+    const ns = document.getElementById("nightsky"), nctx = ns.getContext("2d");
+    const reduceNS = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const hm = (h, m, s = 0) => (h + m / 60 + s / 3600) * 15;            // RA → градусы
+    const dm = (d, m) => d + m / 60;
+    // [название, RA°, Dec°, звёздная величина, цвет (B–V → оттенок), фигура]
+    const STARS = [
+      ["Дубхе", hm(11, 3, 44), dm(61, 45), 1.79, "255,214,170", "UMa"], ["Мерак", hm(11, 1, 50), dm(56, 23), 2.37, "226,236,255", "UMa"],
+      ["Фекда", hm(11, 53, 50), dm(53, 42), 2.44, "226,236,255", "UMa"], ["Мегрец", hm(12, 15, 25), dm(57, 2), 3.31, "232,240,255", "UMa"],
+      ["Алиот", hm(12, 54, 2), dm(55, 58), 1.77, "232,240,255", "UMa"], ["Мицар", hm(13, 23, 56), dm(54, 56), 2.27, "232,240,255", "UMa"],
+      ["Бенетнаш", hm(13, 47, 32), dm(49, 19), 1.86, "214,226,255", "UMa"], ["Алькор", hm(13, 25, 13), dm(54, 59), 4.01, "236,240,255", "UMa+"],
+      ["", hm(8, 30, 16), dm(60, 43), 3.35, "255,236,200", "UMa+"], ["", hm(8, 59, 13), dm(48, 2), 3.14, "245,245,255", "UMa+"],
+      ["", hm(9, 32, 51), dm(51, 41), 3.17, "250,245,235", "UMa+"], ["", hm(10, 17, 6), dm(42, 55), 3.45, "240,244,255", "UMa+"],
+      ["", hm(9, 31, 32), dm(63, 4), 3.67, "250,245,235", "UMa+"], ["", hm(11, 9, 40), dm(44, 30), 3.0, "255,200,160", "UMa+"],
+      ["Полярная", hm(2, 31, 49), dm(89, 16), 1.98, "255,244,220", "UMi"], ["Кохаб", hm(14, 50, 42), dm(74, 9), 2.08, "255,200,150", "UMi"],
+      ["Феркад", hm(15, 20, 44), dm(71, 50), 3.05, "236,240,255", "UMi"], ["", hm(17, 32, 13), dm(86, 35), 4.36, "240,244,255", "UMi"],
+      ["", hm(16, 45, 58), dm(82, 2), 4.21, "255,236,200", "UMi"], ["", hm(15, 44, 4), dm(77, 48), 4.32, "240,244,255", "UMi"],
+      ["", hm(16, 17, 30), dm(75, 45), 4.95, "245,245,255", "UMi"],
+      ["Шедар", hm(0, 40, 30), dm(56, 32), 2.24, "255,214,170", "Cas"], ["Каф", hm(0, 9, 11), dm(59, 9), 2.28, "250,248,240", "Cas"],
+      ["", hm(0, 56, 43), dm(60, 43), 2.15, "214,226,255", "Cas"], ["Рукбах", hm(1, 25, 49), dm(60, 14), 2.68, "240,244,255", "Cas"],
+      ["", hm(1, 54, 24), dm(63, 40), 3.35, "214,226,255", "Cas"]
+    ];
+    const LINES = { UMa: [[0, 1], [1, 2], [2, 3], [3, 0], [3, 4], [4, 5], [5, 6]], UMi: [[14, 17], [17, 18], [18, 19], [19, 15], [15, 16], [16, 20], [20, 19]], Cas: [[22, 21], [21, 23], [23, 24], [24, 25]] };
+    const rN = d3.randomLcg(5);
+    const FIELD = d3.range(900).map(() => ({ ra: rN() * 360, p: Math.sqrt(rN()) * 72, m: 3.8 + rN() * 2.6,
+      c: pickC(rN()), ph: rN() * 6.28, sp: 0.6 + rN() * 1.6 }));
+    const toRad = Math.PI / 180;
+    let nsW = 0, nsH = 0, nsDpr = 1, lst = 205, nsRun = false, nsVis = true, nsLast = 0;
+    function nsSize() {
+      const b = ns.getBoundingClientRect(); nsDpr = Math.min(2, window.devicePixelRatio || 1);
+      nsW = b.width; nsH = b.height; ns.width = Math.round(nsW * nsDpr); ns.height = Math.round(nsH * nsDpr);
+    }
+    function proj(ra, polarDist, R) {                                     // H = LST − RA; восток справа, север вверху
+      const H = (lst - ra) * toRad, rr = polarDist / 50 * R;
+      return [nsW / 2 - rr * Math.sin(H), nsH / 2 - rr * Math.cos(H)];
+    }
+    function starGlow(x, y, rad, c, a) {
+      const g2 = nctx.createRadialGradient(x, y, 0, x, y, rad);
+      g2.addColorStop(0, `rgba(255,255,255,${a})`); g2.addColorStop(0.18, `rgba(${c},${a * 0.85})`);
+      g2.addColorStop(0.45, `rgba(${c},${a * 0.22})`); g2.addColorStop(1, `rgba(${c},0)`);
+      nctx.fillStyle = g2; nctx.beginPath(); nctx.arc(x, y, rad, 0, 6.2832); nctx.fill();
+    }
+    function nsDraw(t) {
+      const R = Math.min(nsW, nsH) * 0.47;
+      nctx.setTransform(nsDpr, 0, 0, nsDpr, 0, 0); nctx.clearRect(0, 0, nsW, nsH);
+      nctx.globalCompositeOperation = "lighter";
+      for (const s of FIELD) {                                            // фоновые звёзды вращаются вместе с небом
+        const [x, y] = proj(s.ra, s.p, R);
+        const tw = reduceNS ? 1 : 0.6 + 0.4 * Math.sin(t * 0.0012 * s.sp + s.ph);
+        nctx.fillStyle = `rgba(${s.c},${(0.85 - (s.m - 3.8) * 0.28) * tw})`;
+        const sz = Math.max(0.6, 2.4 - (s.m - 3.8) * 0.6);
+        nctx.fillRect(x - sz / 2, y - sz / 2, sz, sz);
+      }
+      const P = STARS.map(([, ra, dec]) => proj(ra, 90 - dec, R));
+      for (const [fig, pairs] of Object.entries(LINES)) {                 // линии фигур
+        const main = fig === "UMa";
+        nctx.strokeStyle = main ? "rgba(190,150,255,0.55)" : "rgba(170,150,230,0.22)";
+        nctx.lineWidth = main ? 1.3 : 0.9; nctx.shadowColor = "rgba(180,140,255,0.9)"; nctx.shadowBlur = main ? 8 : 0;
+        nctx.beginPath();
+        pairs.forEach(([a, b]) => { nctx.moveTo(P[a][0], P[a][1]); nctx.lineTo(P[b][0], P[b][1]); });
+        nctx.stroke();
+      }
+      nctx.shadowBlur = 0;
+      STARS.forEach(([name, , , mag, c, fig], k) => {                       // яркие звёзды: мерцание, переливы цвета, лучи
+        const [x, y] = P[k], main = fig === "UMa" || name === "Полярная";
+        const phase = k * 1.7, tw = reduceNS ? 1 : 0.78 + 0.22 * Math.sin(t * 0.0021 + phase) * Math.sin(t * 0.0007 + phase * 2);
+        const hue = reduceNS ? c : (Math.sin(t * 0.0013 + phase) > 0.55 ? "205,180,255" : c);
+        const base = Math.max(1.2, 6.2 - mag * 1.25) * (main ? 1.25 : 0.85);
+        starGlow(x, y, base * 4.2 * tw, hue, 0.95 * tw);
+        if (main && mag < 2.6) {
+          nctx.strokeStyle = `rgba(${hue},${0.55 * tw})`; nctx.lineWidth = 0.8;
+          const L = base * 5.5 * tw;
+          nctx.beginPath(); nctx.moveTo(x - L, y); nctx.lineTo(x + L, y); nctx.moveTo(x, y - L); nctx.lineTo(x, y + L); nctx.stroke();
+        }
+      });
+      nctx.globalCompositeOperation = "source-over";
+      if (nsW < 500) return;                       // на телефоне — без подписей: небо идёт фоном под текстом
+      nctx.font = `400 ${nsW < 500 ? 10 : 12}px "PT Sans", "Segoe UI", sans-serif`; nctx.textAlign = "center";
+      nctx.fillStyle = "rgba(205,190,255,0.75)";
+      const c7 = [0, 1, 2, 3, 4, 5, 6].map((k) => P[k]);
+      nctx.fillText("Большая Медведица", d3.mean(c7, (p) => p[0]), d3.max(c7, (p) => p[1]) + 22);
+      nctx.fillStyle = "rgba(205,190,255,0.6)";
+      nctx.fillText("Полярная звезда", P[14][0], P[14][1] + 20);
+    }
+    function nsLoop(t) {
+      if (!nsRun) return;
+      if (t - nsLast > 33) { lst += (t - (nsLast || t)) * 0.0012; nsLast = t; nsDraw(t); }      // ≈ 1,2° в секунду
+      requestAnimationFrame(nsLoop);
+    }
+    function nsKick() { if (reduceNS) { nsDraw(0); return; } if (!nsRun && nsVis && !document.hidden) { nsRun = true; nsLast = 0; requestAnimationFrame(nsLoop); } }
+    nsSize(); nsDraw(0);
+    new IntersectionObserver((es) => { nsVis = es[0].isIntersecting; if (nsVis) nsKick(); else nsRun = false; }).observe(ns);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) nsRun = false; else nsKick(); });
+    new ResizeObserver(() => { nsSize(); nsDraw(performance.now()); }).observe(ns);
+    nsKick();
+  })();
 
   paint();
   // стартовая карточка: крупнейшее МО самого массового типа с полным рядом

@@ -1,5 +1,12 @@
-data/raw/
-data/external/
+# исходные данные в репозиторий не входят (скачиваются по инструкции); остаются только описания источников
+data/raw/*
+!data/raw/hackathon/
+data/raw/hackathon/*
+!data/raw/hackathon/README.md
+data/external/*
+!data/external/bdmo/
+data/external/bdmo/*
+!data/external/bdmo/README.md
 data/interim/
 __pycache__/
 .pytest_cache/

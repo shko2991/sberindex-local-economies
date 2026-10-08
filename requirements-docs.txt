@@ -1,0 +1,5 @@
+# Только для сборки PDF-версии отчёта (reports/build_pdf.py); основной расчёт их не требует.
+# Chromium для Playwright: python -m playwright install chromium; шрифт HSE Sans (https://it.hse.ru/en/hsesans/)
+# установлен в системе — в репозиторий не входит (без него подставится PT Sans).
+markdown==3.10.2
+playwright==1.56.0

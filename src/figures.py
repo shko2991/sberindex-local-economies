@@ -15,7 +15,9 @@ from common import labor_available, load_config, path  # noqa: E402
 FAMILY_COLORS = {"kefrin": "#1f6f78", "leiden": "#c8553d", "spectral": "#8e6c8a", "spectral_joint": "#b08d57",
                  "kmeans": "#5b7553", "gmm": "#7a9e9f", "ward": "#3d405b", "pattern": "#d4a373"}
 # те же цвета типов, что на интерактивной странице (светлая тема)
-TYPE_COLORS = ["#2f6690", "#4f8a3c", "#c8553d", "#d9a03f", "#7a5ea8", "#12857f", "#9a6a44", "#c06c94",
+# общая таблица «тип → цвет» для рисунков и страницы (landing/template.html, --t0…--t7): средняя светлота,
+# чтобы цвета читались и на белом, и на тёмно-синем фоне
+TYPE_COLORS = ["#3d8ef0", "#4cb85c", "#e5484d", "#f08a24", "#e0b000", "#19b39b", "#e255a8", "#8a96c8",
                "#5c677d", "#a3a83b", "#6d8fc7", "#8c3b4a"]
 plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 9, "axes.spines.top": False,
                      "axes.spines.right": False, "figure.dpi": 150})
