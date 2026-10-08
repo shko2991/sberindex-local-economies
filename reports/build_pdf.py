@@ -180,8 +180,8 @@ a.cite { color: var(--vio); border-bottom: 0.5pt dotted var(--vio2); }
 .cover img { position: absolute; right: -12mm; top: 2mm; width: 130mm; opacity: 1; mix-blend-mode: screen;
   -webkit-mask-image: radial-gradient(ellipse 62% 62% at 50% 50%, #000 50%, transparent 78%); mask-image: radial-gradient(ellipse 62% 62% at 50% 50%, #000 50%, transparent 78%); }
 .cover .series { font-size: 9pt; color: #d8ccff; letter-spacing: 0.02em; }
-.cover h1 { font-family: "HSE Sans", "PT Sans", Arial, sans-serif; font-weight: 700; font-size: 25pt; line-height: 1.05; text-transform: uppercase; margin: 6mm 0 2mm; max-width: 98mm;
-  text-shadow: 0 0 10px rgba(180, 140, 255, 0.6); }
+.cover h1 { font-family: "HSE Sans", "PT Sans", Arial, sans-serif; font-weight: 700; font-size: 25pt; line-height: 1.05; text-transform: uppercase; margin: 6mm 0 2mm; max-width: 98mm; }
+/* без text-shadow: в PDF тень записывается второй копией текста, и при копировании и поиске буквы удваиваются */
 .cover .sub { font-family: "HSE Sans", "PT Sans", sans-serif; font-style: italic; font-size: 13pt; color: #e9e1ff; max-width: 100mm; }
 .chips { display: flex; flex-wrap: wrap; gap: 2mm; margin-top: 6mm; max-width: 110mm; }
 .chips span { border: 0.6pt solid rgba(255,255,255,0.7); border-radius: 4mm; padding: 0.8mm 3mm; font-size: 8.4pt; text-transform: uppercase; letter-spacing: 0.03em; }
