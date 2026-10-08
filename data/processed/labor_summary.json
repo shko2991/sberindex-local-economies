@@ -98,6 +98,18 @@
   "lisa_HH_LL_min_seed_agreement": 0.4,
   "gap_model_R2": 0.6590331138811787,
   "gap_model_n": 1693,
+  "gap_decomposition": {
+    "n": 1693,
+    "regions": 69,
+    "gamma_logC_on_logF": 0.14628320018274518,
+    "gamma_ci95": [
+      0.10578309508422042,
+      0.18678330528126996
+    ],
+    "oq_coef_given_logF": -0.05879219293510726,
+    "oq_p_given_logF": 0.3202205453309941
+  },
+  "gap_model_regions": 69,
   "gap_by_cons_type": {
     "0": 0.172,
     "1": -0.006,

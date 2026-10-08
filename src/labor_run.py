@@ -200,6 +200,31 @@ def main():
     coef = pd.DataFrame({"коэф. (станд.)": m2.params, "p": m2.pvalues,
                          "95% ДИ, нижняя": ci[0], "95% ДИ, верхняя": ci[1]}).drop(index="const")
     coef.round(4).to_csv(path(cfg, "processed", "gap_model.csv"))
+    # разложение отношения (Kronmal, 1993): те же X и та же выборка, зависимые переменные — в натуральных
+    # логарифмах без стандартизации (X — как в основной модели: непрерывные на 1 SD, бинарные 0/1).
+    # МНК линеен по y, поэтому β[log(C/F)] = β[log C] − β[log F] точно.
+    logC, logF = pd.Series(np.log(spend), index=ids), np.log(t.fund_pc)
+    keep = (~fed) & logC.notna().values & logF.notna().values & Xe.notna().all(axis=1).values
+    dec = {}
+    for nm, yv in (("log расходов (C)", logC), ("log фонда оплаты на жителя (F)", logF), ("log(C/F)", logC - logF)):
+        mm = ols(yv[keep], Xe[keep], standardize=True, groups=region[keep], standardize_y=False)
+        dec[nm] = mm.params.drop("const")
+        dec[nm + ": p"] = mm.pvalues.drop("const")
+    dec = pd.DataFrame(dec)
+    dec["проверка: C − F − C/F"] = dec["log расходов (C)"] - dec["log фонда оплаты на жителя (F)"] - dec["log(C/F)"]
+    dec.round(5).to_csv(path(cfg, "processed", "gap_decomposition.csv"))
+    # другой условный вопрос: эластичность расходов по фонду при тех же контролях (без ограничения γ = 1)
+    Xg = Xe[keep].copy()
+    Xg.insert(0, "log фонда оплаты на жителя", logF[keep])
+    mg = ols(logC[keep], Xg, standardize=False, groups=region[keep])
+    ci_g = mg.conf_int(0.05).loc["log фонда оплаты на жителя"]
+    oq = "доля занятых в O–Q (госуправление, образование, здравоохранение)"
+    out["gap_decomposition"] = {
+        "n": int(keep.sum()), "regions": int(region[keep].nunique()),
+        "gamma_logC_on_logF": float(mg.params["log фонда оплаты на жителя"]),
+        "gamma_ci95": [float(ci_g[0]), float(ci_g[1])],
+        "oq_coef_given_logF": float(mg.params[oq]), "oq_p_given_logF": float(mg.pvalues[oq])}
+    out["gap_model_regions"] = int(region[~fed].reindex(m2.model.data.row_labels).nunique())
     gap_by_type = pd.DataFrame({"gap": gap, "type": cons_type})[~fed].groupby("type").gap.median()
     out["gap_by_cons_type"] = gap_by_type.round(3).to_dict()
 

@@ -15,10 +15,12 @@
 признаках окна.
 
 Метки окна сопоставляются с итоговыми типами венгерским алгоритмом по таблице сопряжённости.
-Устойчивый переход МО (2023 → 2024) — одновременно:
+Кандидат на устойчивый переход МО (2023 → 2024; столбец «устойчивый переход» в window_mo.csv) — одновременно:
   1) тип в окне 2023 г. ≠ тип в окне 2024 г. (окна не пересекаются по месяцам);
   2) тип окна 2024 г. держится и в окне с концом в III кв. 2024 г. (закрепился, а не мигнул);
-  3) k-means на тех же признаках окон показывает тот же переход A → B (не артефакт сетевого члена).
+  3) k-means на тех же признаках окон показывает тот же переход A → B (контроль другого алгоритма на тех
+     же данных, а не независимая проверка).
+Экономическое событие этим не устанавливается; чувствительность списка — windows_sensitivity.py.
 Остальные смены типа — колебания на границах типов.
 
   python src/windows.py   → window_labels.parquet, window_summary.csv, window_edges.csv,
@@ -43,8 +45,9 @@ from methods import Context, kefrin
 log = get_logger("windows")
 
 
-def window_features(panel, cfg: dict, months: list[str]) -> Features:
-    """12 признаков узла по месяцам окна (как static_features, но «год к году» → «половина к половине»)."""
+def window_features(panel, cfg: dict, months: list[str], drop: tuple[str, ...] = ()) -> Features:
+    """12 признаков узла по месяцам окна (как static_features, но «год к году» → «половина к половине»).
+    drop — признаки, исключаемые из блока динамики (проверка чувствительности, windows_sensitivity.py)."""
     shares = {c: s[months] for c, s in monthly_shares(panel, cfg).items()}
     resid = {c: r[months] for c, r in residual_series(panel).items()}
     total = cfg["features"]["total"]
@@ -67,6 +70,7 @@ def window_features(panel, cfg: dict, months: list[str]) -> Features:
         "volatility": rt.apply(detrended_std, axis=1),
         "mp_shift": mp[h2].mean(axis=1) - mp[h1].mean(axis=1),
     })
+    dyn = dyn.drop(columns=[c for c in drop if c in dyn])   # блок динамики перевзвешивается: делится на √(число признаков)
     blocks = {"structure": list(struct.columns), "level": list(level.columns), "dynamics": list(dyn.columns)}
     use = list(cfg["features"]["blocks"])
     X = standardize_blocks(pd.concat([struct, level, dyn], axis=1), {b: blocks[b] for b in use})

@@ -463,10 +463,12 @@ def local_moran(A, x: np.ndarray, perms: int = 499, seed: int = 0, alpha: float 
     return out
 
 
-def ols(y: pd.Series, X: pd.DataFrame, standardize: bool = True, groups: pd.Series | None = None):
+def ols(y: pd.Series, X: pd.DataFrame, standardize: bool = True, groups: pd.Series | None = None,
+        standardize_y: bool = True):
     """МНК; ошибки — кластеризованные по группам (регионам), если groups задан: остатки соседних
-    МО коррелированы, и обычные или HC3-ошибки завысили бы значимость. Иначе — HC3.
-    При standardize — стандартизованные коэффициенты (бинарные признаки не стандартизуются)."""
+    МО коррелированы, и обычные или HC3-ошибки завысили бы значимость (Cameron & Miller, 2015). Иначе — HC3.
+    При standardize — стандартизованные коэффициенты (бинарные признаки не стандартизуются);
+    standardize_y=False оставляет зависимую переменную в исходных единицах (для разложения отношения)."""
     import statsmodels.api as sm
     d = pd.concat([y.rename("y"), X] + ([groups.rename("_g")] if groups is not None else []), axis=1).dropna()
     g = d.pop("_g") if groups is not None else None
@@ -475,7 +477,8 @@ def ols(y: pd.Series, X: pd.DataFrame, standardize: bool = True, groups: pd.Seri
     if standardize:
         num = [c for c in Xs if Xs[c].nunique() > 2]
         Xs[num] = (Xs[num] - Xs[num].mean()) / Xs[num].std()
-        yy = (yy - yy.mean()) / yy.std()
+        if standardize_y:
+            yy = (yy - yy.mean()) / yy.std()
     model = sm.OLS(yy, sm.add_constant(Xs.astype(float)))
     if g is not None:
         return model.fit(cov_type="cluster", cov_kwds={"groups": pd.factorize(g)[0]})

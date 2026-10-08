@@ -146,6 +146,13 @@ def build(cfg: dict, raw: pd.DataFrame, type_names: dict[int, str] | None = None
         mo["win"] = wl[wcols].astype(int).values.tolist()
         ws = json.load(open(P("window_summary.json"), encoding="utf-8"))
         windows = {"names": [c.split(":", 1)[1] for c in wcols], "summary": ws}
+        if P("window_sensitivity.csv").exists():          # чувствительность: другие seed, без полугодовых контрастов
+            sv = pd.read_csv(P("window_sensitivity.csv"))
+            base = sv["вариант"].str.startswith("все")
+            col = "МО с неизменной меткой во всех окнах"
+            windows["sensitivity"] = {"stable_min": float(sv[col].min()), "stable_max": float(sv[col].max()),
+                                      "base_stable_min": float(sv.loc[base, col].min()),
+                                      "base_stable_max": float(sv.loc[base, col].max())}
     return {"meta": {"chosen": summary["chosen"], "n": len(mo_ids), "quarters": quarters.columns.tolist(),
                      "analogs": analog_meta, "windows": windows, "publication": cfg.get("publication") or {},
                      "summary": summary, "stability": stability}, "keys": KEYS, "national": national, "types": types, "mo": mo,
