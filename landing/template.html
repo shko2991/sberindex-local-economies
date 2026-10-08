@@ -207,7 +207,7 @@ footer a, .panel a, p a { color: var(--accent); }
       <div><div class="eyebrow">Типы рынка труда</div><svg id="duo-b" class="duo-map" role="img" aria-label="Карта типов рынка труда"></svg></div></div>
       <p class="note">Масштаб и наведение синхронизированы: наведите курсор на МО на одной карте, оно подсветится на обеих. Серым — МО без полного ряда расходов или без данных Росстата.</p></div>
     <div class="panel"><h3>Типы потребления × типы рынка труда</h3><div class="scroll-x"><table class="heat cross" id="cross"></table></div><p class="note">Доля МО типа потребления (строка), попавших в каждый тип рынка труда, %. Строка с одной яркой клеткой — потреблению соответствует один рынок труда; размытая строка — за одинаковым потреблением стоят разные рынки труда.</p></div>
-    <div class="panel"><h3>Типы рынка труда</h3><div class="scroll-x"><table id="ltypes"></table></div><p class="note">Зарплата и численность работников — организации без малого бизнеса, по месту работы (Росстат). Поэтому в деловых районах мегаполисов работников больше, чем жителей. Отличительный сектор — тот, чья доля в занятости сильнее всего превышает среднюю.</p></div>
+    <div class="panel"><h3>Типы рынка труда</h3><div class="scroll-x"><table id="ltypes"></table></div><p class="note">Зарплата и численность работников — организации без малого бизнеса, по месту работы (Росстат). Поэтому в части деловых районов мегаполисов работников больше, чем жителей. Отличительный сектор — тот, чья доля в занятости сильнее всего превышает среднюю.</p></div>
     <div class="panel" id="cases-panel" hidden><h3>Разобранные случаи</h3><div class="types" id="cases"></div><p class="note">Отбор по правилу, без ручного выбора: самый сильный остаток в скоплении «тратят больше» и «тратят меньше», северное МО с наименьшим отношением расходов к фонду оплаты, пригород (до 60 км от центра региона) с наибольшим. Только МО с надёжностью типа ≥ 80%. Объяснения — гипотезы.</p></div>
     <div class="panel"><h3>Что объясняет разрыв между расходами и фондом оплаты труда</h3><div id="gapmodel" class="bars" style="max-width:760px"></div><p class="note" id="gap-note"></p></div>
   </section>
@@ -232,7 +232,7 @@ footer a, .panel a, p a { color: var(--accent); }
     </div>
     <div class="two">
       <div class="panel"><h3>Сходство потребления против связности</h3><div class="scroll-x"><svg id="pareto" width="600" height="380"></svg></div><div class="legend" id="pareto-legend" style="padding:0;border:0"></div><p class="note" id="pareto-note"></p></div>
-      <div class="panel"><h3>Лучшие варианты</h3><div class="scroll-x"><table id="top"></table></div></div>
+      <div class="panel"><h3>Лучшие варианты</h3><div class="scroll-x"><table id="top"></table></div><p class="note">ARI — устойчивость на 50 подвыборках при отборе (5 инициализаций KEFRiN на подвыборку; с 20 инициализациями у итога 0,67, у варианта с 6 типами 0,81). Порог отбора — 0,6.</p></div>
     </div>
   </section>
 
@@ -288,7 +288,8 @@ const DATA = /*__DATA__*/null;
     [D.meta.n.toLocaleString("ru-RU"), "МО с полным рядом"],
     [nTypes, "типов"],
     [D.methods.length, "вариантов разбиения сравнено"],
-    [chosen.ARI_mean != null ? fmt(chosen.ARI_mean, 2) : "—", "устойчивость (ARI на подвыборках)"],
+    (D.meta.stability ? [fmt(D.meta.stability.chosen, 2), `устойчивость (ARI на подвыборках; у ${Object.keys(D.meta.stability.finalists)[0]} типов — ${fmt(Object.values(D.meta.stability.finalists)[0], 2)})`]
+      : [chosen.ARI_mean != null ? fmt(chosen.ARI_mean, 2) : "—", "устойчивость (ARI на подвыборках)"]),
     ...(D.labor ? [[fmt(D.labor.summary.agreement_no_federal.V_Cramer, 2), "связь с типами рынка труда (V Крамера)"]] : [])
   ].map(([v, l]) => `<span><b>${v}</b>${l}</span>`).join("");
 
@@ -332,7 +333,7 @@ const DATA = /*__DATA__*/null;
   const laborColor = (t) => css(`--l${t % 6}`);
   const LAYERS = [
     { id: "type", name: "Потребление" },
-    ...(LB ? [{ id: "labor", name: "Рынок труда" }, { id: "gap", name: "Расходы ÷ зарплаты" }, { id: "lisa", name: "Скопления расхождений" }] : []),
+    ...(LB ? [{ id: "labor", name: "Рынок труда" }, { id: "gap", name: "Расходы ÷ фонд оплаты" }, { id: "lisa", name: "Скопления расхождений" }] : []),
     ...(D.mo.rel ? [{ id: "rel", name: "Надёжность типа" }] : []),
     { id: "quarter", name: "По кварталам" },
     { id: "traj", name: "Траектория" },

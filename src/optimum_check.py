@@ -3,6 +3,7 @@
 1) Критерий KEFRiN (минимизируется) у итогового разбиения и у 10 перезапусков с другими seed
    (по n_init инициализаций, как в основном расчёте) → kefrin_restarts.csv.
 2) Таблицы сопряжённости итоговых типов с финалистами K = 6 и K = 7 → finalists_crosstab.csv.
+3) Фактический вес сети ξ в евклидовом KEFRiN после выравнивания разброса блоков → kefrin_xi.json.
 
   python src/optimum_check.py
 """
@@ -36,10 +37,25 @@ def criterion(m: KEFRiN, Y, P, labels) -> float:
     return float(D[np.arange(len(Y)), labels].sum())
 
 
+def effective_xi(cfg, ctx) -> dict:
+    """ξ = rho_network · Σy² / Σp² для каждой сети (множитель ξ×1)."""
+    c = cfg["methods"]["kefrin"]
+    Y = np.asarray(ctx.X, dtype=float)
+    out = {}
+    for net in dict.fromkeys(list(cfg["methods"]["networks"]) + ["multiplex"]):
+        P = modularity_transform(ctx.graph(net))
+        out[net] = round(float(c["rho_network"] * (Y ** 2).sum() / max((P ** 2).sum(), 1e-12)), 4)
+    with open(path(cfg, "processed", "kefrin_xi.json"), "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=1)
+    log.info("фактический ξ: %s", out)
+    return out
+
+
 def main():
     cfg = load_config()
     _, feat, ctx = build_context(cfg)
     ids = feat.X.index
+    effective_xi(cfg, ctx)
     chosen = json.load(open(path(cfg, "processed", "summary.json"), encoding="utf-8"))["chosen"]
     method, network, dist, xi, k = chosen.split("|")
     assert method == "kefrin" and dist == "euclidean", chosen

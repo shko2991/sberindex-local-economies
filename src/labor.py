@@ -238,8 +238,8 @@ def bh_qvalues(p: np.ndarray) -> np.ndarray:
 
 def local_moran(A, x: np.ndarray, perms: int = 499, seed: int = 0, alpha: float = 0.05,
                 fdr: bool = True) -> pd.DataFrame:
-    """Локальный I Морана (Anselin, 1995) с условной перестановкой: значения соседей случайны,
-    веса сохраняются. Квадранты: HH — высокое среди высоких, LL — низкое среди низких и т.д.
+    """Локальный I Морана (Anselin, 1995) с условной перестановкой: значения соседей — случайная
+    выборка без возвращения из остальных МО, веса сохраняются. Квадранты: HH — высокое среди высоких, LL — низкое среди низких и т.д.
     Значимость — с поправкой Бенджамини–Хохберга (fdr=True): из ~2 000 тестов при α = 0,05
     без поправки около сотни «скоплений» были бы случайными."""
     import scipy.sparse as sp
@@ -252,12 +252,16 @@ def local_moran(A, x: np.ndarray, perms: int = 499, seed: int = 0, alpha: float 
     I = z * lag
     g = np.random.default_rng(seed)
     p = np.ones(n)
+    kmax = int(np.diff(W.indptr).max())
+    # условная перестановка без возвращения: в каждой перестановке k_i разных МО из n − 1 остальных;
+    # один набор перестановок на все МО (как в PySAL), индекс i пропускается сдвигом
+    draws = np.stack([g.choice(n - 1, size=kmax, replace=False) for _ in range(perms)])
     for i in range(n):
         row = W.getrow(i)
         k = row.nnz
         if k == 0:
             continue
-        idx = g.integers(0, n - 1, size=(perms, k))
+        idx = draws[:, :k].copy()
         idx[idx >= i] += 1
         Ip = z[i] * (z[idx] * row.data).sum(1)
         p[i] = (1 + (Ip >= I[i]).sum() if I[i] >= 0 else 1 + (Ip <= I[i]).sum()) / (perms + 1)

@@ -1,5 +1,6 @@
 """Сборка страницы: данные из data/processed/landing_data.json встраиваются в шаблон.
-Получается один самодостаточный файл landing/index.html (без внешних запросов к данным) —
+Получается один самодостаточный файл landing/index.html (данные и библиотеки встроены; шрифты PT
+подгружаются из Google Fonts при наличии сети, без неё — системные) —
 его можно открыть локально, выложить на GitHub Pages или опубликовать как страницу.
 
   python landing/build.py
@@ -25,11 +26,14 @@ def main():
         code = (ROOT / "landing" / "vendor" / local).read_text(encoding="utf-8").replace("</script", "<\\/script")
         body = body.replace(f'<script src="{url}"></script>', f"<script>{code}</script>")
     (ROOT / "landing" / "index.html").write_text(body, encoding="utf-8")
-    # для GitHub Pages — полноценный документ со своим заголовком
+    # для GitHub Pages — полноценный документ: <title> и <link> из начала шаблона переносятся в <head>
+    lines = body.split("\n")
+    n_head = next(i for i, ln in enumerate(lines) if not ln.startswith(("<title", "<link", "<meta")))
+    head, rest = "\n".join(lines[:n_head]), "\n".join(lines[n_head:])
     page = ("<!doctype html>\n<html lang=\"ru\">\n<head>\n<meta charset=\"utf-8\">\n"
             "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">\n"
-            "<style>html{color-scheme:light dark}body{margin:0}[hidden]{display:none!important}</style>\n</head>\n<body>\n"
-            + body + "\n</body>\n</html>\n")
+            + head + "\n<style>html{color-scheme:light dark}body{margin:0}[hidden]{display:none!important}</style>\n</head>\n<body>\n"
+            + rest + "\n</body>\n</html>\n")
     (ROOT / "docs").mkdir(exist_ok=True)
     (ROOT / "docs" / "index.html").write_text(page, encoding="utf-8")
     print("landing/index.html и docs/index.html:", round(len(body.encode()) / 1e6, 2), "МБ")

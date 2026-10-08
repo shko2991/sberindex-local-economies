@@ -104,11 +104,17 @@ def build(cfg: dict, raw: pd.DataFrame, type_names: dict[int, str] | None = None
             t["population"] = r(lt.population.reindex(sel).sum(), 0)
             if "share_urban" in lt:
                 t["urban"] = r(lt.share_urban.reindex(sel).median())
+    stability = None                 # ARI на подвыборках с тем же числом инициализаций, что в основном расчёте
+    if P("finalists.csv").exists():
+        fz = pd.read_csv(P("finalists.csv")).set_index("вариант")
+        if summary["chosen"] in fz.index:
+            stability = {"chosen": r(fz.loc[summary["chosen"], "ARI среднее"]),
+                         "finalists": {int(fz.loc[i, "K"]): r(fz.loc[i, "ARI среднее"]) for i in fz.index}}
     cases = None
     if P("cases.csv").exists():
         cases = json.loads(pd.read_csv(P("cases.csv")).round(3).to_json(orient="records", force_ascii=False))
     return {"meta": {"chosen": summary["chosen"], "n": len(mo_ids), "quarters": quarters.columns.tolist(),
-                     "summary": summary}, "keys": KEYS, "national": national, "types": types, "mo": mo,
+                     "summary": summary, "stability": stability}, "keys": KEYS, "national": national, "types": types, "mo": mo,
             "methods": methods, "network": net,
             "transition": {"rows": trans.index.astype(int).tolist(), "cols": [int(c) for c in trans.columns],
                            "values": trans.values.astype(int).tolist()},
