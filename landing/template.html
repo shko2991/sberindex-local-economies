@@ -46,7 +46,8 @@ body { background: var(--space); color: var(--ink); font-family: var(--sans); fo
   background-image: radial-gradient(ellipse 70% 50% at 12% -8%, rgba(110, 60, 230, 0.34), transparent 70%),
     radial-gradient(ellipse 55% 40% at 92% 6%, rgba(150, 70, 255, 0.22), transparent 70%),
     radial-gradient(ellipse 80% 50% at 50% 115%, rgba(190, 50, 200, 0.16), transparent 70%);
-  background-attachment: fixed; }
+  background-attachment: fixed;
+  isolation: isolate; }   /* свой контекст наложения: иначе фон body закрывает звёздное поле #cosmos (z-index −2) */
 /* космос за страницей: звёздное поле и пылевые облака рисуются на холсте #cosmos; редкий слой мерцает */
 #cosmos { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; display: block; }
 body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1; background-image:
@@ -722,6 +723,12 @@ const DATA = /*__DATA__*/null;
       (t.urban != null ? `<div><dt>горожан, медиана</dt><dd>${fmt(t.urban * 100, 0)}%</dd></div>` : `<div><dt>городских округов</dt><dd>${fmt(t.city * 100, 0)}%</dd></div>`) +
       `<div><dt>доступность рынков</dt><dd>${fmt(t.ma, 0)}</dd></div>` +
       (st ? `<div><dt>устойчивость</dt><dd>${fmt(t.jaccard, 2)} <span class="pill ${st[0]}">${st[1]}</span></dd></div>` : ""));
+    // где МО типа: два самых частых региона и остаток — чтобы название типа не читалось как точная география
+    const regs = d3.rollups(D.mo.id.map((_, i) => i).filter((i) => D.mo.type[i] === t.id), (v) => v.length, (i) => D.mo.region[i])
+      .sort((a, b) => b[1] - a[1] || d3.ascending(a[0], b[0]));
+    const rest = d3.sum(regs.slice(2), (d) => d[1]), nr = regs.length - 2;
+    c.append("p").attr("class", "note").text(`Чаще всего: ${regs.slice(0, 2).map(([r, n]) => `${r} — ${n}`).join(", ")}` +
+      (rest ? `; ещё ${rest} МО в ${nr} ${nr % 10 === 1 && nr % 100 !== 11 ? "регионе" : "регионах"}` : "") + ".");
     const p = t.profile;
     c.append("div").attr("class", "bars").html(SHARE_KEYS.concat(["level_total"]).map((k) => {
       if (k === "level_total") {
@@ -846,7 +853,7 @@ const DATA = /*__DATA__*/null;
   const WS = D.meta.windows;
   document.getElementById("dyn-more").innerHTML = `<ul class="points">
     <li>Квартальные типы присваиваются при постоянной сети и прототипах за весь период; постоянная сеть сглаживает переходы${D.meta.summary.trajectory_counts_features_only ? ` (только по признакам кварталов стабильных МО ${pct((D.meta.summary.trajectory_counts_features_only["стабильный"] || 0) / D.meta.n)})` : ""}.</li>
-    ${WS ? `<li>Проверка: типы построены заново в ${WS.names.length} скользящих окнах по 12 месяцев, где пересчитываются и признаки, и связи. Метку во всех окнах не меняют ${pct(WS.summary.same_type_all_windows)} МО; ядро — Москва и растущие города.</li>
+    ${WS ? `<li>Проверка: типы построены заново в ${WS.names.length} скользящих окнах по 12 месяцев, где пересчитываются и признаки, и связи. Метку во всех окнах не меняют ${pct(WS.summary.same_type_all_windows)} МО; ядро — московский профиль и растущие города.</li>
     <li>Смены метки чаще у МО с низкой надёжностью типа: ${pct(WS.summary.share_changing_among_low_reliability)} против ${pct(WS.summary.share_changing_among_high_reliability)} у остальных.</li>
     ${WS.sensitivity ? `<li>При других seed доля МО с неизменной меткой — ${pct(WS.sensitivity.base_stable_min)}–${pct(WS.sensitivity.base_stable_max)}, без полугодовых признаков — от ${pct(WS.sensitivity.stable_min)}. Преимущество сети по устойчивости во времени не подтверждается.</li>` : ""}
     <li>${WS.summary.persistent_transitions} МО — кандидаты на переход 2023 → 2024 по объявленному правилу; список чувствителен к seed и составу признаков. Тип в каждом окне — вторая полоса в карточке МО.</li>` : ""}</ul>`;
