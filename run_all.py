@@ -23,6 +23,7 @@ STEPS = [
     ("рынок труда и расхождения", ["src/labor_run.py"]),
     ("чувствительность к слоям сети и геометрии (η² по данным Росстата)", ["src/sensitivity.py"]),
     ("разобранные случаи", ["src/cases.py"]),
+    ("дополнительные проверки: перенос на новые регионы, число типов, подбор аналогов", ["src/extra_checks.py"]),
     ("синтетическая проверка KEFRiN", ["src/synthetic.py"]),
     ("рисунки", ["src/figures.py"]),
     ("данные страницы", ["src/landing_data.py"]),
@@ -51,7 +52,8 @@ if __name__ == "__main__":
     for name, args in STEPS:
         if skip and name == "сравнение методов":
             continue
-        if not has_labor and name in ("рынок труда и расхождения", "разобранные случаи"):
+        if not has_labor and name in ("рынок труда и расхождения", "разобранные случаи",
+                                      "дополнительные проверки: перенос на новые регионы, число типов, подбор аналогов"):
             continue
         print(f"\n=== {name} ===", flush=True)
         t0 = time.time()

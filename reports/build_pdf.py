@@ -243,7 +243,7 @@ def render(b, md_name: str, pdf_name: str, series: str, img: str):
              f'<div class="series">{series} · Конкурс СберИндекса, направление «Кластеризация»</div>'
              f'<h1>{TITLE}</h1><div class="sub">{SUBTITLE}, 2023–2024 гг.</div>'
              f'<div class="chips">{"".join(f"<span>{r}</span>" for r in RUBRICS)}</div>'
-             f'<div class="badge">Версия от 8 октября 2026 г.</div></header>')
+             f'<div class="badge">Версия от 9 октября 2026 г.</div></header>')
     # аннотация (первые цитаты) идут сразу после обложки, затем содержание
     quotes = re.findall(r"<blockquote>.*?</blockquote>", body_html, flags=re.S)[:2]
     for q in quotes:
